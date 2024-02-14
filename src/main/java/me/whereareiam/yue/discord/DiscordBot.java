@@ -84,6 +84,6 @@ public class DiscordBot {
 		beanDefinition.setScope(BeanDefinition.SCOPE_SINGLETON);
 		beanDefinition.setLazyInit(false);
 		beanDefinition.setAutowireCandidate(true);
-		context.getBeanFactory().registerSingleton("JDA", jda);
+		context.getBeanFactory().registerSingleton("jda", jda);
 	}
 }

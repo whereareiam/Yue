@@ -61,10 +61,8 @@ public class YueConfig {
 	}
 
 	@Bean
-	@Qualifier("Yue")
+	@Qualifier("yue")
 	public Logger getLogger() {
 		return Logger.getLogger("Yue");
 	}
-
-	
 }

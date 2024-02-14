@@ -6,3 +6,10 @@ logging:
     root: INFO
   pattern:
     console: "%clr(%d{HH:mm:ss}){white} %clr(%level){green}: %msg%n"
+
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: update
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration

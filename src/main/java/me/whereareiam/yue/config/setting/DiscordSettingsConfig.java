@@ -1,10 +1,12 @@
 package me.whereareiam.yue.config.setting;
 
+import lombok.Getter;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 
 import java.util.Collection;
 import java.util.List;
 
+@Getter
 public class DiscordSettingsConfig {
 	private String guildId = "YOUR_GUILD_ID_HERE";
 	private String token = "YOUR_TOKEN_HERE";
@@ -14,20 +16,4 @@ public class DiscordSettingsConfig {
 			GatewayIntent.GUILD_MESSAGES,
 			GatewayIntent.MESSAGE_CONTENT
 	);
-
-	public String getGuildId() {
-		return guildId;
-	}
-
-	public String getToken() {
-		return token;
-	}
-
-	public boolean isAutoReconnect() {
-		return autoReconnect;
-	}
-
-	public Collection<GatewayIntent> getIntents() {
-		return intents;
-	}
 }
