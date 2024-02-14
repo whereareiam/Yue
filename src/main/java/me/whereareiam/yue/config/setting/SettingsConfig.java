@@ -1,9 +1,21 @@
 package me.whereareiam.yue.config.setting;
 
-import net.elytrium.serializer.language.object.YamlSerializable;
-import org.springframework.stereotype.Component;
+import me.whereareiam.yue.model.Language;
 
-@Component
-public class SettingsConfig extends YamlSerializable {
-	public DiscordSettingsConfig discord = new DiscordSettingsConfig();
+public class SettingsConfig {
+	private Language defaultLanguage = Language.ENGLISH;
+	private DatabaseSettingsConfig database = new DatabaseSettingsConfig();
+	private DiscordSettingsConfig discord = new DiscordSettingsConfig();
+
+	public Language getDefaultLanguage() {
+		return defaultLanguage;
+	}
+
+	public DatabaseSettingsConfig getDatabase() {
+		return database;
+	}
+
+	public DiscordSettingsConfig getDiscord() {
+		return discord;
+	}
 }

@@ -1,3 +1,8 @@
 server:
   port: 8080
   address: localhost
+logging:
+  level:
+    root: INFO
+  pattern:
+    console: "%clr(%d{HH:mm:ss}){white} %clr(%level){green}: %msg%n"
