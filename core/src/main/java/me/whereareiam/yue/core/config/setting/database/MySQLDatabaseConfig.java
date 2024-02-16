@@ -1,11 +1,9 @@
-package me.whereareiam.yue.core.config.setting;
+package me.whereareiam.yue.core.config.setting.database;
 
 import lombok.Getter;
-import me.whereareiam.yue.core.database.Database;
 
 @Getter
-public class DatabaseSettingsConfig {
-	private Database type = Database.MYSQL;
+public class MySQLDatabaseConfig {
 	private String host = "localhost";
 	private int port = 3306;
 	private String database = "yue";

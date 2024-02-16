@@ -3,6 +3,8 @@ package me.whereareiam.yue.core.database;
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityManagerFactory;
 import me.whereareiam.yue.core.config.setting.SettingsConfig;
+import me.whereareiam.yue.core.config.setting.database.DatabaseSettingsConfig;
+import me.whereareiam.yue.core.exception.DatabaseSetupException;
 import me.whereareiam.yue.core.util.BeanRegistrationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -20,15 +22,15 @@ import java.util.logging.Logger;
 
 @Component
 @DependsOn("configService")
-public class DatabaseManager {
+public class DatabaseSetupManager {
 	private final ApplicationContext ctx;
 	private final BeanRegistrationUtil beanRegistrationUtil;
 	private final Logger logger;
 	private final SettingsConfig settingsConfig;
 
 	@Autowired
-	public DatabaseManager(@Qualifier ApplicationContext ctx, BeanRegistrationUtil beanRegistrationUtil, Logger logger,
-	                       SettingsConfig settingsConfig) {
+	public DatabaseSetupManager(@Qualifier ApplicationContext ctx, BeanRegistrationUtil beanRegistrationUtil, Logger logger,
+	                            SettingsConfig settingsConfig) {
 		this.ctx = ctx;
 		this.beanRegistrationUtil = beanRegistrationUtil;
 		this.logger = logger;
@@ -42,8 +44,7 @@ public class DatabaseManager {
 			createEntityManagerFactory();
 			createTransactionManager();
 		} catch (Exception e) {
-			logger.severe("Failed to set up Database connection. Check your settings.json file.");
-			System.exit(1);
+			throw new DatabaseSetupException("Failed to set up Database connection.", e);
 		}
 
 		logger.info("Database connection established.");
@@ -51,18 +52,21 @@ public class DatabaseManager {
 
 	private void createDataSource() {
 		DriverManagerDataSource dataSource = new DriverManagerDataSource();
-		Database database = settingsConfig.getDatabase().getType();
-		switch (database) {
+		DatabaseSettingsConfig database = settingsConfig.getDatabase();
+		switch (settingsConfig.getDatabase().getType()) {
 			case MYSQL:
-				dataSource.setUrl("jdbc:mysql://" + settingsConfig.getDatabase().getHost() + ":" + settingsConfig.getDatabase().getPort() + "/" + settingsConfig.getDatabase().getDatabase() + "?useSSL=" + settingsConfig.getDatabase().isUseSSL() + "&autoReconnect=" + settingsConfig.getDatabase().isAutoReconnect());
+				dataSource.setUrl("jdbc:mysql://" + database.getMysql().getHost() + ":" + database.getMysql().getPort() + "/" + database.getMysql().getDatabase() + "?useSSL=" + database.getMysql().isUseSSL() + "&autoReconnect=" + database.getMysql().isAutoReconnect());
 				dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
+				dataSource.setUsername(database.getMysql().getUsername());
+				dataSource.setPassword(database.getMysql().getPassword());
+				break;
+			case SQLITE:
+				dataSource.setUrl("jdbc:sqlite:" + database.getSqlite().getFile());
+				dataSource.setDriverClassName("org.sqlite.JDBC");
 				break;
 			default:
 				throw new RuntimeException("Unsupported database type: " + database);
 		}
-
-		dataSource.setUsername(settingsConfig.getDatabase().getUsername());
-		dataSource.setPassword(settingsConfig.getDatabase().getPassword());
 
 		beanRegistrationUtil.registerSingleton("dataSource", DataSource.class, dataSource);
 	}

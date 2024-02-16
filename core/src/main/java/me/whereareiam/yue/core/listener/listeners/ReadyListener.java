@@ -1,4 +1,4 @@
-package me.whereareiam.yue.core.listener.listeners.discord;
+package me.whereareiam.yue.core.listener.listeners;
 
 import me.whereareiam.yue.core.listener.pubisher.ApplicationSuccessfullyStartedPublisher;
 import net.dv8tion.jda.api.events.session.ReadyEvent;

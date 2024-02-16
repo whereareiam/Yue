@@ -1,5 +1,6 @@
 package me.whereareiam.yue.core;
 
+import me.whereareiam.yue.api.YueAPI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.info.BuildProperties;
@@ -20,6 +21,11 @@ public class YueConfig {
 	@Autowired
 	public YueConfig(ApplicationContext ctx) {
 		this.ctx = ctx;
+	}
+
+	@Bean
+	public YueAPI yueAPI() {
+		return new YueAPI(ctx.getBean(YueApplication.class));
 	}
 
 	@Bean

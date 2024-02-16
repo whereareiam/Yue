@@ -1,6 +1,7 @@
 package me.whereareiam.yue.core.config;
 
 import jakarta.annotation.PostConstruct;
+import me.whereareiam.yue.core.config.palette.PaletteConfig;
 import me.whereareiam.yue.core.config.setting.SettingsConfig;
 import me.whereareiam.yue.core.util.BeanRegistrationUtil;
 import org.jetbrains.annotations.NotNull;
@@ -30,10 +31,14 @@ public class ConfigService implements ApplicationContextAware {
 	@PostConstruct
 	public void loadConfigs() {
 		registerConfigBean(SettingsConfig.class, "settings.json");
+		registerConfigBean(RolesConfig.class, "roles.json");
+		registerConfigBean(PaletteConfig.class, "palette.json");
 	}
 
 	public void reloadConfigs() {
 		reloadConfigBean(SettingsConfig.class, "settings.json");
+		reloadConfigBean(RolesConfig.class, "roles.json");
+		reloadConfigBean(PaletteConfig.class, "palette.json");
 	}
 
 	private <T> void registerConfigBean(Class<T> configClass, String fileName) {

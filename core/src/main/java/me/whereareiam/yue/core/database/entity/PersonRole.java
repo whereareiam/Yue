@@ -14,11 +14,11 @@ import lombok.Setter;
 public class PersonRole {
 	@Id
 	@Column(name = "user_id")
-	private int personId;
+	private String personId;
 
 	@Id
 	@Column(name = "role_id")
-	private int roleId;
+	private String roleId;
 
 	@ManyToOne
 	@JoinColumn(name = "user_id", insertable = false, updatable = false)

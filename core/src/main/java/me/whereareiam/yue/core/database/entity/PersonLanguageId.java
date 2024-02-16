@@ -10,6 +10,6 @@ import java.io.Serializable;
 @Setter
 @EqualsAndHashCode
 public class PersonLanguageId implements Serializable {
-	private int personId;
+	private String personId;
 	private int languageId;
 }

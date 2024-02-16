@@ -1,8 +1,10 @@
-package me.whereareiam.yue.core.discord;
+package me.whereareiam.yue.core.listener;
 
-import me.whereareiam.yue.core.listener.listeners.discord.GuildMemberJoinListener;
-import me.whereareiam.yue.core.listener.listeners.discord.MessageListener;
-import me.whereareiam.yue.core.listener.listeners.discord.SlashCommandInteractionListener;
+import me.whereareiam.yue.core.listener.listeners.MessageListener;
+import me.whereareiam.yue.core.listener.listeners.ReadyListener;
+import me.whereareiam.yue.core.listener.listeners.SlashCommandInteractionListener;
+import me.whereareiam.yue.core.listener.listeners.guild.GuildMemberJoinListener;
+import me.whereareiam.yue.core.listener.listeners.guild.GuildMemberRemoveListener;
 import net.dv8tion.jda.api.JDA;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -25,5 +27,7 @@ public class DiscordListenerRegistrar {
 		jda.addEventListener(ctx.getBean(MessageListener.class));
 		jda.addEventListener(ctx.getBean(SlashCommandInteractionListener.class));
 		jda.addEventListener(ctx.getBean(GuildMemberJoinListener.class));
+		jda.addEventListener(ctx.getBean(GuildMemberRemoveListener.class));
+		jda.addEventListener(ctx.getBean(ReadyListener.class));
 	}
 }

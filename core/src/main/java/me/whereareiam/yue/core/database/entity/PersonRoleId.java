@@ -10,6 +10,6 @@ import java.io.Serializable;
 @Setter
 @EqualsAndHashCode
 public class PersonRoleId implements Serializable {
-	private int personId;
-	private int roleId;
+	private String personId;
+	private String roleId;
 }

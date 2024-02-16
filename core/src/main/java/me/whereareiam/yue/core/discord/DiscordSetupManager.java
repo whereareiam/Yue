@@ -2,11 +2,13 @@ package me.whereareiam.yue.core.discord;
 
 import jakarta.annotation.PreDestroy;
 import me.whereareiam.yue.api.event.ApplicationSuccessfullyStarted;
-import me.whereareiam.yue.core.Scheduler;
+import me.whereareiam.yue.core.config.RolesConfig;
 import me.whereareiam.yue.core.config.setting.DiscordSettingsConfig;
 import me.whereareiam.yue.core.config.setting.SettingsConfig;
-import me.whereareiam.yue.core.language.LanguageManager;
-import me.whereareiam.yue.core.listener.pubisher.ApplicationSuccessfullyStartedPublisher;
+import me.whereareiam.yue.core.database.entity.Role;
+import me.whereareiam.yue.core.database.repository.RoleRepository;
+import me.whereareiam.yue.core.language.LanguageService;
+import me.whereareiam.yue.core.listener.DiscordListenerRegistrar;
 import me.whereareiam.yue.core.util.BeanRegistrationUtil;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -19,36 +21,35 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.event.EventListener;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
+import java.util.List;
 
 @Component
-@DependsOn("databaseManager")
-public class DiscordBot {
+@DependsOn("databaseSetupManager")
+public class DiscordSetupManager {
 	private final BeanRegistrationUtil beanRegistrationUtil;
 	private final DiscordListenerRegistrar discordListenerRegistrar;
-	private final ApplicationSuccessfullyStartedPublisher eventPublisher;
-	private final LanguageManager languageManager;
-	private final Logger logger;
-	private final Scheduler scheduler;
+	private final LanguageService languageService;
 	private final SettingsConfig settingsConfig;
+	private final RolesConfig rolesConfig;
+	private final RoleRepository roleRepository;
 	private JDA jda;
 
 	@Autowired
-	public DiscordBot(BeanRegistrationUtil beanRegistrationUtil, @Lazy DiscordListenerRegistrar discordListenerRegistrar,
-	                  ApplicationSuccessfullyStartedPublisher eventPublisher, LanguageManager languageManager, Logger logger,
-	                  Scheduler scheduler, SettingsConfig settingsConfig) {
+	public DiscordSetupManager(BeanRegistrationUtil beanRegistrationUtil, @Lazy DiscordListenerRegistrar discordListenerRegistrar,
+	                           LanguageService languageService, SettingsConfig settingsConfig, RolesConfig rolesConfig,
+	                           RoleRepository roleRepository) {
 		this.beanRegistrationUtil = beanRegistrationUtil;
 		this.discordListenerRegistrar = discordListenerRegistrar;
-		this.eventPublisher = eventPublisher;
-		this.languageManager = languageManager;
-		this.logger = logger;
-		this.scheduler = scheduler;
+		this.languageService = languageService;
 		this.settingsConfig = settingsConfig;
+		this.rolesConfig = rolesConfig;
+		this.roleRepository = roleRepository;
 	}
 
+	@Order(2)
 	@EventListener(ApplicationReadyEvent.class)
 	public void onLoad() {
 		try {
@@ -62,24 +63,44 @@ public class DiscordBot {
 			jda = bot.build();
 			beanRegistrationUtil.registerSingleton("jda", JDA.class, jda);
 		} catch (InvalidTokenException e) {
-			logger.severe("Discord token is invalid. Please check your settings.json file.");
-			System.exit(1);
+			throw new RuntimeException("Discord token is invalid. Please check your settings.json file.");
 		}
 
 		jda.getPresence().setActivity(Activity.playing(
-				languageManager.getTranslation("core.main.phase.loading")
+				languageService.getTranslation("core.main.phase.loading")
 		));
 
 		jda.updateCommands().queue();
 		discordListenerRegistrar.registerListeners();
-		scheduler.schedule(eventPublisher::publish, 1, TimeUnit.SECONDS);
+		registerRoles();
 	}
 
+	private void registerRoles() {
+		List<Role> existingRoles = roleRepository.findAll();
+
+		List<String> existingRoleIds = existingRoles.stream()
+				.map(Role::getId)
+				.toList();
+
+		existingRoles.stream()
+				.filter(role -> !rolesConfig.getRoles().contains(role.getId()))
+				.forEach(roleRepository::delete);
+
+		rolesConfig.getRoles().stream()
+				.filter(roleId -> !existingRoleIds.contains(roleId))
+				.forEach(roleId -> {
+					Role newRole = new Role();
+					newRole.setId(roleId);
+					roleRepository.save(newRole);
+				});
+	}
+
+	@Order(1)
 	@EventListener(ApplicationSuccessfullyStarted.class)
 	public void onEnable() {
 		beanRegistrationUtil.registerSingleton("guild", Guild.class, jda.getGuildById(settingsConfig.getDiscord().getGuildId()));
 		jda.getPresence().setActivity(Activity.playing(
-				languageManager.getTranslation("core.main.phase.starting")
+				languageService.getTranslation("core.main.phase.starting")
 		));
 	}
 

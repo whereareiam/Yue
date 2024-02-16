@@ -1,4 +1,4 @@
-package me.whereareiam.yue.core.listener.listeners.discord;
+package me.whereareiam.yue.core.listener.listeners;
 
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;

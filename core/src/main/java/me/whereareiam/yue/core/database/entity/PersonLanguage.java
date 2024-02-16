@@ -14,7 +14,7 @@ import lombok.Setter;
 public class PersonLanguage {
 	@Id
 	@Column(name = "user_id")
-	private int personId;
+	private String personId;
 
 	@Id
 	@Column(name = "language_id")

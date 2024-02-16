@@ -44,6 +44,11 @@
             <artifactId>mysql-connector-java</artifactId>
             <version>${mysql-connector.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.minndevelopment</groupId>
+            <artifactId>emoji-java</artifactId>
+            <version>master-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
     <profiles>
@@ -75,6 +80,20 @@
                         <artifactId>exec-maven-plugin</artifactId>
                         <version>${exec-maven-plugin.version}</version>
                         <executions>
+                            <execution>
+                                <id>mysql-start</id>
+                                <phase>install</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>docker</executable>
+                                    <arguments>
+                                        <argument>start</argument>
+                                        <argument>yue-db-1</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
                             <execution>
                                 <id>start-app</id>
                                 <phase>install</phase>
