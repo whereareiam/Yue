@@ -3,8 +3,11 @@ package me.whereareiam.yue.core.feature.verification;
 import me.whereareiam.yue.core.config.feature.VerificationFeatureConfig;
 import me.whereareiam.yue.core.config.setting.FeaturesSettingsConfig;
 import me.whereareiam.yue.core.config.setting.SettingsConfig;
+import me.whereareiam.yue.core.database.repository.PersonRepository;
 import me.whereareiam.yue.core.feature.Feature;
 import me.whereareiam.yue.core.model.StepData;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -12,6 +15,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.logging.Logger;
 
 @Service
 public class VerificationFeature implements Feature {
@@ -42,21 +46,15 @@ public class VerificationFeature implements Feature {
 
 			if (nextStepIndex < verificationSteps.size()) {
 				stepData.setStep(verificationSteps.get(nextStepIndex));
-			} else {
-				registerMember(user);
-				return;
+
+				if (nextStepIndex == verificationSteps.size() - 1) {
+					verifications.remove(userId);
+				}
 			}
 		}
 
 		verifications.put(userId, stepData);
 		stepData.getStep().execute(stepData, buttonId);
-	}
-
-	private void registerMember(User user) {
-		verifications.remove(user.getId());
-
-		System.out.println("Last step");
-		//TODO: Implement this method
 	}
 
 	@Override
@@ -68,6 +66,17 @@ public class VerificationFeature implements Feature {
 					.findFirst()
 					.ifPresent(verificationSteps::add);
 		}
+
+		Guild guild = ctx.getBean(Guild.class);
+		Logger logger = ctx.getBean(Logger.class);
+		List<Member> members = guild.loadMembers().get();
+		members.removeIf(member -> ctx.getBean(PersonRepository.class).findById(member.getId()).isPresent());
+		members.remove(guild.getSelfMember());
+
+		members.forEach(member -> {
+			logger.info("Verifying member: " + member.getEffectiveName());
+			verifyMember(member.getUser(), Optional.empty());
+		});
 
 		enabled = true;
 	}

@@ -54,9 +54,24 @@ public class PersonService {
 		personAdditionalLanguageRepository.save(personAdditionalLanguage);
 	}
 
+	public void addRole(String userId, String roleId) {
+		Person person = personRepository.findById(userId).orElseThrow();
+		Role role = roleRepository.findById(roleId).orElseThrow();
+
+		PersonRole personRole = new PersonRole();
+		personRole.setPersonId(person.getId());
+		personRole.setRoleId(role.getId());
+		personRoleRepository.save(personRole);
+	}
+
 	public void removeAdditionalLanguage(String userId, String langCode) {
 		Language language = languageRepository.findByCode(langCode).orElseThrow();
 		personAdditionalLanguageRepository.deleteByPersonIdAndLanguageId(userId, language.getId());
+	}
+
+	public void removeRole(String userId, String roleId) {
+		Role role = roleRepository.findById(roleId).orElseThrow();
+		personRoleRepository.deleteByPersonIdAndRoleId(userId, role.getId());
 	}
 
 	@CacheEvict(value = "userLanguage", key = "#userId")

@@ -1,6 +1,7 @@
 package me.whereareiam.yue.core.feature.verification.steps;
 
 import com.vdurmont.emoji.EmojiParser;
+import me.whereareiam.yue.core.config.feature.VerificationFeatureConfig;
 import me.whereareiam.yue.core.database.entity.Language;
 import me.whereareiam.yue.core.database.repository.LanguageRepository;
 import me.whereareiam.yue.core.database.service.PersonService;
@@ -17,22 +18,23 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Logger;
 
 @Service
 @Lazy
-public class MainLanguageStep implements VerificationStep {
+public class MainLanguageStep extends VerificationStep {
+	private final Logger logger;
 	private final LanguageRepository languageRepository;
 	private final PersonService personService;
-	private final MessageBuilderUtil messageBuilderUtil;
-	private final VerificationFeature verificationFeature;
 
 	@Autowired
-	public MainLanguageStep(LanguageRepository languageRepository, PersonService personService,
-	                        MessageBuilderUtil messageBuilderUtil, VerificationFeature verificationFeature) {
+	public MainLanguageStep(VerificationFeatureConfig verificationConfig, VerificationFeature verificationFeature,
+	                        MessageBuilderUtil messageBuilderUtil, Logger logger, LanguageRepository languageRepository,
+	                        PersonService personService) {
+		super(verificationConfig, verificationFeature, messageBuilderUtil);
+		this.logger = logger;
 		this.languageRepository = languageRepository;
 		this.personService = personService;
-		this.messageBuilderUtil = messageBuilderUtil;
-		this.verificationFeature = verificationFeature;
 	}
 
 	@Override
@@ -62,7 +64,11 @@ public class MainLanguageStep implements VerificationStep {
 		stepData.setStep(this);
 		stepData.getUser().openPrivateChannel()
 				.flatMap(privateChannel -> privateChannel.sendMessageEmbeds(embed).setActionRow(buttons))
-				.queue(stepData::setMessage);
+				.queue(
+						stepData::setMessage,
+						throwable -> logger.severe("Failed to send message to user: " + stepData.getUser().getAsMention())
+				);
+
 	}
 
 	private void handleButtonPress(StepData stepData, String buttonId) {

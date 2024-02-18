@@ -34,6 +34,10 @@ public class MessageBuilderUtil {
 		return embed(user, title, description, footer, Color.decode(paletteConfig.getMain().getDanger()));
 	}
 
+	public MessageEmbed successEmbed(User user, String title, String description, String footer) {
+		return embed(user, title, description, footer, Color.decode(paletteConfig.getMain().getSuccess()));
+	}
+
 	public MessageEmbed embed(User user, String title, String description, String footer, Color color) {
 		EmbedBuilder embedBuilder = new EmbedBuilder();
 

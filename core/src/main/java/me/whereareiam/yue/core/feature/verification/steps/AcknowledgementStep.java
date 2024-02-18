@@ -15,12 +15,14 @@ import java.util.Optional;
 
 @Service
 @Lazy
-public class AcknowledgementStep implements VerificationStep {
+public class AcknowledgementStep extends VerificationStep {
 	private final VerificationFeatureConfig verificationConfig;
 	private final VerificationFeature verificationFeature;
 	private final MessageBuilderUtil messageBuilderUtil;
 
-	public AcknowledgementStep(VerificationFeatureConfig verificationConfig, VerificationFeature verificationFeature, MessageBuilderUtil messageBuilderUtil) {
+	public AcknowledgementStep(VerificationFeatureConfig verificationConfig, VerificationFeature verificationFeature,
+	                           MessageBuilderUtil messageBuilderUtil) {
+		super(verificationConfig, verificationFeature, messageBuilderUtil);
 		this.verificationConfig = verificationConfig;
 		this.verificationFeature = verificationFeature;
 		this.messageBuilderUtil = messageBuilderUtil;

@@ -8,4 +8,5 @@ public class MainPaletteConfig {
 	private String secondary = "#000FFF";
 	private String tertiary = "#0FFF00";
 	private String danger = "#FF0000";
+	private String success = "#00FF00";
 }

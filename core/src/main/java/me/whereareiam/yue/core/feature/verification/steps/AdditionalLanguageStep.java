@@ -22,10 +22,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Lazy
-public class AdditionalLanguageStep implements VerificationStep {
-	private final VerificationFeatureConfig verificationConfig;
-	private final VerificationFeature verificationFeature;
-	private final MessageBuilderUtil messageBuilderUtil;
+public class AdditionalLanguageStep extends VerificationStep {
 	private final LanguageRepository languageRepository;
 	private final PersonService personService;
 
@@ -33,9 +30,7 @@ public class AdditionalLanguageStep implements VerificationStep {
 	public AdditionalLanguageStep(VerificationFeatureConfig verificationConfig, VerificationFeature verificationFeature,
 	                              MessageBuilderUtil messageBuilderUtil, LanguageRepository languageRepository,
 	                              PersonService personService) {
-		this.verificationConfig = verificationConfig;
-		this.verificationFeature = verificationFeature;
-		this.messageBuilderUtil = messageBuilderUtil;
+		super(verificationConfig, verificationFeature, messageBuilderUtil);
 		this.languageRepository = languageRepository;
 		this.personService = personService;
 	}

@@ -53,6 +53,17 @@ public class RoleSynchronizerFeature implements Feature {
 		logger.info("Discord role synchronization completed.");
 	}
 
+	public void synchronizeRoles(Member member) {
+		if (member.getUser().isBot() || !guild.getSelfMember().canInteract(member))
+			return;
+
+		try {
+			processMember(member);
+		} catch (Exception e) {
+			logger.severe("Failed to process member: " + member.getEffectiveName());
+		}
+	}
+
 	private void processMember(Member member) {
 		Optional<Person> personOptional = personRepository.findById(member.getId());
 		if (personOptional.isPresent()) {
@@ -72,7 +83,10 @@ public class RoleSynchronizerFeature implements Feature {
 				.filter(role -> !rolesInDb.stream().map(Role::getId).toList().contains(role.getId()))
 				.toList();
 
-		rolesToRemove.forEach(role -> guild.removeRoleFromMember(member, role).queue());
+		rolesToRemove.forEach(role -> {
+			logger.info("-" + role.getName() + " -> " + member.getEffectiveName());
+			guild.removeRoleFromMember(member, role).queue();
+		});
 	}
 
 	private void addMissingRoles(Member member, List<Role> rolesInDb) {
@@ -81,6 +95,7 @@ public class RoleSynchronizerFeature implements Feature {
 				.forEach(role -> {
 					net.dv8tion.jda.api.entities.Role discordRole = guild.getRoleById(role.getId());
 					if (discordRole != null) {
+						logger.info("+" + discordRole.getName() + " -> " + member.getEffectiveName());
 						guild.addRoleToMember(member, discordRole).queue();
 					} else {
 						logger.warning("Role not found for ID: " + role.getId());
