@@ -10,6 +10,8 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class GuildMemberJoinListener extends ListenerAdapter {
 	private final FeatureManager featureManager;
@@ -26,7 +28,7 @@ public class GuildMemberJoinListener extends ListenerAdapter {
 		if (discordSettingsConfig.getGuildId().equals(event.getGuild().getId())) {
 			VerificationFeature verificationFeature = (VerificationFeature) featureManager.getFeature(VerificationFeature.class);
 			if (verificationFeature != null)
-				verificationFeature.verifyMember(event.getMember());
+				verificationFeature.verifyMember(event.getMember().getUser(), Optional.empty());
 		}
 	}
 }

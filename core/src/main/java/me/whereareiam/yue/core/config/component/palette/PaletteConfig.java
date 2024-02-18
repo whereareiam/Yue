@@ -1,4 +1,4 @@
-package me.whereareiam.yue.core.config.palette;
+package me.whereareiam.yue.core.config.component.palette;
 
 import lombok.Getter;
 

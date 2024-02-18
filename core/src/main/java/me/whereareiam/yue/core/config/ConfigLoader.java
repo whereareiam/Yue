@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
 
@@ -20,23 +21,37 @@ public class ConfigLoader<T> {
 
 	public ConfigLoader(@Qualifier("dataPath") Path dataPath) {
 		this.dataFolder = dataPath;
-		this.gson = new GsonBuilder().setPrettyPrinting().create();
+		this.gson = new GsonBuilder()
+				.setPrettyPrinting()
+				.create();
 	}
 
-	public void load(Class<T> configClass, String fileName) {
-		File file = dataFolder.resolve(fileName).toFile();
-		if (!file.exists() || file.length() == 0) {
+	public void load(Class<T> configClass, String path, String fileName) {
+		File file = null;
+		if (path.isEmpty()) {
+			file = dataFolder.resolve(fileName).toFile();
+		} else {
+			Path filePath = dataFolder.resolve(path).resolve(fileName);
+			try {
+				Files.createDirectories(filePath.getParent());
+				file = filePath.toFile();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+
+		if (file != null && (!file.exists() || file.length() == 0)) {
 			try {
 				boolean fileCreated = file.createNewFile();
 				if (fileCreated) {
 					config = configClass.getDeclaredConstructor().newInstance();
-					save(fileName);
+					save(path, fileName);
 				}
 			} catch (IOException | InstantiationException | IllegalAccessException | NoSuchMethodException |
 			         InvocationTargetException e) {
 				e.printStackTrace();
 			}
-		} else {
+		} else if (file != null) {
 			try {
 				FileReader reader = new FileReader(file);
 				JsonObject fileConfig = gson.fromJson(reader, JsonObject.class);
@@ -53,8 +68,7 @@ public class ConfigLoader<T> {
 				fileConfig.entrySet().removeIf(entry -> !defaultConfigJson.has(entry.getKey()));
 
 				config = gson.fromJson(fileConfig, configClass);
-
-				save(fileName);
+				save(path, fileName);
 			} catch (FileNotFoundException | InstantiationException | IllegalAccessException | NoSuchMethodException |
 			         InvocationTargetException e) {
 				e.printStackTrace();
@@ -62,9 +76,12 @@ public class ConfigLoader<T> {
 		}
 	}
 
-	public void save(String fileName) {
+	public void save(String path, String fileName) {
 		try {
-			FileWriter writer = new FileWriter(dataFolder.resolve(fileName).toFile());
+			if (!path.isEmpty()) {
+				Files.createDirectories(dataFolder.resolve(path));
+			}
+			FileWriter writer = new FileWriter(dataFolder.resolve(path).resolve(fileName).toFile());
 			gson.toJson(config, writer);
 			writer.close();
 		} catch (IOException e) {
@@ -72,8 +89,7 @@ public class ConfigLoader<T> {
 		}
 	}
 
-	public void reload(Class<T> configClass, String fileName) {
-		load(configClass, fileName);
+	public void reload(Class<T> configClass, String path, String fileName) {
+		load(configClass, path, fileName);
 	}
-
 }

@@ -50,7 +50,7 @@ public class InfoPrinterUtil {
 		List<Language> languages = languageRepository.findAll();
 		String languageCodes = languages.stream()
 				.map(Language::getCode)
-				.limit(5)
+				.limit(3)
 				.collect(Collectors.joining(", "));
 		logger.info("  Languages: " + languages.size() + " (" + languageCodes + (languages.size() > 5 ? ", ..." : "") + ")");
 

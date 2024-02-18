@@ -1,8 +1,6 @@
 package me.whereareiam.yue.core.database.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -17,4 +15,8 @@ public class Person {
 	private String id;
 	private String globalName;
 	private String name;
+
+	@ManyToOne
+	@JoinColumn(name = "language_id")
+	private Language mainLanguage;
 }

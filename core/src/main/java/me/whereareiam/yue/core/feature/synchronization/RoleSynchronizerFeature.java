@@ -19,7 +19,7 @@ import java.util.Optional;
 import java.util.logging.Logger;
 
 @Service
-public class RoleSynchronizer implements Feature {
+public class RoleSynchronizerFeature implements Feature {
 	private final Logger logger;
 	private final Guild guild;
 	private final FeaturesSettingsConfig featuresSettingsConfig;
@@ -28,8 +28,8 @@ public class RoleSynchronizer implements Feature {
 	private boolean enabled;
 
 	@Autowired
-	public RoleSynchronizer(Logger logger, @Lazy Guild guild, SettingsConfig settingsConfig, PersonRepository personRepository,
-	                        PersonRoleRepository personRoleRepository) {
+	public RoleSynchronizerFeature(Logger logger, @Lazy Guild guild, SettingsConfig settingsConfig, PersonRepository personRepository,
+	                               PersonRoleRepository personRoleRepository) {
 		this.logger = logger;
 		this.guild = guild;
 		this.featuresSettingsConfig = settingsConfig.getFeatures();

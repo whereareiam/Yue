@@ -1,4 +1,4 @@
-package me.whereareiam.yue.core.discord;
+package me.whereareiam.yue.core;
 
 import jakarta.annotation.PreDestroy;
 import me.whereareiam.yue.api.event.ApplicationSuccessfullyStarted;

@@ -1,7 +1,8 @@
 package me.whereareiam.yue.core.util.message;
 
+import com.vdurmont.emoji.EmojiParser;
 import me.whereareiam.yue.core.language.LanguageService;
-import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,18 +18,19 @@ public class MessageFormatterUtil {
 		this.languageService = languageService;
 	}
 
-	public String[] formatMessage(String[] message, Member member) {
+	public String[] formatMessage(User user, String[] message) {
 		for (int i = 0; i < message.length; i++) {
-			message[i] = formatMessage(message[i], member);
+			message[i] = formatMessage(user, message[i]);
 		}
 
 		return message;
 	}
 
-	public String formatMessage(String message, Member member) {
-		message = languageService.getTranslation(message);
+	public String formatMessage(User user, String message) {
+		message = languageService.getTranslation(user, message);
 		message = hookTranslationPlaceholders(message);
-		message = hookInternalPlaceholders(message, member);
+		message = hookInternalPlaceholders(user, message);
+		message = hookEmojiParser(message);
 
 		return message;
 	}
@@ -49,7 +51,15 @@ public class MessageFormatterUtil {
 		return buffer.toString();
 	}
 
-	private String hookInternalPlaceholders(String message, Member member) {
-		return message.replace("{memberTag}", member.getAsMention());
+	private String hookInternalPlaceholders(User user, String message) {
+		return message.replace("{memberTag}", user.getAsMention());
+	}
+
+	private String hookEmojiParser(String message) {
+		if (message.startsWith(":") && message.endsWith(":")) {
+			return EmojiParser.parseToUnicode(message);
+		}
+
+		return message;
 	}
 }

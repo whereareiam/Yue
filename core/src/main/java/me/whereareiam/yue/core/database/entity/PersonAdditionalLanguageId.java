@@ -9,7 +9,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @EqualsAndHashCode
-public class PersonLanguageId implements Serializable {
+public class PersonAdditionalLanguageId implements Serializable {
 	private String personId;
 	private int languageId;
 }

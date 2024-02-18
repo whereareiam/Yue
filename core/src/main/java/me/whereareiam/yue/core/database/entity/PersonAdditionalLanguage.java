@@ -10,8 +10,8 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-@IdClass(PersonLanguageId.class)
-public class PersonLanguage {
+@IdClass(PersonAdditionalLanguageId.class)
+public class PersonAdditionalLanguage {
 	@Id
 	@Column(name = "user_id")
 	private String personId;

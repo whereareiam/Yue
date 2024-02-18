@@ -1,5 +1,6 @@
 package me.whereareiam.yue.core.listener;
 
+import me.whereareiam.yue.core.listener.listeners.ButtonInteractionListener;
 import me.whereareiam.yue.core.listener.listeners.MessageListener;
 import me.whereareiam.yue.core.listener.listeners.ReadyListener;
 import me.whereareiam.yue.core.listener.listeners.SlashCommandInteractionListener;
@@ -28,6 +29,7 @@ public class DiscordListenerRegistrar {
 		jda.addEventListener(ctx.getBean(SlashCommandInteractionListener.class));
 		jda.addEventListener(ctx.getBean(GuildMemberJoinListener.class));
 		jda.addEventListener(ctx.getBean(GuildMemberRemoveListener.class));
+		jda.addEventListener(ctx.getBean(ButtonInteractionListener.class));
 		jda.addEventListener(ctx.getBean(ReadyListener.class));
 	}
 }

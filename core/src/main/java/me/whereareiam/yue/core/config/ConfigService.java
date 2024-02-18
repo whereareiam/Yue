@@ -1,7 +1,9 @@
 package me.whereareiam.yue.core.config;
 
 import jakarta.annotation.PostConstruct;
-import me.whereareiam.yue.core.config.palette.PaletteConfig;
+import me.whereareiam.yue.core.config.component.ButtonsConfig;
+import me.whereareiam.yue.core.config.component.palette.PaletteConfig;
+import me.whereareiam.yue.core.config.feature.VerificationFeatureConfig;
 import me.whereareiam.yue.core.config.setting.SettingsConfig;
 import me.whereareiam.yue.core.util.BeanRegistrationUtil;
 import org.jetbrains.annotations.NotNull;
@@ -30,28 +32,32 @@ public class ConfigService implements ApplicationContextAware {
 
 	@PostConstruct
 	public void loadConfigs() {
-		registerConfigBean(SettingsConfig.class, "settings.json");
-		registerConfigBean(RolesConfig.class, "roles.json");
-		registerConfigBean(PaletteConfig.class, "palette.json");
+		registerConfigBean(SettingsConfig.class, "", "settings.json");
+		registerConfigBean(RolesConfig.class, "", "roles.json");
+		registerConfigBean(VerificationFeatureConfig.class, "feature", "verification.json");
+		registerConfigBean(ButtonsConfig.class, "component", "buttons.json");
+		registerConfigBean(PaletteConfig.class, "component", "palette.json");
 	}
 
 	public void reloadConfigs() {
-		reloadConfigBean(SettingsConfig.class, "settings.json");
-		reloadConfigBean(RolesConfig.class, "roles.json");
-		reloadConfigBean(PaletteConfig.class, "palette.json");
+		reloadConfigBean(SettingsConfig.class, "", "settings.json");
+		reloadConfigBean(RolesConfig.class, "", "roles.json");
+		reloadConfigBean(VerificationFeatureConfig.class, "feature", "verification.json");
+		reloadConfigBean(ButtonsConfig.class, "component", "buttons.json");
+		reloadConfigBean(PaletteConfig.class, "component", "palette.json");
 	}
 
-	private <T> void registerConfigBean(Class<T> configClass, String fileName) {
+	private <T> void registerConfigBean(Class<T> configClass, String path, String fileName) {
 		ConfigLoader<T> loader = new ConfigLoader<>(dataFolder);
-		loader.load(configClass, fileName);
+		loader.load(configClass, path, fileName);
 		T config = loader.getConfig();
 
 		beanRegistrationUtil.registerSingleton(configClass.getName(), configClass, config);
 	}
 
-	private <T> void reloadConfigBean(Class<T> configClass, String fileName) {
+	private <T> void reloadConfigBean(Class<T> configClass, String path, String fileName) {
 		ConfigLoader<T> loader = new ConfigLoader<>(dataFolder);
-		loader.reload(configClass, fileName);
+		loader.reload(configClass, path, fileName);
 		T config = loader.getConfig();
 
 		DefaultSingletonBeanRegistry registry = (DefaultSingletonBeanRegistry) context.getBeanFactory();

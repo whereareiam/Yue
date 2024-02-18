@@ -1,61 +1,81 @@
 package me.whereareiam.yue.core.feature.verification;
 
-import com.vdurmont.emoji.EmojiParser;
+import me.whereareiam.yue.core.config.feature.VerificationFeatureConfig;
 import me.whereareiam.yue.core.config.setting.FeaturesSettingsConfig;
 import me.whereareiam.yue.core.config.setting.SettingsConfig;
-import me.whereareiam.yue.core.database.repository.LanguageRepository;
 import me.whereareiam.yue.core.feature.Feature;
-import me.whereareiam.yue.core.util.message.MessageBuilderUtil;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.emoji.Emoji;
-import net.dv8tion.jda.api.interactions.components.buttons.Button;
+import me.whereareiam.yue.core.model.StepData;
+import net.dv8tion.jda.api.entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.*;
 
 @Service
 public class VerificationFeature implements Feature {
+	private final ApplicationContext ctx;
 	private final FeaturesSettingsConfig featuresSettingsConfig;
-	private final LanguageRepository languageRepository;
-	private final MessageBuilderUtil messageBuilderUtil;
+	private final VerificationFeatureConfig verificationFeatureConfig;
+	private final List<VerificationStep> verificationSteps = new ArrayList<>();
+	private final Map<String, StepData> verifications = new HashMap<>();
 	private boolean enabled;
 
 	@Autowired
-	public VerificationFeature(SettingsConfig settingsConfig, LanguageRepository languageRepository, MessageBuilderUtil messageBuilderUtil) {
+	public VerificationFeature(@Qualifier ApplicationContext ctx, SettingsConfig settingsConfig,
+	                           VerificationFeatureConfig verificationFeatureConfig) {
+		this.ctx = ctx;
 		this.featuresSettingsConfig = settingsConfig.getFeatures();
-		this.languageRepository = languageRepository;
-		this.messageBuilderUtil = messageBuilderUtil;
+		this.verificationFeatureConfig = verificationFeatureConfig;
 	}
 
-	public void verifyMember(Member member) {
-		List<Button> buttons = languageRepository.findAll().stream()
-				.map(language -> {
-					Emoji emoji = Emoji.fromUnicode(EmojiParser.parseToUnicode(":flag_{code}:".replace("{code}", language.getCode())));
-					return Button.success(language.getCode(), emoji);
-				}).toList();
+	public void verifyMember(User user, Optional<String> buttonId) {
+		String userId = user.getId();
+		StepData stepData = verifications.get(userId);
+		if (stepData == null) {
+			stepData = new StepData(user, null, null, new ArrayList<>(), verificationSteps.get(0), false);
+		}
+		if (stepData.isNextStep()) {
+			stepData.setNextStep(false);
+			int nextStepIndex = verificationSteps.indexOf(stepData.getStep()) + 1;
 
-		MessageEmbed embed = messageBuilderUtil.buildEmbedMessage(
-				member,
-				"core.main.features.verification.step-1.title",
-				"core.main.features.verification.step-1.content",
-				"core.main.features.verification.step-1.subtitle"
-		);
+			if (nextStepIndex < verificationSteps.size()) {
+				stepData.setStep(verificationSteps.get(nextStepIndex));
+			} else {
+				registerMember(user);
+				return;
+			}
+		}
 
-		member.getUser().openPrivateChannel()
-				.flatMap(channel -> channel.sendMessageEmbeds(embed).setActionRow(buttons))
-				.queue();
+		verifications.put(userId, stepData);
+		stepData.getStep().execute(stepData, buttonId);
+	}
+
+	private void registerMember(User user) {
+		verifications.remove(user.getId());
+
+		System.out.println("Last step");
+		//TODO: Implement this method
 	}
 
 	@Override
 	public void initialize() {
+		List<String> steps = verificationFeatureConfig.getSteps();
+		for (String step : steps) {
+			ctx.getBeansOfType(VerificationStep.class).values().stream()
+					.filter(verificationStep -> verificationStep.getName().equals(step))
+					.findFirst()
+					.ifPresent(verificationSteps::add);
+		}
+
 		enabled = true;
 	}
 
 	@Override
 	public void reload() {
-
+		verifications.clear();
+		initialize();
 	}
 
 	@Override
