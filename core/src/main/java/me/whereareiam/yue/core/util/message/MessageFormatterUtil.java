@@ -26,6 +26,23 @@ public class MessageFormatterUtil {
 		return message;
 	}
 
+	public String[] formatMessage(User user, String[] message, String... placeholdersContent) {
+		for (int i = 0; i < message.length; i++) {
+			message[i] = formatMessage(user, message[i]);
+			message[i] = hookPlaceholdersParser(message[i], placeholdersContent);
+		}
+
+		return message;
+	}
+
+	public String formatMessage(String message) {
+		message = languageService.getTranslation(message);
+		message = hookTranslationPlaceholders(message);
+		message = hookEmojiParser(message);
+
+		return message;
+	}
+
 	public String formatMessage(User user, String message) {
 		message = languageService.getTranslation(user, message);
 		message = hookTranslationPlaceholders(message);
@@ -58,6 +75,14 @@ public class MessageFormatterUtil {
 	private String hookEmojiParser(String message) {
 		if (message.startsWith(":") && message.endsWith(":")) {
 			return EmojiParser.parseToUnicode(message);
+		}
+
+		return message;
+	}
+
+	private String hookPlaceholdersParser(String message, String... content) {
+		for (String string : content) {
+			message = message.replaceFirst("\\{.*?\\}", string);
 		}
 
 		return message;

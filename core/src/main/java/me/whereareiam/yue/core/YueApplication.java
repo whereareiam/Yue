@@ -20,6 +20,10 @@ public class YueApplication implements Yue {
 	@Autowired
 	public YueApplication(@Qualifier ApplicationContext ctx) {
 		YueApplication.ctx = ctx;
+
+		//TODO Change cache to Redis
+		//TODO Store temporary StepData in Redis
+		//TODO User must confirm his main language in verification process
 	}
 
 	public static void main(String[] args) {

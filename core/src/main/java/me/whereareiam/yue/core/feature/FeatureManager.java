@@ -3,6 +3,7 @@ package me.whereareiam.yue.core.feature;
 import me.whereareiam.yue.api.event.ApplicationSuccessfullyStarted;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.EventListener;
+import org.springframework.core.annotation.Order;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +20,7 @@ public class FeatureManager {
 	}
 
 	@Async
+	@Order(1)
 	@EventListener(ApplicationSuccessfullyStarted.class)
 	public void loadFeatures() {
 		String[] featureBeans = applicationContext.getBeanNamesForType(Feature.class);

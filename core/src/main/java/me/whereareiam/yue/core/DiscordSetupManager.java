@@ -70,7 +70,6 @@ public class DiscordSetupManager {
 				languageService.getTranslation("core.main.phase.loading")
 		));
 
-		jda.updateCommands().queue();
 		discordListenerRegistrar.registerListeners();
 		registerRoles();
 	}
@@ -95,7 +94,7 @@ public class DiscordSetupManager {
 				});
 	}
 
-	@Order(1)
+	@Order(0)
 	@EventListener(ApplicationSuccessfullyStarted.class)
 	public void onEnable() {
 		beanRegistrationUtil.registerSingleton("guild", Guild.class, jda.getGuildById(settingsConfig.getDiscord().getGuildId()));

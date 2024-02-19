@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.awt.*;
+import java.util.Optional;
 
 @Service
 public class MessageBuilderUtil {
@@ -27,22 +28,30 @@ public class MessageBuilderUtil {
 	}
 
 	public MessageEmbed primaryEmbed(User user, String title, String description, String footer) {
-		return embed(user, title, description, footer, Color.decode(paletteConfig.getMain().getPrimary()));
+		return embed(user, title, description, footer, Color.decode(paletteConfig.getMain().getPrimary()), Optional.empty());
 	}
 
 	public MessageEmbed dangerEmbed(User user, String title, String description, String footer) {
-		return embed(user, title, description, footer, Color.decode(paletteConfig.getMain().getDanger()));
+		return embed(user, title, description, footer, Color.decode(paletteConfig.getMain().getDanger()), Optional.empty());
+	}
+
+	public MessageEmbed dangerEmbed(User user, String title, String description, String footer, String... placeholders) {
+		return embed(user, title, description, footer, Color.decode(paletteConfig.getMain().getDanger()), Optional.of(placeholders));
 	}
 
 	public MessageEmbed successEmbed(User user, String title, String description, String footer) {
-		return embed(user, title, description, footer, Color.decode(paletteConfig.getMain().getSuccess()));
+		return embed(user, title, description, footer, Color.decode(paletteConfig.getMain().getSuccess()), Optional.empty());
 	}
 
-	public MessageEmbed embed(User user, String title, String description, String footer, Color color) {
+	public MessageEmbed embed(User user, String title, String description, String footer, Color color, Optional<String[]> placeholders) {
 		EmbedBuilder embedBuilder = new EmbedBuilder();
 
 		String[] message = {title, description, footer};
-		message = messageFormatterUtil.formatMessage(user, message);
+		if (placeholders.isPresent()) {
+			message = messageFormatterUtil.formatMessage(user, message, placeholders.get());
+		} else {
+			message = messageFormatterUtil.formatMessage(user, message);
+		}
 
 		embedBuilder.setTitle(message[0]);
 		embedBuilder.setDescription(message[1]);

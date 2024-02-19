@@ -7,6 +7,7 @@ import me.whereareiam.yue.core.config.setting.database.DatabaseSettingsConfig;
 public class SettingsConfig {
 	private String defaultLanguage = "us";
 	private DatabaseSettingsConfig database = new DatabaseSettingsConfig();
+	private RedisSettingsConfig redis = new RedisSettingsConfig();
 	private DiscordSettingsConfig discord = new DiscordSettingsConfig();
 	private FeaturesSettingsConfig features = new FeaturesSettingsConfig();
 }

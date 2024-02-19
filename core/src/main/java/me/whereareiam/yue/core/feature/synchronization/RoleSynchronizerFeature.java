@@ -1,5 +1,6 @@
 package me.whereareiam.yue.core.feature.synchronization;
 
+import me.whereareiam.yue.core.config.RolesConfig;
 import me.whereareiam.yue.core.config.setting.FeaturesSettingsConfig;
 import me.whereareiam.yue.core.config.setting.SettingsConfig;
 import me.whereareiam.yue.core.database.entity.Person;
@@ -17,24 +18,28 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 @Service
 public class RoleSynchronizerFeature implements Feature {
+	private final FeaturesSettingsConfig featuresSettingsConfig;
+	private final PersonRoleRepository personRoleRepository;
+	private final PersonRepository personRepository;
+	private final RolesConfig rolesConfig;
 	private final Logger logger;
 	private final Guild guild;
-	private final FeaturesSettingsConfig featuresSettingsConfig;
-	private final PersonRepository personRepository;
-	private final PersonRoleRepository personRoleRepository;
 	private boolean enabled;
 
 	@Autowired
-	public RoleSynchronizerFeature(Logger logger, @Lazy Guild guild, SettingsConfig settingsConfig, PersonRepository personRepository,
-	                               PersonRoleRepository personRoleRepository) {
+	public RoleSynchronizerFeature(SettingsConfig settingsConfig, PersonRoleRepository personRoleRepository,
+	                               PersonRepository personRepository, RolesConfig rolesConfig, Logger logger,
+	                               @Lazy Guild guild) {
+		this.featuresSettingsConfig = settingsConfig.getFeatures();
+		this.personRoleRepository = personRoleRepository;
+		this.personRepository = personRepository;
+		this.rolesConfig = rolesConfig;
 		this.logger = logger;
 		this.guild = guild;
-		this.featuresSettingsConfig = settingsConfig.getFeatures();
-		this.personRepository = personRepository;
-		this.personRoleRepository = personRoleRepository;
 	}
 
 	public void synchronizeRoles() {
@@ -69,7 +74,9 @@ public class RoleSynchronizerFeature implements Feature {
 		if (personOptional.isPresent()) {
 			Person person = personOptional.get();
 			List<PersonRole> personRoles = personRoleRepository.findByPerson(person);
-			List<Role> rolesInDb = personRoles.stream().map(PersonRole::getRole).toList();
+			List<Role> rolesInDb = personRoles.stream()
+					.map(PersonRole::getRole)
+					.filter(role -> rolesConfig.getRoles().contains(role.getId())).toList();
 
 			removeExtraRoles(member, rolesInDb);
 			addMissingRoles(member, rolesInDb);
@@ -81,7 +88,9 @@ public class RoleSynchronizerFeature implements Feature {
 	private void removeExtraRoles(Member member, List<Role> rolesInDb) {
 		List<net.dv8tion.jda.api.entities.Role> rolesToRemove = member.getRoles().stream()
 				.filter(role -> !rolesInDb.stream().map(Role::getId).toList().contains(role.getId()))
-				.toList();
+				.collect(Collectors.toList());
+
+		rolesToRemove.removeIf(role -> !rolesConfig.getRoles().contains(role.getId()));
 
 		rolesToRemove.forEach(role -> {
 			logger.info("-" + role.getName() + " -> " + member.getEffectiveName());

@@ -20,6 +20,7 @@ public class BeanRegistrationUtil {
 		beanDefinition.setScope(BeanDefinition.SCOPE_SINGLETON);
 		beanDefinition.setLazyInit(false);
 		beanDefinition.setAutowireCandidate(true);
+
 		context.getBeanFactory().registerSingleton(beanName, beanInstance);
 	}
 }

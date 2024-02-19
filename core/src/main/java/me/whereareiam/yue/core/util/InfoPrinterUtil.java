@@ -1,6 +1,7 @@
 package me.whereareiam.yue.core.util;
 
 import me.whereareiam.yue.api.event.ApplicationSuccessfullyStarted;
+import me.whereareiam.yue.core.command.management.CommandRegistrar;
 import me.whereareiam.yue.core.database.entity.Language;
 import me.whereareiam.yue.core.database.repository.LanguageRepository;
 import me.whereareiam.yue.core.database.repository.PersonRepository;
@@ -20,15 +21,18 @@ import java.util.stream.Collectors;
 @Service
 @DependsOn("discordSetupManager")
 public class InfoPrinterUtil {
-	private final String version;
-	private final Logger logger;
 	private final PersonRepository personRepository;
 	private final LanguageRepository languageRepository;
+	private final CommandRegistrar commandRegistrar;
+	private final String version;
+	private final Logger logger;
 	private final JDA jda;
 
 	@Autowired
-	public InfoPrinterUtil(@Qualifier("version") String version, Logger logger, PersonRepository personRepository,
-	                       LanguageRepository languageRepository, @Lazy JDA jda) {
+	public InfoPrinterUtil(PersonRepository personRepository, LanguageRepository languageRepository,
+	                       CommandRegistrar commandRegistrar, @Qualifier("version") String version, Logger logger,
+	                       @Lazy JDA jda) {
+		this.commandRegistrar = commandRegistrar;
 		this.version = version;
 		this.logger = logger;
 		this.personRepository = personRepository;
@@ -44,8 +48,9 @@ public class InfoPrinterUtil {
 		logger.info("  ░█░ █▄█ ██▄   by whereareiam");
 		logger.info("");
 		logger.info("  Logged in as " + jda.getSelfUser().getName());
+		logger.info("");
 		logger.info("  Saved users: " + personRepository.count());
-		logger.info("  Guild count: " + jda.getGuilds().size());
+		logger.info("  Registered commands: " + commandRegistrar.getCommands().size());
 
 		List<Language> languages = languageRepository.findAll();
 		String languageCodes = languages.stream()

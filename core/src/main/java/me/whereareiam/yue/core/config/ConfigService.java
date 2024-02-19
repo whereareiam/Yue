@@ -1,6 +1,7 @@
 package me.whereareiam.yue.core.config;
 
 import jakarta.annotation.PostConstruct;
+import me.whereareiam.yue.core.config.command.CommandsConfig;
 import me.whereareiam.yue.core.config.component.ButtonsConfig;
 import me.whereareiam.yue.core.config.component.palette.PaletteConfig;
 import me.whereareiam.yue.core.config.feature.VerificationFeatureConfig;
@@ -34,6 +35,7 @@ public class ConfigService implements ApplicationContextAware {
 	public void loadConfigs() {
 		registerConfigBean(SettingsConfig.class, "", "settings.json");
 		registerConfigBean(RolesConfig.class, "", "roles.json");
+		registerConfigBean(CommandsConfig.class, "", "commands.json");
 		registerConfigBean(VerificationFeatureConfig.class, "feature", "verification.json");
 		registerConfigBean(ButtonsConfig.class, "component", "buttons.json");
 		registerConfigBean(PaletteConfig.class, "component", "palette.json");
@@ -42,6 +44,7 @@ public class ConfigService implements ApplicationContextAware {
 	public void reloadConfigs() {
 		reloadConfigBean(SettingsConfig.class, "", "settings.json");
 		reloadConfigBean(RolesConfig.class, "", "roles.json");
+		reloadConfigBean(CommandsConfig.class, "", "commands.json");
 		reloadConfigBean(VerificationFeatureConfig.class, "feature", "verification.json");
 		reloadConfigBean(ButtonsConfig.class, "component", "buttons.json");
 		reloadConfigBean(PaletteConfig.class, "component", "palette.json");
