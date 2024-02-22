@@ -14,13 +14,11 @@ import java.util.Optional;
 
 @Service
 public class CommandService {
-	private final MessageSenderUtil messageSenderUtil;
 	private final CommandRegistrar commandRegistrar;
 	private final Guild guild;
 
 	@Autowired
-	public CommandService(MessageSenderUtil messageSenderUtil, CommandRegistrar commandRegistrar, @Lazy Guild guild) {
-		this.messageSenderUtil = messageSenderUtil;
+	public CommandService(CommandRegistrar commandRegistrar, @Lazy Guild guild) {
 		this.commandRegistrar = commandRegistrar;
 		this.guild = guild;
 	}
@@ -33,7 +31,6 @@ public class CommandService {
 		CommandBase command = optionalCommand.get();
 		if (!checkRequiredRole(command, event)) return;
 		if (!checkAllowedChannels(command, event)) return;
-		event.deferReply().queue();
 
 		command.execute(event);
 	}
@@ -48,7 +45,7 @@ public class CommandService {
 		if (command.getAllowedChannels().isEmpty() || !event.isFromGuild()) return true;
 
 		if (command.isGuildOnly() && !event.isFromGuild()) {
-			messageSenderUtil.guildOnly(event.getHook());
+			MessageSenderUtil.guildOnly(event.getHook());
 			return false;
 		}
 
@@ -56,7 +53,7 @@ public class CommandService {
 
 		if (!isAllowed) {
 			event.deferReply(true).queue();
-			messageSenderUtil.noRequiredChannel(
+			MessageSenderUtil.noRequiredChannel(
 					event.getHook(),
 					guild.getChannels().stream()
 							.filter(channel -> command.getAllowedChannels().contains(channel.getId()))
@@ -85,7 +82,7 @@ public class CommandService {
 
 		if (!isAllowed) {
 			event.deferReply(true).queue();
-			messageSenderUtil.noRequiredRole(
+			MessageSenderUtil.noRequiredRole(
 					event.getHook(),
 					guild.getRoleById(command.getRequiredRole()) == null ? command.getRequiredRole() : guild.getRoleById(command.getRequiredRole()).getAsMention()
 			);

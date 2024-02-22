@@ -3,53 +3,52 @@ package me.whereareiam.yue.core.command.commands;
 import me.whereareiam.yue.core.command.base.CommandBase;
 import me.whereareiam.yue.core.command.base.CommandCategory;
 import me.whereareiam.yue.core.config.command.CommandsConfig;
-import me.whereareiam.yue.core.config.command.LanguageCommandCommandsConfig;
+import me.whereareiam.yue.core.config.command.InfoCommandCommandsConfig;
+import me.whereareiam.yue.core.service.PersonService;
 import me.whereareiam.yue.core.util.message.MessageFormatterUtil;
-import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Lazy
 @Component
-public class LanguageCommand extends CommandBase {
-	private final LanguageCommandCommandsConfig languageCommand;
-	private final MessageFormatterUtil formatterUtil;
+public class InfoCommand extends CommandBase {
+	private final InfoCommandCommandsConfig infoCommand;
+	private final PersonService personService;
+	private final Guild guild;
 
 	@Autowired
-	public LanguageCommand(CommandsConfig commandsConfig, MessageFormatterUtil formatterUtil) {
+	public InfoCommand(CommandsConfig commandsConfig, PersonService personService, Guild guild) {
 		super(commandsConfig);
-		this.languageCommand = commandsConfig.getLanguageCommand();
-		this.formatterUtil = formatterUtil;
+		this.infoCommand = commandsConfig.getInfoCommand();
+		this.personService = personService;
+		this.guild = guild;
 	}
 
 	@Override
 	public void execute(SlashCommandInteractionEvent event) {
-		User user = event.getUser();
-
-		event.getHook().sendMessage("Потом").queue();
+		//event.deferReply(false).queue();
 	}
 
 	@Override
 	public List<String> getCommandAliases() {
-		return languageCommand.getCommand();
+		return infoCommand.getCommand();
 	}
 
 	@Override
 	public List<? extends CommandData> getCommand() {
 		List<SlashCommandData> commandData = getCommandAliases().stream()
 				.map(command ->
-						Commands.slash(command, formatterUtil.formatMessage(languageCommand.getDescription()))
+						Commands.slash(command, MessageFormatterUtil.formatMessage(infoCommand.getShortDescription()))
 				)
 				.toList();
-
-		commandData.forEach(command -> {
-			command.setGuildOnly(isGuildOnly());
-		});
 
 		return commandData;
 	}
@@ -61,17 +60,17 @@ public class LanguageCommand extends CommandBase {
 
 	@Override
 	public String getRequiredRole() {
-		return languageCommand.getRole();
+		return infoCommand.getRole();
 	}
 
 	@Override
 	public List<String> getAllowedChannels() {
-		return languageCommand.getAllowedChannels();
+		return infoCommand.getAllowedChannels();
 	}
 
 	@Override
 	public String getId() {
-		return "languageCommand";
+		return "infoCommand";
 	}
 
 	@Override
@@ -81,6 +80,6 @@ public class LanguageCommand extends CommandBase {
 
 	@Override
 	public boolean isEnabled() {
-		return languageCommand.isEnabled();
+		return infoCommand.isEnabled();
 	}
 }

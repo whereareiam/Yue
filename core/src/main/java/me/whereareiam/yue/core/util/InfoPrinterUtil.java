@@ -1,6 +1,6 @@
 package me.whereareiam.yue.core.util;
 
-import me.whereareiam.yue.api.event.ApplicationSuccessfullyStarted;
+import me.whereareiam.yue.api.event.ApplicationBotStarted;
 import me.whereareiam.yue.core.command.management.CommandRegistrar;
 import me.whereareiam.yue.core.database.entity.Language;
 import me.whereareiam.yue.core.database.repository.LanguageRepository;
@@ -19,7 +19,8 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @Service
-@DependsOn("discordSetupManager")
+@Lazy
+@DependsOn({"discordSetupManager", "commandRegistrar"})
 public class InfoPrinterUtil {
 	private final PersonRepository personRepository;
 	private final LanguageRepository languageRepository;
@@ -31,7 +32,7 @@ public class InfoPrinterUtil {
 	@Autowired
 	public InfoPrinterUtil(PersonRepository personRepository, LanguageRepository languageRepository,
 	                       CommandRegistrar commandRegistrar, @Qualifier("version") String version, Logger logger,
-	                       @Lazy JDA jda) {
+	                       JDA jda) {
 		this.commandRegistrar = commandRegistrar;
 		this.version = version;
 		this.logger = logger;
@@ -41,7 +42,7 @@ public class InfoPrinterUtil {
 	}
 
 	@Async
-	@EventListener(ApplicationSuccessfullyStarted.class)
+	@EventListener(ApplicationBotStarted.class)
 	public void printStartMessage() {
 		logger.info("");
 		logger.info("  █▄█ █░█ █▀▀   Yue v" + version);

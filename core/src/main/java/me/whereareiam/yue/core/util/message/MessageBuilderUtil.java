@@ -1,8 +1,10 @@
 package me.whereareiam.yue.core.util.message;
 
 import me.whereareiam.yue.core.config.component.ButtonsConfig;
+import me.whereareiam.yue.core.config.component.EmbedsConfig;
 import me.whereareiam.yue.core.config.component.palette.PaletteConfig;
 import me.whereareiam.yue.core.model.CustomButton;
+import me.whereareiam.yue.core.model.Embed;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
@@ -15,60 +17,62 @@ import java.util.Optional;
 
 @Service
 public class MessageBuilderUtil {
-	private final PaletteConfig paletteConfig;
-	private final ButtonsConfig buttonsConfig;
-	private final MessageFormatterUtil messageFormatterUtil;
+	private static PaletteConfig paletteConfig;
+	private static ButtonsConfig buttonsConfig;
+	private static EmbedsConfig embedsConfig;
 
 	@Autowired
-	public MessageBuilderUtil(PaletteConfig paletteConfig, ButtonsConfig buttonsConfig,
-	                          MessageFormatterUtil messageFormatterUtil) {
-		this.paletteConfig = paletteConfig;
-		this.buttonsConfig = buttonsConfig;
-		this.messageFormatterUtil = messageFormatterUtil;
+	public MessageBuilderUtil(PaletteConfig paletteConfig, ButtonsConfig buttonsConfig, EmbedsConfig embedsConfig) {
+		MessageBuilderUtil.paletteConfig = paletteConfig;
+		MessageBuilderUtil.buttonsConfig = buttonsConfig;
+		MessageBuilderUtil.embedsConfig = embedsConfig;
 	}
 
-	public MessageEmbed primaryEmbed(User user, String title, String description, String footer) {
-		return embed(user, title, description, footer, Color.decode(paletteConfig.getMain().getPrimary()), Optional.empty());
-	}
+	public static MessageEmbed embed(String embedId, User user, Optional<PlaceholderReplacement> replacement) {
+		Embed embed = embedsConfig.getEmbeds().stream()
+				.filter(e -> e.getId().equals(embedId))
+				.findFirst()
+				.orElseThrow();
 
-	public MessageEmbed dangerEmbed(User user, String title, String description, String footer) {
-		return embed(user, title, description, footer, Color.decode(paletteConfig.getMain().getDanger()), Optional.empty());
-	}
+		String[] message = embed.getMessage();
+		message = MessageFormatterUtil.formatMessage(user, message);
 
-	public MessageEmbed dangerEmbed(User user, String title, String description, String footer, String... placeholders) {
-		return embed(user, title, description, footer, Color.decode(paletteConfig.getMain().getDanger()), Optional.of(placeholders));
-	}
+		if (replacement.isPresent())
+			message = MessageFormatterUtil.replacePlaceholders(message, replacement.get());
 
-	public MessageEmbed successEmbed(User user, String title, String description, String footer) {
-		return embed(user, title, description, footer, Color.decode(paletteConfig.getMain().getSuccess()), Optional.empty());
-	}
-
-	public MessageEmbed embed(User user, String title, String description, String footer, Color color, Optional<String[]> placeholders) {
 		EmbedBuilder embedBuilder = new EmbedBuilder();
+		if (embed.getTitle() != null) embedBuilder.setTitle(message[0]);
+		if (embed.getDescription() != null) embedBuilder.setDescription(message[1]);
+		if (embed.getFooter() != null) embedBuilder.setFooter(message[2]);
+		if (embed.getColor() != null) embedBuilder.setColor(Color.decode(paletteConfig.getColor(embed.getColor())));
+		if (!embed.getFields().isEmpty()) {
+			embed.getFields().forEach(field -> {
+				String fieldValue = MessageFormatterUtil.formatMessage(user, field.getValue());
+				if (replacement.isPresent())
+					fieldValue = MessageFormatterUtil.replacePlaceholders(fieldValue, replacement.get());
 
-		String[] message = {title, description, footer};
-		if (placeholders.isPresent()) {
-			message = messageFormatterUtil.formatMessage(user, message, placeholders.get());
-		} else {
-			message = messageFormatterUtil.formatMessage(user, message);
+				embedBuilder.addField(field.getName(), fieldValue, field.isInline());
+			});
 		}
-
-		embedBuilder.setTitle(message[0]);
-		embedBuilder.setDescription(message[1]);
-		embedBuilder.setFooter(message[2]);
-		embedBuilder.setColor(color);
 
 		return embedBuilder.build();
 	}
 
-	public Button button(User user, String buttonId) {
+	public static MessageEmbed.Field field(User user, String name, String value, boolean inline) {
+		name = MessageFormatterUtil.formatMessage(user, name);
+		value = MessageFormatterUtil.formatMessage(user, value);
+
+		return new MessageEmbed.Field(name, value, inline);
+	}
+
+	public static Button button(String buttonId, User user) {
 		CustomButton customButton = buttonsConfig.getButtons().stream()
 				.filter(button -> button.getId().equals(buttonId))
 				.findFirst()
 				.orElseThrow();
 
 		String label = customButton.getLabel();
-		label = messageFormatterUtil.formatMessage(user, label);
+		label = MessageFormatterUtil.formatMessage(user, label);
 
 		return Button.of(customButton.getStyle(), customButton.getId(), label);
 	}

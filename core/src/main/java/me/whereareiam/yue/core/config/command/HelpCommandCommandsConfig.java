@@ -14,8 +14,8 @@ public class HelpCommandCommandsConfig {
 			"helpme"
 	);
 	private CommandCategory category = CommandCategory.GENERAL;
-	private String description = "$t{core.commands.general.help.description}";
-	private String commandOption = "$t{core.commands.general.help.options.command.description}";
+	private String shortDescription = "$t{core.commands.general.help.shortDescription}";
+	private String fullDescription = "$t{core.commands.general.help.fullDescription}";
 	private String role = "";
 	private List<String> allowedChannels = new ArrayList<>();
 

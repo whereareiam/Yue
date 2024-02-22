@@ -4,6 +4,6 @@ import lombok.Getter;
 
 @Getter
 public class AcknowledgementStepConfig {
-	private String getInformationButtonId = "getAcknowledgementInformation";
+	private String readButtonId = "readAcknowledgement";
 	private String acceptButtonId = "accept";
 }

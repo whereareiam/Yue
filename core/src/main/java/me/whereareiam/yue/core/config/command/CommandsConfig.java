@@ -5,5 +5,6 @@ import lombok.Getter;
 @Getter
 public class CommandsConfig {
 	private HelpCommandCommandsConfig helpCommand = new HelpCommandCommandsConfig();
-	private LanguageCommandCommandsConfig languageCommand = new LanguageCommandCommandsConfig();
+	private DeleteCommandCommandsConfig deleteCommand = new DeleteCommandCommandsConfig();
+	private InfoCommandCommandsConfig infoCommand = new InfoCommandCommandsConfig();
 }

@@ -6,4 +6,6 @@ public interface Feature {
 	void reload();
 
 	boolean isEnabled();
+
+	void handleEvent(Object object);
 }

@@ -7,14 +7,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-public class LanguageCommandCommandsConfig {
+public class DeleteCommandCommandsConfig {
 	private boolean enabled = true;
 	private List<String> command = List.of(
-			"lang",
-			"language"
+			"delete",
+			"deleteuser"
 	);
 	private CommandCategory category = CommandCategory.UTILITY;
-	private String description = "$t{core.commands.utility.language.description}";
-	private String role = "";
+	private String shortDescription = "$t{core.commands.staff.delete.shortDescription}";
+	private String fullDescription = "$t{core.commands.staff.delete.fullDescription}";
+	private String role = "1209471775805800478";
 	private List<String> allowedChannels = new ArrayList<>();
 }

@@ -1,24 +1,32 @@
 package me.whereareiam.yue.core.feature.verification;
 
+import lombok.Getter;
 import me.whereareiam.yue.core.config.feature.VerificationFeatureConfig;
 import me.whereareiam.yue.core.config.setting.FeaturesSettingsConfig;
 import me.whereareiam.yue.core.config.setting.SettingsConfig;
 import me.whereareiam.yue.core.feature.Feature;
 import me.whereareiam.yue.core.model.StepData;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
+@Lazy
 public class VerificationFeature implements Feature {
 	private final ApplicationContext ctx;
 	private final FeaturesSettingsConfig featuresSettingsConfig;
 	private final VerificationFeatureConfig verificationFeatureConfig;
 	private final List<VerificationStep> verificationSteps = new ArrayList<>();
+	@Getter
 	private final Map<String, StepData> verifications = new HashMap<>();
 	private boolean enabled;
 
@@ -30,7 +38,7 @@ public class VerificationFeature implements Feature {
 		this.verificationFeatureConfig = verificationFeatureConfig;
 	}
 
-	public void verifyMember(User user, Optional<String> buttonId) {
+	public void verifyMember(User user) {
 		String userId = user.getId();
 		StepData stepData = verifications.get(userId);
 		if (stepData == null) {
@@ -50,7 +58,7 @@ public class VerificationFeature implements Feature {
 		}
 
 		verifications.put(userId, stepData);
-		stepData.getStep().execute(stepData, buttonId);
+		stepData.getStep().execute(stepData);
 	}
 
 	@Override
@@ -86,5 +94,12 @@ public class VerificationFeature implements Feature {
 	@Override
 	public boolean isEnabled() {
 		return enabled == featuresSettingsConfig.isVerification();
+	}
+
+	@Override
+	public void handleEvent(Object object) {
+		if (object instanceof GuildMemberJoinEvent event) {
+			verifyMember(event.getMember().getUser());
+		}
 	}
 }

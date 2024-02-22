@@ -1,14 +1,13 @@
-package me.whereareiam.yue.core;
+package me.whereareiam.yue.core.discord;
 
 import jakarta.annotation.PreDestroy;
-import me.whereareiam.yue.api.event.ApplicationSuccessfullyStarted;
+import me.whereareiam.yue.api.event.ApplicationBotStarted;
 import me.whereareiam.yue.core.config.RolesConfig;
 import me.whereareiam.yue.core.config.setting.DiscordSettingsConfig;
 import me.whereareiam.yue.core.config.setting.SettingsConfig;
 import me.whereareiam.yue.core.database.entity.Role;
 import me.whereareiam.yue.core.database.repository.RoleRepository;
 import me.whereareiam.yue.core.language.LanguageService;
-import me.whereareiam.yue.core.listener.DiscordListenerRegistrar;
 import me.whereareiam.yue.core.util.BeanRegistrationUtil;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -19,8 +18,8 @@ import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.DependsOn;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.context.event.EventListener;
+import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
@@ -30,7 +29,6 @@ import java.util.List;
 @DependsOn("databaseSetupManager")
 public class DiscordSetupManager {
 	private final BeanRegistrationUtil beanRegistrationUtil;
-	private final DiscordListenerRegistrar discordListenerRegistrar;
 	private final LanguageService languageService;
 	private final SettingsConfig settingsConfig;
 	private final RolesConfig rolesConfig;
@@ -38,18 +36,16 @@ public class DiscordSetupManager {
 	private JDA jda;
 
 	@Autowired
-	public DiscordSetupManager(BeanRegistrationUtil beanRegistrationUtil, @Lazy DiscordListenerRegistrar discordListenerRegistrar,
-	                           LanguageService languageService, SettingsConfig settingsConfig, RolesConfig rolesConfig,
-	                           RoleRepository roleRepository) {
+	public DiscordSetupManager(BeanRegistrationUtil beanRegistrationUtil, LanguageService languageService, SettingsConfig settingsConfig,
+	                           RolesConfig rolesConfig, RoleRepository roleRepository) {
 		this.beanRegistrationUtil = beanRegistrationUtil;
-		this.discordListenerRegistrar = discordListenerRegistrar;
 		this.languageService = languageService;
 		this.settingsConfig = settingsConfig;
 		this.rolesConfig = rolesConfig;
 		this.roleRepository = roleRepository;
 	}
 
-	@Order(2)
+	@Order(Ordered.HIGHEST_PRECEDENCE)
 	@EventListener(ApplicationReadyEvent.class)
 	public void onLoad() {
 		try {
@@ -70,7 +66,6 @@ public class DiscordSetupManager {
 				languageService.getTranslation("core.main.phase.loading")
 		));
 
-		discordListenerRegistrar.registerListeners();
 		registerRoles();
 	}
 
@@ -94,8 +89,8 @@ public class DiscordSetupManager {
 				});
 	}
 
-	@Order(0)
-	@EventListener(ApplicationSuccessfullyStarted.class)
+	@Order(Ordered.HIGHEST_PRECEDENCE)
+	@EventListener(ApplicationBotStarted.class)
 	public void onEnable() {
 		beanRegistrationUtil.registerSingleton("guild", Guild.class, jda.getGuildById(settingsConfig.getDiscord().getGuildId()));
 		jda.getPresence().setActivity(Activity.playing(

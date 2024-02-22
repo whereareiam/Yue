@@ -9,21 +9,30 @@ import me.whereareiam.yue.core.listener.listeners.guild.GuildMemberRemoveListene
 import net.dv8tion.jda.api.JDA;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Component;
+import org.springframework.context.event.EventListener;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
+import org.springframework.stereotype.Service;
 
-@Component
+@Lazy
+@Service
+@DependsOn("discordSetupManager")
 public class DiscordListenerRegistrar {
 	private final ApplicationContext ctx;
 	private final JDA jda;
 
 	@Autowired
-	public DiscordListenerRegistrar(@Qualifier ApplicationContext ctx, @Lazy JDA jda) {
+	public DiscordListenerRegistrar(@Qualifier ApplicationContext ctx, JDA jda) {
 		this.jda = jda;
 		this.ctx = ctx;
 	}
 
+	@Order(Ordered.HIGHEST_PRECEDENCE + 1)
+	@EventListener(ApplicationReadyEvent.class)
 	public void registerListeners() {
 		jda.addEventListener(ctx.getBean(MessageListener.class));
 		jda.addEventListener(ctx.getBean(SlashCommandInteractionListener.class));

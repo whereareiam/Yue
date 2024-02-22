@@ -18,7 +18,7 @@ public class BeanRegistrationUtil {
 		GenericBeanDefinition beanDefinition = new GenericBeanDefinition();
 		beanDefinition.setBeanClass(beanClass);
 		beanDefinition.setScope(BeanDefinition.SCOPE_SINGLETON);
-		beanDefinition.setLazyInit(false);
+		beanDefinition.setLazyInit(true);
 		beanDefinition.setAutowireCandidate(true);
 
 		context.getBeanFactory().registerSingleton(beanName, beanInstance);

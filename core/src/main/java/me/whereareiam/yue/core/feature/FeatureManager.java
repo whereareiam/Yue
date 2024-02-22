@@ -1,9 +1,9 @@
 package me.whereareiam.yue.core.feature;
 
-import me.whereareiam.yue.api.event.ApplicationSuccessfullyStarted;
+import me.whereareiam.yue.api.event.ApplicationBotStarted;
+import me.whereareiam.yue.api.event.ApplicationReloaded;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.EventListener;
-import org.springframework.core.annotation.Order;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -12,32 +12,36 @@ import java.util.Map;
 
 @Service
 public class FeatureManager {
-	private final ApplicationContext applicationContext;
+	private final ApplicationContext ctx;
 	private final Map<Class<? extends Feature>, Feature> features = new HashMap<>();
 
-	public FeatureManager(ApplicationContext applicationContext) {
-		this.applicationContext = applicationContext;
+	public FeatureManager(ApplicationContext ctx) {
+		this.ctx = ctx;
 	}
 
 	@Async
-	@Order(1)
-	@EventListener(ApplicationSuccessfullyStarted.class)
+	@EventListener(ApplicationBotStarted.class)
 	public void loadFeatures() {
-		String[] featureBeans = applicationContext.getBeanNamesForType(Feature.class);
+		String[] featureBeans = ctx.getBeanNamesForType(Feature.class);
 
 		for (String beanName : featureBeans) {
-			Feature feature = (Feature) applicationContext.getBean(beanName);
+			Feature feature = (Feature) ctx.getBean(beanName);
 			feature.initialize();
 
 			if (feature.isEnabled()) {
 				features.put(feature.getClass(), feature);
 			} else {
-				applicationContext.getAutowireCapableBeanFactory().destroyBean(feature);
+				ctx.getAutowireCapableBeanFactory().destroyBean(feature);
 			}
 		}
 	}
 
-	public Feature getFeature(Class<? extends Feature> featureName) {
-		return features.get(featureName);
+	@EventListener(ApplicationReloaded.class)
+	public void reloadFeatures() {
+		features.values().forEach(Feature::reload);
+	}
+
+	public void notifyFeatures(Object event) {
+		features.values().forEach(feature -> feature.handleEvent(event));
 	}
 }

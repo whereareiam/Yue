@@ -21,9 +21,11 @@ public class YueApplication implements Yue {
 	public YueApplication(@Qualifier ApplicationContext ctx) {
 		YueApplication.ctx = ctx;
 
-		//TODO Change cache to Redis
-		//TODO Store temporary StepData in Redis
 		//TODO User must confirm his main language in verification process
+		//TODO Help command
+		//TODO Information command
+		//TODO Module control command
+		//TODO Move all features to modules
 	}
 
 	public static void main(String[] args) {

@@ -1,7 +1,7 @@
 package me.whereareiam.yue.core.language;
 
 import me.whereareiam.yue.core.config.setting.SettingsConfig;
-import me.whereareiam.yue.core.database.service.PersonService;
+import me.whereareiam.yue.core.service.PersonLanguageService;
 import net.dv8tion.jda.api.entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,13 +13,13 @@ import java.util.Optional;
 @Service
 public class LanguageService {
 	private final SettingsConfig settingsConfig;
-	private final PersonService personService;
+	private final PersonLanguageService personLanguageService;
 	private final Map<String, Map<String, String>> translations = new HashMap<>();
 
 	@Autowired
-	public LanguageService(SettingsConfig settingsConfig, PersonService personService) {
+	public LanguageService(SettingsConfig settingsConfig, PersonLanguageService personLanguageService) {
 		this.settingsConfig = settingsConfig;
-		this.personService = personService;
+		this.personLanguageService = personLanguageService;
 	}
 
 	public void registerTranslation(String key, String langCode, String value) {
@@ -27,7 +27,7 @@ public class LanguageService {
 	}
 
 	public String getTranslation(User user, String key) {
-		Optional<String> langCode = personService.getUserLanguage(user.getId());
+		Optional<String> langCode = personLanguageService.getUserLanguage(user.getId());
 		if (langCode.isEmpty()) {
 			langCode = Optional.of(settingsConfig.getDefaultLanguage());
 		}

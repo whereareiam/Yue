@@ -3,6 +3,7 @@ package me.whereareiam.yue.core.config;
 import jakarta.annotation.PostConstruct;
 import me.whereareiam.yue.core.config.command.CommandsConfig;
 import me.whereareiam.yue.core.config.component.ButtonsConfig;
+import me.whereareiam.yue.core.config.component.EmbedsConfig;
 import me.whereareiam.yue.core.config.component.palette.PaletteConfig;
 import me.whereareiam.yue.core.config.feature.VerificationFeatureConfig;
 import me.whereareiam.yue.core.config.setting.SettingsConfig;
@@ -39,6 +40,7 @@ public class ConfigService implements ApplicationContextAware {
 		registerConfigBean(VerificationFeatureConfig.class, "feature", "verification.json");
 		registerConfigBean(ButtonsConfig.class, "component", "buttons.json");
 		registerConfigBean(PaletteConfig.class, "component", "palette.json");
+		registerConfigBean(EmbedsConfig.class, "component", "embeds.json");
 	}
 
 	public void reloadConfigs() {
@@ -48,6 +50,7 @@ public class ConfigService implements ApplicationContextAware {
 		reloadConfigBean(VerificationFeatureConfig.class, "feature", "verification.json");
 		reloadConfigBean(ButtonsConfig.class, "component", "buttons.json");
 		reloadConfigBean(PaletteConfig.class, "component", "palette.json");
+		reloadConfigBean(EmbedsConfig.class, "component", "embeds.json");
 	}
 
 	private <T> void registerConfigBean(Class<T> configClass, String path, String fileName) {

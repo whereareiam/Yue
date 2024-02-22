@@ -1,10 +1,11 @@
 package me.whereareiam.yue.core.command.management;
 
 import lombok.Getter;
-import me.whereareiam.yue.api.event.ApplicationSuccessfullyStarted;
+import me.whereareiam.yue.api.event.ApplicationBotStarted;
 import me.whereareiam.yue.core.command.base.CommandBase;
+import me.whereareiam.yue.core.command.commands.DeleteCommand;
 import me.whereareiam.yue.core.command.commands.HelpCommand;
-import me.whereareiam.yue.core.command.commands.LanguageCommand;
+import me.whereareiam.yue.core.command.commands.InfoCommand;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
@@ -34,12 +36,14 @@ public class CommandRegistrar {
 		this.guild = guild;
 	}
 
-	@EventListener(ApplicationSuccessfullyStarted.class)
+	@Async
+	@EventListener(ApplicationBotStarted.class)
 	public void registerCommands() {
 		jda.updateCommands().queue();
 
 		registerCommand(ctx.getBean(HelpCommand.class));
-		registerCommand(ctx.getBean(LanguageCommand.class));
+		registerCommand(ctx.getBean(DeleteCommand.class));
+		registerCommand(ctx.getBean(InfoCommand.class));
 
 		jda.updateCommands().addCommands(commands.stream().map(CommandBase::getCommand).flatMap(List::stream).toList()).queue();
 	}

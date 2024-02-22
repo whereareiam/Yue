@@ -11,6 +11,7 @@ import me.whereareiam.yue.core.database.repository.PersonRoleRepository;
 import me.whereareiam.yue.core.feature.Feature;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,7 @@ import java.util.Optional;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+@Lazy
 @Service
 public class RoleSynchronizerFeature implements Feature {
 	private final FeaturesSettingsConfig featuresSettingsConfig;
@@ -33,7 +35,7 @@ public class RoleSynchronizerFeature implements Feature {
 	@Autowired
 	public RoleSynchronizerFeature(SettingsConfig settingsConfig, PersonRoleRepository personRoleRepository,
 	                               PersonRepository personRepository, RolesConfig rolesConfig, Logger logger,
-	                               @Lazy Guild guild) {
+	                               Guild guild) {
 		this.featuresSettingsConfig = settingsConfig.getFeatures();
 		this.personRoleRepository = personRoleRepository;
 		this.personRepository = personRepository;
@@ -133,5 +135,12 @@ public class RoleSynchronizerFeature implements Feature {
 	@Override
 	public boolean isEnabled() {
 		return enabled == featuresSettingsConfig.isSynchronization();
+	}
+
+	@Override
+	public void handleEvent(Object object) {
+		if (object instanceof GuildMemberJoinEvent event) {
+			synchronizeRoles(event.getMember());
+		}
 	}
 }

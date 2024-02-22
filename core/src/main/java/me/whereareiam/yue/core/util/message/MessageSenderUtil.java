@@ -1,50 +1,57 @@
 package me.whereareiam.yue.core.util.message;
 
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.interactions.InteractionHook;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class MessageSenderUtil {
-	private final MessageBuilderUtil builderUtil;
-	private final Guild guild;
-
-	@Autowired
-	public MessageSenderUtil(MessageBuilderUtil builderUtil, @Lazy Guild guild) {
-		this.builderUtil = builderUtil;
-		this.guild = guild;
+	public static void noRequiredRole(InteractionHook hook, String allowedRole) {
+		noRequiredRole(hook, new String[]{allowedRole});
 	}
 
-	public void noRequiredRole(InteractionHook hook, String allowedRole) {
+	public static void noRequiredRole(InteractionHook hook, String[] allowedRole) {
+		String allowedRoles = String.join(", ", allowedRole);
+
 		hook.sendMessageEmbeds(
-				builderUtil.dangerEmbed(hook.getInteraction().getUser(),
-						"core.commands.messages.error.title",
-						"core.commands.messages.error.noRequiredRole",
-						"core.commands.messages.error.footer",
-						allowedRole
+				MessageBuilderUtil.embed(
+						"noRequiredRole",
+						hook.getInteraction().getUser(),
+						Optional.of(new PlaceholderReplacement(List.of("{roleMention}"), List.of(allowedRoles)))
 				)
 		).queue();
 	}
 
-	public void noRequiredChannel(InteractionHook hook, String... allowedChannels) {
+	public static void noRequiredChannel(InteractionHook hook, String[] allowedChannel) {
+		String allowedChannels = String.join(", ", allowedChannel);
+
 		hook.sendMessageEmbeds(
-				builderUtil.dangerEmbed(hook.getInteraction().getUser(),
-						"core.commands.messages.error.title",
-						"core.commands.messages.error.noRequiredChannel",
-						"core.commands.messages.error.footer",
-						allowedChannels
+				MessageBuilderUtil.embed(
+						"noRequiredChannel",
+						hook.getInteraction().getUser(),
+						Optional.of(new PlaceholderReplacement(List.of("{channelMention}"), List.of(allowedChannels)))
 				)
 		).queue();
 	}
 
-	public void guildOnly(InteractionHook hook) {
+	public static void noRequiredUser(InteractionHook hook, String id) {
 		hook.sendMessageEmbeds(
-				builderUtil.dangerEmbed(hook.getInteraction().getUser(),
-						"core.commands.messages.error.title",
-						"core.commands.messages.error.guildOnly",
-						"core.commands.messages.error.footer"
+				MessageBuilderUtil.embed(
+						"noRequiredUser",
+						hook.getInteraction().getUser(),
+						Optional.of(new PlaceholderReplacement(List.of("{userMention}"), List.of(id)))
+				)
+		).queue();
+	}
+
+	public static void guildOnly(InteractionHook hook) {
+		hook.sendMessageEmbeds(
+				MessageBuilderUtil.embed(
+						"guildOnly",
+						hook.getInteraction().getUser(),
+						Optional.empty()
 				)
 		).queue();
 	}

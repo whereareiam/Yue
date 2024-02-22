@@ -6,9 +6,9 @@ import me.whereareiam.yue.core.database.entity.Language;
 import me.whereareiam.yue.core.database.repository.LanguageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.annotation.DependsOn;
+import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +21,6 @@ import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 @Service
-@DependsOn("databaseSetupManager")
 public class LanguageRegistrar {
 	private final Logger logger;
 	private final LanguageRepository languageRepository;
@@ -37,8 +36,8 @@ public class LanguageRegistrar {
 		this.langPath = langPath;
 	}
 
-	@Order(1)
-	@EventListener(ApplicationReadyEvent.class)
+	@Order(Ordered.HIGHEST_PRECEDENCE)
+	@EventListener(ApplicationStartedEvent.class)
 	public void onLoad() {
 		try (Stream<Path> paths = Files.walk(langPath, 1)) {
 			paths.filter(Files::isDirectory).forEach(dir -> {
