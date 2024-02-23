@@ -1,10 +1,10 @@
 package me.whereareiam.yue.core;
 
-import me.whereareiam.yue.api.Yue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
@@ -14,18 +14,15 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @EnableCaching
 @EnableJpaRepositories
 @SpringBootApplication
-public class YueApplication implements Yue {
-	private static ApplicationContext ctx;
-
+@EntityScan
+public class YueApplication extends Yue {
 	@Autowired
 	public YueApplication(@Qualifier ApplicationContext ctx) {
-		YueApplication.ctx = ctx;
+		super(ctx);
 
-		//TODO User must confirm his main language in verification process
 		//TODO Help command
-		//TODO Information command
-		//TODO Module control command
-		//TODO Move all features to modules
+		//TODO Plugin control command
+		//TODO Move all features to plugins
 	}
 
 	public static void main(String[] args) {

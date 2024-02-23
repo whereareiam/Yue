@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class PersonRoleService {
+public class PersonRoleService implements me.whereareiam.yue.api.service.PersonRoleService {
 	private final PersonRepository personRepository;
 	private final RoleRepository roleRepository;
 	private final PersonRoleRepository personRoleRepository;
@@ -43,10 +43,16 @@ public class PersonRoleService {
 		personRoleRepository.deleteByPersonIdAndRoleId(userId, role.getId());
 	}
 
-	public List<PersonRole> getPersonsByRole(String roleId) {
+	public List<String> getPersonsByRole(String roleId) {
 		Optional<Role> role = roleRepository.findById(roleId);
 		if (role.isPresent()) {
-			return personRoleRepository.findByRole(role.get());
+			List<PersonRole> personRoles = personRoleRepository.findByRole(role.get());
+			List<String> personIds = new ArrayList<>();
+			for (PersonRole personRole : personRoles) {
+				personIds.add(personRole.getPersonId());
+			}
+
+			return personIds;
 		} else {
 			return new ArrayList<>();
 		}

@@ -9,4 +9,17 @@
     </parent>
 
     <artifactId>api</artifactId>
+
+    <dependencies>
+        <dependency>
+            <groupId>net.dv8tion</groupId>
+            <artifactId>JDA</artifactId>
+            <version>${discord.jda.version}</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>${project.parent.artifactId}API-${project.parent.version}</finalName>
+    </build>
 </project>

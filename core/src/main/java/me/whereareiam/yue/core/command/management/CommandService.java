@@ -1,6 +1,7 @@
 package me.whereareiam.yue.core.command.management;
 
-import me.whereareiam.yue.core.command.base.CommandBase;
+import me.whereareiam.yue.api.command.base.CommandBase;
+import me.whereareiam.yue.api.command.management.CommandRegistrar;
 import me.whereareiam.yue.core.util.message.MessageSenderUtil;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;

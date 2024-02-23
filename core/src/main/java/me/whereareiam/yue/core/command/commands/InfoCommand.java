@@ -1,12 +1,17 @@
 package me.whereareiam.yue.core.command.commands;
 
-import me.whereareiam.yue.core.command.base.CommandBase;
-import me.whereareiam.yue.core.command.base.CommandCategory;
+import me.whereareiam.yue.api.command.base.CommandBase;
+import me.whereareiam.yue.api.command.base.CommandCategory;
+import me.whereareiam.yue.core.database.entity.Language;
 import me.whereareiam.yue.core.config.command.CommandsConfig;
 import me.whereareiam.yue.core.config.command.InfoCommandCommandsConfig;
-import me.whereareiam.yue.core.service.PersonService;
+import me.whereareiam.yue.core.database.repository.LanguageRepository;
+import me.whereareiam.yue.core.database.repository.PersonRepository;
+import me.whereareiam.yue.core.util.message.MessageBuilderUtil;
 import me.whereareiam.yue.core.util.message.MessageFormatterUtil;
-import net.dv8tion.jda.api.entities.Guild;
+import me.whereareiam.yue.core.util.message.PlaceholderReplacement;
+import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
@@ -15,27 +20,77 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.MemoryMXBean;
+import java.lang.management.OperatingSystemMXBean;
+import java.lang.management.RuntimeMXBean;
+import java.text.DecimalFormat;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Lazy
 @Component
 public class InfoCommand extends CommandBase {
 	private final InfoCommandCommandsConfig infoCommand;
-	private final PersonService personService;
-	private final Guild guild;
+	private final LanguageRepository languageRepository;
+	private final PersonRepository personRepository;
+
+	private final OperatingSystemMXBean osBean = ManagementFactory.getOperatingSystemMXBean();
+	private final RuntimeMXBean runtimeBean = ManagementFactory.getRuntimeMXBean();
+	private final MemoryMXBean memoryBean = ManagementFactory.getMemoryMXBean();
 
 	@Autowired
-	public InfoCommand(CommandsConfig commandsConfig, PersonService personService, Guild guild) {
-		super(commandsConfig);
+	public InfoCommand(CommandsConfig commandsConfig, LanguageRepository languageRepository,
+	                   PersonRepository personRepository) {
 		this.infoCommand = commandsConfig.getInfoCommand();
-		this.personService = personService;
-		this.guild = guild;
+		this.languageRepository = languageRepository;
+		this.personRepository = personRepository;
 	}
 
 	@Override
 	public void execute(SlashCommandInteractionEvent event) {
-		//event.deferReply(false).queue();
+		event.deferReply(true).queue();
+		User user = event.getUser();
+
+		PlaceholderReplacement replacement = createPlaceholderReplacement();
+
+		MessageEmbed embed = MessageBuilderUtil.embed("info", user, Optional.of(replacement));
+
+		event.getHook().sendMessageEmbeds(embed).queue();
 	}
+
+	private PlaceholderReplacement createPlaceholderReplacement() {
+		DecimalFormat df = new DecimalFormat("00.0");
+
+		String cpuLoad = df.format(osBean.getSystemLoadAverage());
+		String cpuCores = String.valueOf(osBean.getAvailableProcessors());
+		String memoryUsage = String.valueOf(getUsedMemory());
+		String memoryTotal = String.valueOf(getTotalMemory());
+		String memoryUsagePercentage = df.format(((double) getUsedMemory() / (double) getTotalMemory()) * 100);
+		String uptime = String.format("%.1f", runtimeBean.getUptime() / 1000.0 / 60.0 / 60.0);
+		String usersCount = String.valueOf(personRepository.count());
+		final String languages = languageRepository.findAll().stream()
+				.map(Language::getCode)
+				.collect(Collectors.joining(", "));
+
+		return new PlaceholderReplacement(
+				List.of("{osName}", "{osVersion}", "{osArch}", "{cpuLoad}", "{cpuCores}",
+						"{memoryUsage}", "{memoryTotal}", "{memoryUsagePercentage}", "{uptime}",
+						"{usersCount}", "{languages}"),
+				List.of(System.getProperty("os.name"), System.getProperty("os.version"), System.getProperty("os.arch"),
+						cpuLoad, cpuCores, memoryUsage, memoryTotal, memoryUsagePercentage, uptime, usersCount, languages)
+		);
+	}
+
+	private long getUsedMemory() {
+		return memoryBean.getHeapMemoryUsage().getUsed() / 1024 / 1024;
+	}
+
+	private long getTotalMemory() {
+		return memoryBean.getHeapMemoryUsage().getMax() / 1024 / 1024;
+	}
+
 
 	@Override
 	public List<String> getCommandAliases() {

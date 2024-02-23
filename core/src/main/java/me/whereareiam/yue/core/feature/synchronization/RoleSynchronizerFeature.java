@@ -1,11 +1,11 @@
 package me.whereareiam.yue.core.feature.synchronization;
 
-import me.whereareiam.yue.core.config.RolesConfig;
-import me.whereareiam.yue.core.config.setting.FeaturesSettingsConfig;
-import me.whereareiam.yue.core.config.setting.SettingsConfig;
 import me.whereareiam.yue.core.database.entity.Person;
 import me.whereareiam.yue.core.database.entity.PersonRole;
 import me.whereareiam.yue.core.database.entity.Role;
+import me.whereareiam.yue.core.config.RolesConfig;
+import me.whereareiam.yue.core.config.setting.FeaturesSettingsConfig;
+import me.whereareiam.yue.core.config.setting.SettingsConfig;
 import me.whereareiam.yue.core.database.repository.PersonRepository;
 import me.whereareiam.yue.core.database.repository.PersonRoleRepository;
 import me.whereareiam.yue.core.feature.Feature;

@@ -1,4 +1,4 @@
-package me.whereareiam.yue.core.command.base;
+package me.whereareiam.yue.api.command.base;
 
 public enum CommandCategory {
 	GENERAL,

@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @Service
-public class LanguageService {
+public class LanguageService implements me.whereareiam.yue.api.language.LanguageService {
 	private final SettingsConfig settingsConfig;
 	private final PersonLanguageService personLanguageService;
 	private final Map<String, Map<String, String>> translations = new HashMap<>();

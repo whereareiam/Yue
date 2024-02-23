@@ -21,18 +21,16 @@ import java.util.Properties;
 import java.util.logging.Logger;
 
 @Component
-@DependsOn("configService")
+@DependsOn("configInitializer")
 public class DatabaseSetupManager {
 	private final ApplicationContext ctx;
-	private final BeanRegistrationUtil beanRegistrationUtil;
 	private final Logger logger;
 	private final SettingsConfig settingsConfig;
 
 	@Autowired
-	public DatabaseSetupManager(@Qualifier ApplicationContext ctx, BeanRegistrationUtil beanRegistrationUtil, Logger logger,
+	public DatabaseSetupManager(@Qualifier ApplicationContext ctx, Logger logger,
 	                            SettingsConfig settingsConfig) {
 		this.ctx = ctx;
-		this.beanRegistrationUtil = beanRegistrationUtil;
 		this.logger = logger;
 		this.settingsConfig = settingsConfig;
 	}
@@ -68,7 +66,7 @@ public class DatabaseSetupManager {
 				throw new RuntimeException("Unsupported database type: " + database);
 		}
 
-		beanRegistrationUtil.registerSingleton("dataSource", DataSource.class, dataSource);
+		BeanRegistrationUtil.registerSingleton("dataSource", DataSource.class, dataSource);
 	}
 
 	private void createEntityManagerFactory() {
@@ -89,7 +87,7 @@ public class DatabaseSetupManager {
 
 		em.afterPropertiesSet();
 
-		beanRegistrationUtil.registerSingleton("entityManagerFactory", EntityManagerFactory.class, em.getObject());
+		BeanRegistrationUtil.registerSingleton("entityManagerFactory", EntityManagerFactory.class, em.getObject());
 	}
 
 	private void createTransactionManager() {
@@ -97,6 +95,6 @@ public class DatabaseSetupManager {
 		JpaTransactionManager tm = new JpaTransactionManager();
 		tm.setEntityManagerFactory(emf);
 
-		beanRegistrationUtil.registerSingleton("transactionManager", JpaTransactionManager.class, tm);
+		BeanRegistrationUtil.registerSingleton("transactionManager", JpaTransactionManager.class, tm);
 	}
 }

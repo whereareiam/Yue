@@ -1,11 +1,11 @@
 package me.whereareiam.yue.core.discord;
 
 import jakarta.annotation.PreDestroy;
+import me.whereareiam.yue.core.database.entity.Role;
 import me.whereareiam.yue.api.event.ApplicationBotStarted;
 import me.whereareiam.yue.core.config.RolesConfig;
 import me.whereareiam.yue.core.config.setting.DiscordSettingsConfig;
 import me.whereareiam.yue.core.config.setting.SettingsConfig;
-import me.whereareiam.yue.core.database.entity.Role;
 import me.whereareiam.yue.core.database.repository.RoleRepository;
 import me.whereareiam.yue.core.language.LanguageService;
 import me.whereareiam.yue.core.util.BeanRegistrationUtil;
@@ -28,7 +28,6 @@ import java.util.List;
 @Component
 @DependsOn("databaseSetupManager")
 public class DiscordSetupManager {
-	private final BeanRegistrationUtil beanRegistrationUtil;
 	private final LanguageService languageService;
 	private final SettingsConfig settingsConfig;
 	private final RolesConfig rolesConfig;
@@ -36,9 +35,8 @@ public class DiscordSetupManager {
 	private JDA jda;
 
 	@Autowired
-	public DiscordSetupManager(BeanRegistrationUtil beanRegistrationUtil, LanguageService languageService, SettingsConfig settingsConfig,
-	                           RolesConfig rolesConfig, RoleRepository roleRepository) {
-		this.beanRegistrationUtil = beanRegistrationUtil;
+	public DiscordSetupManager(LanguageService languageService, SettingsConfig settingsConfig, RolesConfig rolesConfig,
+	                           RoleRepository roleRepository) {
 		this.languageService = languageService;
 		this.settingsConfig = settingsConfig;
 		this.rolesConfig = rolesConfig;
@@ -57,7 +55,7 @@ public class DiscordSetupManager {
 					.setAutoReconnect(discordSettingsConfig.isAutoReconnect());
 
 			jda = bot.build();
-			beanRegistrationUtil.registerSingleton("jda", JDA.class, jda);
+			BeanRegistrationUtil.registerSingleton("jda", JDA.class, jda);
 		} catch (InvalidTokenException e) {
 			throw new RuntimeException("Discord token is invalid. Please check your settings.json file.");
 		}
@@ -92,7 +90,7 @@ public class DiscordSetupManager {
 	@Order(Ordered.HIGHEST_PRECEDENCE)
 	@EventListener(ApplicationBotStarted.class)
 	public void onEnable() {
-		beanRegistrationUtil.registerSingleton("guild", Guild.class, jda.getGuildById(settingsConfig.getDiscord().getGuildId()));
+		BeanRegistrationUtil.registerSingleton("guild", Guild.class, jda.getGuildById(settingsConfig.getDiscord().getGuildId()));
 		jda.getPresence().setActivity(Activity.playing(
 				languageService.getTranslation("core.main.phase.starting")
 		));

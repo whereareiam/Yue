@@ -1,7 +1,7 @@
 package me.whereareiam.yue.core.config.command;
 
 import lombok.Getter;
-import me.whereareiam.yue.core.command.base.CommandCategory;
+import me.whereareiam.yue.api.command.base.CommandCategory;
 
 import java.util.ArrayList;
 import java.util.List;

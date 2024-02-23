@@ -15,6 +15,7 @@ public class DiscordSettingsConfig {
 	private Collection<GatewayIntent> intents = List.of(
 			GatewayIntent.GUILD_MEMBERS,
 			GatewayIntent.GUILD_MESSAGES,
+			GatewayIntent.GUILD_PRESENCES,
 			GatewayIntent.MESSAGE_CONTENT
 	);
 }

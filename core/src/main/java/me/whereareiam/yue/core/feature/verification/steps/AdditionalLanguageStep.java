@@ -1,8 +1,8 @@
 package me.whereareiam.yue.core.feature.verification.steps;
 
 import com.vdurmont.emoji.EmojiParser;
-import me.whereareiam.yue.core.config.feature.VerificationFeatureConfig;
 import me.whereareiam.yue.core.database.entity.Language;
+import me.whereareiam.yue.core.config.feature.VerificationFeatureConfig;
 import me.whereareiam.yue.core.database.repository.LanguageRepository;
 import me.whereareiam.yue.core.discord.DiscordButtonManager;
 import me.whereareiam.yue.core.feature.verification.VerificationFeature;

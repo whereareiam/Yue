@@ -1,7 +1,7 @@
 package me.whereareiam.yue.core.command.commands;
 
-import me.whereareiam.yue.core.command.base.CommandBase;
-import me.whereareiam.yue.core.command.base.CommandCategory;
+import me.whereareiam.yue.api.command.base.CommandBase;
+import me.whereareiam.yue.api.command.base.CommandCategory;
 import me.whereareiam.yue.core.config.command.CommandsConfig;
 import me.whereareiam.yue.core.config.command.DeleteCommandCommandsConfig;
 import me.whereareiam.yue.core.service.PersonService;
@@ -32,7 +32,6 @@ public class DeleteCommand extends CommandBase {
 
 	@Autowired
 	public DeleteCommand(CommandsConfig commandsConfig, PersonService personService, Guild guild) {
-		super(commandsConfig);
 		this.deleteCommand = commandsConfig.getDeleteCommand();
 		this.personService = personService;
 		this.guild = guild;

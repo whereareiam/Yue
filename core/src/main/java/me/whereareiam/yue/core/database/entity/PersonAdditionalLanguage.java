@@ -28,4 +28,3 @@ public class PersonAdditionalLanguage {
 	@JoinColumn(name = "language_id", insertable = false, updatable = false)
 	private Language language;
 }
-

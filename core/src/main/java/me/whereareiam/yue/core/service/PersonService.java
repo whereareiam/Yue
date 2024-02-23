@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class PersonService {
+public class PersonService implements me.whereareiam.yue.api.service.PersonService {
 	private final PersonRepository repository;
 	private final LanguageRepository languageRepository;
 	private final PersonAdditionalLanguageRepository additionalLanguageRepository;

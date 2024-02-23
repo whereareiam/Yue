@@ -79,7 +79,7 @@ public class VerificationFeature implements Feature {
 
 		members.forEach(member -> {
 			logger.info("Verifying member: " + member.getEffectiveName());
-			verifyMember(member.getUser(), Optional.empty());
+			verifyMember(member.getUser());
 		});*/
 
 		enabled = true;

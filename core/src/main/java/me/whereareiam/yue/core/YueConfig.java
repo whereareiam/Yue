@@ -1,10 +1,12 @@
 package me.whereareiam.yue.core;
 
 import me.whereareiam.yue.api.YueAPI;
+import org.pf4j.spring.SpringPluginManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.info.BuildProperties;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,6 +31,11 @@ public class YueConfig {
 	}
 
 	@Bean
+	public SpringPluginManager pluginManager() {
+		return new SpringPluginManager(getPluginPath());
+	}
+
+	@Bean
 	@Qualifier("version")
 	public String getVersion() {
 		String version;
@@ -50,7 +57,7 @@ public class YueConfig {
 
 	@Bean
 	@Qualifier("languagePath")
-	public Path languagePath() {
+	public Path getLanguagePath() {
 		Path languagePath = ctx.getBean(Path.class).resolve("language");
 		if (!languagePath.toFile().exists()) {
 			boolean dirCreated = languagePath.toFile().mkdir();
@@ -63,9 +70,28 @@ public class YueConfig {
 	}
 
 	@Bean
+	@Qualifier("pluginPath")
+	public Path getPluginPath() {
+		Path pluginPath = ctx.getBean(Path.class).resolve("plugins");
+		if (!pluginPath.toFile().exists()) {
+			boolean dirCreated = pluginPath.toFile().mkdir();
+			if (!dirCreated) {
+				throw new RuntimeException("Failed to create plugin directory.");
+			}
+		}
+
+		return pluginPath;
+	}
+
+	@Bean
 	@Qualifier
 	public ApplicationContext getApplicationContext() {
 		return new AnnotationConfigApplicationContext("spring");
+	}
+
+	@Bean
+	public ConfigurableApplicationContext getConfigurableApplicationContext() {
+		return (ConfigurableApplicationContext) ctx;
 	}
 
 	@Bean

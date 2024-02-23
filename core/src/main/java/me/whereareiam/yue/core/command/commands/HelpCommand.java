@@ -1,8 +1,8 @@
 package me.whereareiam.yue.core.command.commands;
 
-import me.whereareiam.yue.core.command.base.CommandBase;
-import me.whereareiam.yue.core.command.base.CommandCategory;
-import me.whereareiam.yue.core.command.management.CommandRegistrar;
+import me.whereareiam.yue.api.command.base.CommandBase;
+import me.whereareiam.yue.api.command.base.CommandCategory;
+import me.whereareiam.yue.api.command.management.CommandRegistrar;
 import me.whereareiam.yue.core.config.command.CommandsConfig;
 import me.whereareiam.yue.core.config.command.HelpCommandCommandsConfig;
 import me.whereareiam.yue.core.discord.DiscordButtonManager;
@@ -36,20 +36,12 @@ public class HelpCommand extends CommandBase {
 	private final CommandRegistrar commandRegistrar;
 	private final Guild guild;
 
-	private final List<CommandCategory> categories;
-
 	@Autowired
 	public HelpCommand(CommandsConfig commandsConfig, DiscordButtonManager buttonManager, CommandRegistrar commandRegistrar,
 	                   Guild guild) {
-		super(commandsConfig);
 		this.helpCommand = commandsConfig.getHelpCommand();
 		this.buttonManager = buttonManager;
 		this.commandRegistrar = commandRegistrar;
-
-		this.categories = commandRegistrar.getCommands().stream()
-				.map(CommandBase::getCategory)
-				.sorted(Comparator.comparing(Enum::name))
-				.toList();
 		this.guild = guild;
 	}
 
@@ -67,7 +59,7 @@ public class HelpCommand extends CommandBase {
 	private void buildHelpMessage(SlashCommandInteractionEvent event) {
 		User user = event.getUser();
 		MessageEmbed embed = MessageBuilderUtil.embed("help", user, Optional.empty());
-		List<CommandCategory> allowedCategories = getAllowedCategories(event.getMember());
+		List<CommandCategory> allowedCategories = getAllowedCategories(guild.getMember(user));
 
 		List<Button> buttons = allowedCategories.stream()
 				.map(category -> MessageBuilderUtil.button(
@@ -124,7 +116,7 @@ public class HelpCommand extends CommandBase {
 					OptionType.STRING,
 					"command",
 					MessageFormatterUtil.formatMessage(
-							helpCommand.getShortDescription().replace("shortDescription", "options.user.shortDescription")
+							helpCommand.getShortDescription().replace("shortDescription", "options.command.shortDescription")
 					),
 					false
 			);

@@ -47,11 +47,14 @@ public class MessageBuilderUtil {
 		if (embed.getColor() != null) embedBuilder.setColor(Color.decode(paletteConfig.getColor(embed.getColor())));
 		if (!embed.getFields().isEmpty()) {
 			embed.getFields().forEach(field -> {
+				String fieldName = MessageFormatterUtil.formatMessage(user, field.getName());
 				String fieldValue = MessageFormatterUtil.formatMessage(user, field.getValue());
-				if (replacement.isPresent())
+				if (replacement.isPresent()) {
+					fieldName = MessageFormatterUtil.replacePlaceholders(fieldName, replacement.get());
 					fieldValue = MessageFormatterUtil.replacePlaceholders(fieldValue, replacement.get());
+				}
 
-				embedBuilder.addField(field.getName(), fieldValue, field.isInline());
+				embedBuilder.addField(fieldName, fieldValue, field.isInline());
 			});
 		}
 
