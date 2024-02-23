@@ -23,7 +23,24 @@
 
 ## TODO
 
-- [ ] Verification feature -> Plugin
-- [ ] Synchronization feature -> Plugin
+Needed for release:
+
 - [ ] Commands -> Essentials Plugin
 - [ ] Plugin controller
+- [ ] Synchronization feature -> Plugin
+- [ ] Verification feature -> Plugin
+
+Planned for the future:
+
+- [ ] Custom commands plugin
+- [ ] Economy plugin
+- [ ] Extended verification plugin
+- [ ] Fun plugin
+- [ ] Integration: CloudNet
+- [ ] Integration: Minecraft
+- [ ] Integration: Socialismus
+- [ ] Moderation plugin
+- [ ] Music channels plugin
+- [ ] Own voice channel plugin
+- [ ] Rest API
+- [ ] Tickets plugin
