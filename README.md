@@ -23,4 +23,7 @@
 
 ## TODO
 
-- [x] Add a README
+- [ ] Verification feature -> Plugin
+- [ ] Synchronization feature -> Plugin
+- [ ] Commands -> Essentials Plugin
+- [ ] Plugin controller
