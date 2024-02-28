@@ -26,7 +26,7 @@ public class DiscordListenerRegistrar {
 	private final JDA jda;
 
 	@Autowired
-	public DiscordListenerRegistrar(@Qualifier ApplicationContext ctx, JDA jda) {
+	public DiscordListenerRegistrar(@Qualifier ApplicationContext ctx, @Lazy JDA jda) {
 		this.jda = jda;
 		this.ctx = ctx;
 	}

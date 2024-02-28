@@ -1,4 +1,9 @@
 package me.whereareiam.yue.api.event;
 
-public class ApplicationReloaded {
+import org.springframework.context.ApplicationEvent;
+
+public class ApplicationReloaded extends ApplicationEvent {
+	public ApplicationReloaded(Object source) {
+		super(source);
+	}
 }

@@ -1,6 +1,7 @@
 package me.whereareiam.yue.core.language;
 
-import me.whereareiam.yue.core.config.setting.SettingsConfig;
+import lombok.Getter;
+import me.whereareiam.yue.core.config.configs.setting.SettingsConfig;
 import me.whereareiam.yue.core.service.PersonLanguageService;
 import net.dv8tion.jda.api.entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import java.util.Optional;
 public class LanguageService implements me.whereareiam.yue.api.language.LanguageService {
 	private final SettingsConfig settingsConfig;
 	private final PersonLanguageService personLanguageService;
+	@Getter
 	private final Map<String, Map<String, String>> translations = new HashMap<>();
 
 	@Autowired

@@ -15,6 +15,6 @@ public class ApplicationReloadedPublisher {
 	}
 
 	public void publish() {
-		applicationEventPublisher.publishEvent(new ApplicationReloaded());
+		applicationEventPublisher.publishEvent(new ApplicationReloaded(this));
 	}
 }

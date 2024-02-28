@@ -11,6 +11,8 @@ import me.whereareiam.yue.core.database.repository.PersonRepository;
 import me.whereareiam.yue.core.database.repository.PersonRoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
@@ -33,7 +35,10 @@ public class PersonService implements me.whereareiam.yue.api.service.PersonServi
 		this.roleRepository = roleRepository;
 	}
 
-	@CacheEvict(value = "userLanguage", key = "#userId")
+	@Caching(evict = {
+			@CacheEvict(value = "userLanguage", key = "#userId"),
+			@CacheEvict(value = "users", allEntries = true)
+	})
 	public void addUser(String userId, String globalName, String name, String langCode) {
 		Person person = new Person();
 		person.setId(userId);
@@ -46,7 +51,10 @@ public class PersonService implements me.whereareiam.yue.api.service.PersonServi
 		repository.save(person);
 	}
 
-	@CacheEvict(value = "userLanguage", key = "#userId")
+	@Caching(evict = {
+			@CacheEvict(value = "userLanguage", key = "#userId"),
+			@CacheEvict(value = "users", allEntries = true)
+	})
 	public void deleteUser(String userId) {
 		Person person = repository.findById(userId)
 				.orElseThrow(() -> new EntityNotFoundException("Person not found with id " + userId));
@@ -60,7 +68,7 @@ public class PersonService implements me.whereareiam.yue.api.service.PersonServi
 		repository.delete(person);
 	}
 
-
+	@Cacheable(value = "users")
 	public long getUserCount() {
 		return repository.count();
 	}

@@ -1,14 +1,14 @@
 package me.whereareiam.yue.core.discord;
 
 import jakarta.annotation.PreDestroy;
-import me.whereareiam.yue.core.database.entity.Role;
 import me.whereareiam.yue.api.event.ApplicationBotStarted;
+import me.whereareiam.yue.api.util.BeanRegistrationUtil;
 import me.whereareiam.yue.core.config.RolesConfig;
-import me.whereareiam.yue.core.config.setting.DiscordSettingsConfig;
-import me.whereareiam.yue.core.config.setting.SettingsConfig;
+import me.whereareiam.yue.core.config.configs.setting.DiscordSettingsConfig;
+import me.whereareiam.yue.core.config.configs.setting.SettingsConfig;
+import me.whereareiam.yue.core.database.entity.Role;
 import me.whereareiam.yue.core.database.repository.RoleRepository;
 import me.whereareiam.yue.core.language.LanguageService;
-import me.whereareiam.yue.core.util.BeanRegistrationUtil;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
@@ -28,6 +28,7 @@ import java.util.List;
 @Component
 @DependsOn("databaseSetupManager")
 public class DiscordSetupManager {
+	private final BeanRegistrationUtil beanRegistrationUtil;
 	private final LanguageService languageService;
 	private final SettingsConfig settingsConfig;
 	private final RolesConfig rolesConfig;
@@ -35,8 +36,9 @@ public class DiscordSetupManager {
 	private JDA jda;
 
 	@Autowired
-	public DiscordSetupManager(LanguageService languageService, SettingsConfig settingsConfig, RolesConfig rolesConfig,
+	public DiscordSetupManager(BeanRegistrationUtil beanRegistrationUtil, LanguageService languageService, SettingsConfig settingsConfig, RolesConfig rolesConfig,
 	                           RoleRepository roleRepository) {
+		this.beanRegistrationUtil = beanRegistrationUtil;
 		this.languageService = languageService;
 		this.settingsConfig = settingsConfig;
 		this.rolesConfig = rolesConfig;
@@ -55,7 +57,7 @@ public class DiscordSetupManager {
 					.setAutoReconnect(discordSettingsConfig.isAutoReconnect());
 
 			jda = bot.build();
-			BeanRegistrationUtil.registerSingleton("jda", JDA.class, jda);
+			beanRegistrationUtil.registerSingleton("jda", JDA.class, jda);
 		} catch (InvalidTokenException e) {
 			throw new RuntimeException("Discord token is invalid. Please check your settings.json file.");
 		}
@@ -90,7 +92,7 @@ public class DiscordSetupManager {
 	@Order(Ordered.HIGHEST_PRECEDENCE)
 	@EventListener(ApplicationBotStarted.class)
 	public void onEnable() {
-		BeanRegistrationUtil.registerSingleton("guild", Guild.class, jda.getGuildById(settingsConfig.getDiscord().getGuildId()));
+		beanRegistrationUtil.registerSingleton("guild", Guild.class, jda.getGuildById(settingsConfig.getDiscord().getGuildId()));
 		jda.getPresence().setActivity(Activity.playing(
 				languageService.getTranslation("core.main.phase.starting")
 		));

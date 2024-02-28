@@ -1,6 +1,6 @@
 package me.whereareiam.yue.core.feature.verification;
 
-import me.whereareiam.yue.core.config.feature.VerificationFeatureConfig;
+import me.whereareiam.yue.core.config.configs.feature.VerificationFeatureConfig;
 import me.whereareiam.yue.core.model.StepData;
 import org.springframework.beans.factory.annotation.Autowired;
 

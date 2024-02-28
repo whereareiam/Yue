@@ -1,11 +1,11 @@
 package me.whereareiam.yue.core.feature.verification.steps;
 
-import me.whereareiam.yue.core.config.feature.VerificationFeatureConfig;
-import me.whereareiam.yue.core.discord.DiscordButtonManager;
+import me.whereareiam.yue.api.discord.DiscordButtonManager;
+import me.whereareiam.yue.api.util.message.MessageBuilderUtil;
+import me.whereareiam.yue.core.config.configs.feature.VerificationFeatureConfig;
 import me.whereareiam.yue.core.feature.verification.VerificationFeature;
 import me.whereareiam.yue.core.feature.verification.VerificationStep;
 import me.whereareiam.yue.core.model.StepData;
-import me.whereareiam.yue.core.util.message.MessageBuilderUtil;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
@@ -20,28 +20,30 @@ import java.util.Optional;
 public class AcknowledgementStep extends VerificationStep {
 	private final VerificationFeatureConfig verificationConfig;
 	private final VerificationFeature verificationFeature;
+	private final MessageBuilderUtil messageBuilderUtil;
 	private final DiscordButtonManager buttonManager;
 
 	public AcknowledgementStep(VerificationFeatureConfig verificationConfig, VerificationFeature verificationFeature,
-	                           DiscordButtonManager buttonManager) {
+	                           MessageBuilderUtil messageBuilderUtil, DiscordButtonManager buttonManager) {
 		super(verificationConfig, verificationFeature);
 		this.verificationConfig = verificationConfig;
 		this.verificationFeature = verificationFeature;
+		this.messageBuilderUtil = messageBuilderUtil;
 		this.buttonManager = buttonManager;
 	}
 
 	@Override
 	public void execute(StepData stepData) {
-		MessageEmbed embed = MessageBuilderUtil.embed(
+		MessageEmbed embed = messageBuilderUtil.embed(
 				"acknowledgementCheck",
 				stepData.getUser(),
 				Optional.empty()
 		);
 
 		List<Button> buttons = List.of(
-				MessageBuilderUtil.button(verificationConfig.acknowledgement.getReadButtonId(), stepData.getUser())
+				messageBuilderUtil.button(verificationConfig.acknowledgement.getReadButtonId(), stepData.getUser())
 						.withId(getName() + "-information"),
-				MessageBuilderUtil.button(verificationConfig.acknowledgement.getAcceptButtonId(), stepData.getUser())
+				messageBuilderUtil.button(verificationConfig.acknowledgement.getAcceptButtonId(), stepData.getUser())
 						.withId(getName() + "-accept")
 		);
 		buttonManager.addButton(buttons.get(0).getId(), this::handleInformationButton);
@@ -60,7 +62,7 @@ public class AcknowledgementStep extends VerificationStep {
 
 		stepData.getUser().openPrivateChannel().flatMap(
 				privateChannel -> privateChannel.sendMessageEmbeds(
-						MessageBuilderUtil.embed(
+						messageBuilderUtil.embed(
 								"acknowledgementInformation",
 								stepData.getUser(),
 								Optional.empty()
@@ -69,13 +71,13 @@ public class AcknowledgementStep extends VerificationStep {
 				)
 		).queue();
 
-		MessageEmbed embed = MessageBuilderUtil.embed(
+		MessageEmbed embed = messageBuilderUtil.embed(
 				"acknowledgementCheck",
 				stepData.getUser(),
 				Optional.empty()
 		);
 
-		Button button = MessageBuilderUtil.button(verificationConfig.acknowledgement.getAcceptButtonId(), stepData.getUser())
+		Button button = messageBuilderUtil.button(verificationConfig.acknowledgement.getAcceptButtonId(), stepData.getUser())
 				.withId(getName() + "-accept");
 
 		stepData.getUser().openPrivateChannel().flatMap(

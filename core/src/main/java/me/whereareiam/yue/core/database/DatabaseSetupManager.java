@@ -2,10 +2,10 @@ package me.whereareiam.yue.core.database;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityManagerFactory;
-import me.whereareiam.yue.core.config.setting.SettingsConfig;
-import me.whereareiam.yue.core.config.setting.database.DatabaseSettingsConfig;
+import me.whereareiam.yue.api.util.BeanRegistrationUtil;
+import me.whereareiam.yue.core.config.configs.setting.SettingsConfig;
+import me.whereareiam.yue.core.config.configs.setting.database.DatabaseSettingsConfig;
 import me.whereareiam.yue.core.exception.DatabaseSetupException;
-import me.whereareiam.yue.core.util.BeanRegistrationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
@@ -26,13 +26,15 @@ public class DatabaseSetupManager {
 	private final ApplicationContext ctx;
 	private final Logger logger;
 	private final SettingsConfig settingsConfig;
+	private final BeanRegistrationUtil beanRegistrationUtil;
 
 	@Autowired
-	public DatabaseSetupManager(@Qualifier ApplicationContext ctx, Logger logger,
-	                            SettingsConfig settingsConfig) {
+	public DatabaseSetupManager(@Qualifier ApplicationContext ctx, Logger logger, SettingsConfig settingsConfig,
+	                            BeanRegistrationUtil beanRegistrationUtil) {
 		this.ctx = ctx;
 		this.logger = logger;
 		this.settingsConfig = settingsConfig;
+		this.beanRegistrationUtil = beanRegistrationUtil;
 	}
 
 	@PostConstruct
@@ -66,7 +68,7 @@ public class DatabaseSetupManager {
 				throw new RuntimeException("Unsupported database type: " + database);
 		}
 
-		BeanRegistrationUtil.registerSingleton("dataSource", DataSource.class, dataSource);
+		beanRegistrationUtil.registerSingleton("dataSource", DataSource.class, dataSource);
 	}
 
 	private void createEntityManagerFactory() {
@@ -87,7 +89,7 @@ public class DatabaseSetupManager {
 
 		em.afterPropertiesSet();
 
-		BeanRegistrationUtil.registerSingleton("entityManagerFactory", EntityManagerFactory.class, em.getObject());
+		beanRegistrationUtil.registerSingleton("entityManagerFactory", EntityManagerFactory.class, em.getObject());
 	}
 
 	private void createTransactionManager() {
@@ -95,6 +97,6 @@ public class DatabaseSetupManager {
 		JpaTransactionManager tm = new JpaTransactionManager();
 		tm.setEntityManagerFactory(emf);
 
-		BeanRegistrationUtil.registerSingleton("transactionManager", JpaTransactionManager.class, tm);
+		beanRegistrationUtil.registerSingleton("transactionManager", JpaTransactionManager.class, tm);
 	}
 }

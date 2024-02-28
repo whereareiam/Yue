@@ -1,12 +1,9 @@
 package me.whereareiam.yue.core.config;
 
 import jakarta.annotation.PostConstruct;
-import me.whereareiam.yue.core.config.command.CommandsConfig;
-import me.whereareiam.yue.core.config.component.ButtonsConfig;
-import me.whereareiam.yue.core.config.component.EmbedsConfig;
-import me.whereareiam.yue.core.config.component.palette.PaletteConfig;
-import me.whereareiam.yue.core.config.feature.VerificationFeatureConfig;
-import me.whereareiam.yue.core.config.setting.SettingsConfig;
+import me.whereareiam.yue.core.config.configs.command.CommandsConfig;
+import me.whereareiam.yue.core.config.configs.feature.VerificationFeatureConfig;
+import me.whereareiam.yue.core.config.configs.setting.SettingsConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
@@ -28,9 +25,5 @@ public class ConfigInitializer {
 		configService.registerConfig(CommandsConfig.class, "", "commands.json");
 
 		configService.registerConfig(VerificationFeatureConfig.class, "feature", "verification.json");
-
-		configService.registerConfig(ButtonsConfig.class, "component", "buttons.json");
-		configService.registerConfig(PaletteConfig.class, "component", "palette.json");
-		configService.registerConfig(EmbedsConfig.class, "component", "embeds.json");
 	}
 }

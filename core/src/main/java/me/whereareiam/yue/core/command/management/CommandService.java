@@ -2,7 +2,7 @@ package me.whereareiam.yue.core.command.management;
 
 import me.whereareiam.yue.api.command.base.CommandBase;
 import me.whereareiam.yue.api.command.management.CommandRegistrar;
-import me.whereareiam.yue.core.util.message.MessageSenderUtil;
+import me.whereareiam.yue.api.util.message.MessageSenderUtil;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.Channel;
@@ -15,11 +15,13 @@ import java.util.Optional;
 
 @Service
 public class CommandService {
+	private final MessageSenderUtil messageSenderUtil;
 	private final CommandRegistrar commandRegistrar;
 	private final Guild guild;
 
 	@Autowired
-	public CommandService(CommandRegistrar commandRegistrar, @Lazy Guild guild) {
+	public CommandService(MessageSenderUtil messageSenderUtil, CommandRegistrar commandRegistrar, @Lazy Guild guild) {
+		this.messageSenderUtil = messageSenderUtil;
 		this.commandRegistrar = commandRegistrar;
 		this.guild = guild;
 	}
@@ -46,7 +48,7 @@ public class CommandService {
 		if (command.getAllowedChannels().isEmpty() || !event.isFromGuild()) return true;
 
 		if (command.isGuildOnly() && !event.isFromGuild()) {
-			MessageSenderUtil.guildOnly(event.getHook());
+			messageSenderUtil.guildOnly(event.getHook());
 			return false;
 		}
 
@@ -54,7 +56,7 @@ public class CommandService {
 
 		if (!isAllowed) {
 			event.deferReply(true).queue();
-			MessageSenderUtil.noRequiredChannel(
+			messageSenderUtil.noRequiredChannel(
 					event.getHook(),
 					guild.getChannels().stream()
 							.filter(channel -> command.getAllowedChannels().contains(channel.getId()))
@@ -83,7 +85,7 @@ public class CommandService {
 
 		if (!isAllowed) {
 			event.deferReply(true).queue();
-			MessageSenderUtil.noRequiredRole(
+			messageSenderUtil.noRequiredRole(
 					event.getHook(),
 					guild.getRoleById(command.getRequiredRole()) == null ? command.getRequiredRole() : guild.getRoleById(command.getRequiredRole()).getAsMention()
 			);

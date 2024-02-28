@@ -1,33 +1,56 @@
 package me.whereareiam.yue.core.config;
 
-import me.whereareiam.yue.core.util.BeanRegistrationUtil;
+import me.whereareiam.yue.api.util.BeanRegistrationUtil;
+import org.pf4j.PluginWrapper;
+import org.pf4j.spring.SpringPluginManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Set;
 
 @Service
 public class ConfigService implements me.whereareiam.yue.api.config.ConfigService {
 	private final Path dataPath;
+	private final SpringPluginManager pluginManager;
+	private final BeanRegistrationUtil beanRegistrationUtil;
 	private final Set<Class<?>> registeredConfigs = new HashSet<>();
 
 	@Autowired
-	public ConfigService(@Qualifier("dataPath") Path dataPath) {
+	public ConfigService(@Qualifier("dataPath") Path dataPath, SpringPluginManager pluginManager,
+	                     BeanRegistrationUtil beanRegistrationUtil) {
 		this.dataPath = dataPath;
+		this.pluginManager = pluginManager;
+		this.beanRegistrationUtil = beanRegistrationUtil;
 	}
 
 	@Override
 	public <T> boolean registerConfig(Class<T> configClass, String path, String fileName) {
 		if (registeredConfigs.contains(configClass) || path == null || fileName == null) return false;
 
-		ConfigLoader<T> configLoader = new ConfigLoader<>(dataPath);
+		String packageName = configClass.getPackage().getName();
+		Path pathToUse = dataPath;
+
+		if (!packageName.startsWith("me.whereareiam.core.yue.")) {
+			for (PluginWrapper plugin : pluginManager.getPlugins()) {
+				Package[] packages = plugin.getPluginClassLoader().getDefinedPackages();
+				for (Package pkg : packages) {
+					if (pkg.getName().equals(packageName)) {
+						pathToUse = Paths.get(dataPath.toString(), "plugins", plugin.getPluginId());
+						break;
+					}
+				}
+			}
+		}
+
+		ConfigLoader<T> configLoader = new ConfigLoader<>(pathToUse);
 		configLoader.load(configClass, path, fileName);
 		T object = configLoader.getConfig();
 
-		BeanRegistrationUtil.registerSingleton(configClass.getName(), configClass, object);
+		beanRegistrationUtil.registerSingleton(configClass.getName(), configClass, object);
 		registeredConfigs.add(configClass);
 
 		return true;
@@ -36,7 +59,7 @@ public class ConfigService implements me.whereareiam.yue.api.config.ConfigServic
 	@Override
 	public <T> void unregisterConfig(Class<T> configClass) {
 		if (registeredConfigs.contains(configClass)) {
-			BeanRegistrationUtil.destroyBean(configClass.getName());
+			beanRegistrationUtil.destroyBean(configClass.getName());
 			registeredConfigs.remove(configClass);
 		}
 	}

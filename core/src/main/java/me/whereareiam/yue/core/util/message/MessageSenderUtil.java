@@ -1,22 +1,31 @@
 package me.whereareiam.yue.core.util.message;
 
+import me.whereareiam.yue.api.util.message.PlaceholderReplacement;
 import net.dv8tion.jda.api.interactions.InteractionHook;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
-public class MessageSenderUtil {
-	public static void noRequiredRole(InteractionHook hook, String allowedRole) {
+public class MessageSenderUtil implements me.whereareiam.yue.api.util.message.MessageSenderUtil {
+	private final MessageBuilderUtil messageBuilderUtil;
+
+	@Autowired
+	public MessageSenderUtil(MessageBuilderUtil messageBuilderUtil) {
+		this.messageBuilderUtil = messageBuilderUtil;
+	}
+
+	public void noRequiredRole(InteractionHook hook, String allowedRole) {
 		noRequiredRole(hook, new String[]{allowedRole});
 	}
 
-	public static void noRequiredRole(InteractionHook hook, String[] allowedRole) {
+	public void noRequiredRole(InteractionHook hook, String[] allowedRole) {
 		String allowedRoles = String.join(", ", allowedRole);
 
 		hook.sendMessageEmbeds(
-				MessageBuilderUtil.embed(
+				messageBuilderUtil.embed(
 						"noRequiredRole",
 						hook.getInteraction().getUser(),
 						Optional.of(new PlaceholderReplacement(List.of("{roleMention}"), List.of(allowedRoles)))
@@ -24,11 +33,11 @@ public class MessageSenderUtil {
 		).queue();
 	}
 
-	public static void noRequiredChannel(InteractionHook hook, String[] allowedChannel) {
+	public void noRequiredChannel(InteractionHook hook, String[] allowedChannel) {
 		String allowedChannels = String.join(", ", allowedChannel);
 
 		hook.sendMessageEmbeds(
-				MessageBuilderUtil.embed(
+				messageBuilderUtil.embed(
 						"noRequiredChannel",
 						hook.getInteraction().getUser(),
 						Optional.of(new PlaceholderReplacement(List.of("{channelMention}"), List.of(allowedChannels)))
@@ -36,9 +45,9 @@ public class MessageSenderUtil {
 		).queue();
 	}
 
-	public static void noRequiredUser(InteractionHook hook, String id) {
+	public void noRequiredUser(InteractionHook hook, String id) {
 		hook.sendMessageEmbeds(
-				MessageBuilderUtil.embed(
+				messageBuilderUtil.embed(
 						"noRequiredUser",
 						hook.getInteraction().getUser(),
 						Optional.of(new PlaceholderReplacement(List.of("{userMention}"), List.of(id)))
@@ -46,9 +55,9 @@ public class MessageSenderUtil {
 		).queue();
 	}
 
-	public static void guildOnly(InteractionHook hook) {
+	public void guildOnly(InteractionHook hook) {
 		hook.sendMessageEmbeds(
-				MessageBuilderUtil.embed(
+				messageBuilderUtil.embed(
 						"guildOnly",
 						hook.getInteraction().getUser(),
 						Optional.empty()

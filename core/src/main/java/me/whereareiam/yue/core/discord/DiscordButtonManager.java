@@ -10,7 +10,7 @@ import java.util.function.Consumer;
 
 @Lazy
 @Service
-public class DiscordButtonManager {
+public class DiscordButtonManager implements me.whereareiam.yue.api.discord.DiscordButtonManager {
 	private final Map<String, Consumer<ButtonInteractionEvent>> buttonActions = new HashMap<>();
 
 	public void addButton(String id, Consumer<ButtonInteractionEvent> action) {

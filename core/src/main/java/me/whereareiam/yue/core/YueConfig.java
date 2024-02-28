@@ -1,6 +1,5 @@
 package me.whereareiam.yue.core;
 
-import me.whereareiam.yue.api.YueAPI;
 import org.pf4j.spring.SpringPluginManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -26,13 +25,11 @@ public class YueConfig {
 	}
 
 	@Bean
-	public YueAPI yueAPI() {
-		return new YueAPI(ctx.getBean(YueApplication.class));
-	}
-
-	@Bean
 	public SpringPluginManager pluginManager() {
-		return new SpringPluginManager(getPluginPath());
+		SpringPluginManager pluginManager = new SpringPluginManager();
+		pluginManager.setApplicationContext(ctx);
+
+		return pluginManager;
 	}
 
 	@Bean

@@ -25,6 +25,7 @@
 
 Needed for release:
 
+- [ ] Per plugin components
 - [ ] Commands -> Essentials Plugin
 - [ ] Plugin controller
 - [ ] Synchronization feature -> Plugin

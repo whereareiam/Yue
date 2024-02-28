@@ -2,12 +2,12 @@ package me.whereareiam.yue.core.command.commands;
 
 import me.whereareiam.yue.api.command.base.CommandBase;
 import me.whereareiam.yue.api.command.base.CommandCategory;
-import me.whereareiam.yue.core.config.command.CommandsConfig;
-import me.whereareiam.yue.core.config.command.DeleteCommandCommandsConfig;
+import me.whereareiam.yue.api.util.message.MessageBuilderUtil;
+import me.whereareiam.yue.api.util.message.MessageFormatterUtil;
+import me.whereareiam.yue.api.util.message.MessageSenderUtil;
+import me.whereareiam.yue.core.config.configs.command.CommandsConfig;
+import me.whereareiam.yue.core.config.configs.command.DeleteCommandConfig;
 import me.whereareiam.yue.core.service.PersonService;
-import me.whereareiam.yue.core.util.message.MessageBuilderUtil;
-import me.whereareiam.yue.core.util.message.MessageFormatterUtil;
-import me.whereareiam.yue.core.util.message.MessageSenderUtil;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -26,13 +26,21 @@ import java.util.Optional;
 @Lazy
 @Component
 public class DeleteCommand extends CommandBase {
-	private final DeleteCommandCommandsConfig deleteCommand;
+	private final DeleteCommandConfig deleteCommand;
+	private final MessageFormatterUtil messageFormatterUtil;
+	private final MessageBuilderUtil messageBuilderUtil;
+	private final MessageSenderUtil messageSenderUtil;
 	private final PersonService personService;
 	private final Guild guild;
 
 	@Autowired
-	public DeleteCommand(CommandsConfig commandsConfig, PersonService personService, Guild guild) {
+	public DeleteCommand(CommandsConfig commandsConfig, MessageFormatterUtil messageFormatterUtil,
+	                     MessageBuilderUtil messageBuilderUtil, MessageSenderUtil messageSenderUtil,
+	                     PersonService personService, @Lazy Guild guild) {
 		this.deleteCommand = commandsConfig.getDeleteCommand();
+		this.messageFormatterUtil = messageFormatterUtil;
+		this.messageBuilderUtil = messageBuilderUtil;
+		this.messageSenderUtil = messageSenderUtil;
 		this.personService = personService;
 		this.guild = guild;
 	}
@@ -45,7 +53,7 @@ public class DeleteCommand extends CommandBase {
 			personService.deleteUser(userOption.getAsMember().getId());
 			guild.kick(userOption.getAsMember()).queue();
 
-			MessageEmbed embed = MessageBuilderUtil.embed(
+			MessageEmbed embed = messageBuilderUtil.embed(
 					"deleteCommandSuccess",
 					event.getUser(),
 					Optional.empty()
@@ -56,7 +64,7 @@ public class DeleteCommand extends CommandBase {
 			return;
 		}
 
-		MessageSenderUtil.noRequiredUser(event.getHook(), userOption.getAsUser().getId());
+		messageSenderUtil.noRequiredUser(event.getHook(), userOption.getAsUser().getId());
 	}
 
 	@Override
@@ -68,7 +76,7 @@ public class DeleteCommand extends CommandBase {
 	public List<? extends CommandData> getCommand() {
 		List<SlashCommandData> commandData = getCommandAliases().stream()
 				.map(command ->
-						Commands.slash(command, MessageFormatterUtil.formatMessage(deleteCommand.getShortDescription()))
+						Commands.slash(command, messageFormatterUtil.formatMessage(deleteCommand.getShortDescription()))
 				)
 				.toList();
 
@@ -76,7 +84,7 @@ public class DeleteCommand extends CommandBase {
 			command.addOption(
 					OptionType.USER,
 					"user",
-					MessageFormatterUtil.formatMessage(
+					messageFormatterUtil.formatMessage(
 							deleteCommand.getShortDescription().replace("shortDescription", "options.user.shortDescription")
 					),
 					true

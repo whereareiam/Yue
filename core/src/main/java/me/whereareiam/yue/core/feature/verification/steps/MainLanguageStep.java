@@ -1,17 +1,17 @@
 package me.whereareiam.yue.core.feature.verification.steps;
 
 import com.vdurmont.emoji.EmojiParser;
+import me.whereareiam.yue.api.discord.DiscordButtonManager;
+import me.whereareiam.yue.api.util.message.MessageBuilderUtil;
+import me.whereareiam.yue.core.config.configs.feature.VerificationFeatureConfig;
+import me.whereareiam.yue.core.config.configs.setting.SettingsConfig;
 import me.whereareiam.yue.core.database.entity.Language;
-import me.whereareiam.yue.core.config.feature.VerificationFeatureConfig;
-import me.whereareiam.yue.core.config.setting.SettingsConfig;
 import me.whereareiam.yue.core.database.repository.LanguageRepository;
-import me.whereareiam.yue.core.discord.DiscordButtonManager;
 import me.whereareiam.yue.core.feature.verification.VerificationFeature;
 import me.whereareiam.yue.core.feature.verification.VerificationStep;
 import me.whereareiam.yue.core.model.StepData;
 import me.whereareiam.yue.core.service.PersonLanguageService;
 import me.whereareiam.yue.core.service.PersonService;
-import me.whereareiam.yue.core.util.message.MessageBuilderUtil;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
 @Service
 public class MainLanguageStep extends VerificationStep {
 	private final PersonLanguageService personLanguageService;
+	private final MessageBuilderUtil messageBuilderUtil;
 	private final LanguageRepository languageRepository;
 	private final DiscordButtonManager buttonManager;
 	private final SettingsConfig settingsConfig;
@@ -38,12 +39,13 @@ public class MainLanguageStep extends VerificationStep {
 	@Autowired
 	public MainLanguageStep(PersonLanguageService personLanguageService, LanguageRepository languageRepository,
 	                        DiscordButtonManager buttonManager, VerificationFeatureConfig verificationConfig,
-	                        VerificationFeature verificationFeature, SettingsConfig settingsConfig,
-	                        PersonService personService, Logger logger) {
+	                        VerificationFeature verificationFeature, MessageBuilderUtil messageBuilderUtil,
+	                        SettingsConfig settingsConfig, PersonService personService, Logger logger) {
 		super(verificationConfig, verificationFeature);
 		this.personLanguageService = personLanguageService;
 		this.languageRepository = languageRepository;
 		this.buttonManager = buttonManager;
+		this.messageBuilderUtil = messageBuilderUtil;
 		this.settingsConfig = settingsConfig;
 		this.personService = personService;
 		this.logger = logger;
@@ -51,7 +53,7 @@ public class MainLanguageStep extends VerificationStep {
 
 	@Override
 	public void execute(StepData stepData) {
-		MessageEmbed embed = MessageBuilderUtil.embed(
+		MessageEmbed embed = messageBuilderUtil.embed(
 				"mainLanguage",
 				stepData.getUser(),
 				Optional.empty()
@@ -65,7 +67,7 @@ public class MainLanguageStep extends VerificationStep {
 		).collect(Collectors.toList());
 		buttons.forEach(button -> buttonManager.addButton(button.getId(), this::handleLanguageButton));
 
-		Button continueButton = MessageBuilderUtil.button("continue", stepData.getUser());
+		Button continueButton = messageBuilderUtil.button("continue", stepData.getUser());
 		buttonManager.addButton(continueButton.getId(), this::handleContinueButton);
 		buttons.add(continueButton);
 

@@ -12,7 +12,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 @Service
-public class Scheduler {
+public class Scheduler implements me.whereareiam.yue.api.Scheduler {
 	private final ScheduledExecutorService scheduler;
 
 	public Scheduler() {

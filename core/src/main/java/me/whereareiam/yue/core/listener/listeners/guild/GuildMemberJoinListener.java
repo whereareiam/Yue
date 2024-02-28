@@ -1,7 +1,7 @@
 package me.whereareiam.yue.core.listener.listeners.guild;
 
-import me.whereareiam.yue.core.config.setting.DiscordSettingsConfig;
-import me.whereareiam.yue.core.config.setting.SettingsConfig;
+import me.whereareiam.yue.core.config.configs.setting.DiscordSettingsConfig;
+import me.whereareiam.yue.core.config.configs.setting.SettingsConfig;
 import me.whereareiam.yue.core.feature.FeatureManager;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;

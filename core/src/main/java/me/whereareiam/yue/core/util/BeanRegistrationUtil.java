@@ -7,7 +7,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Service;
 
 @Service
-public class BeanRegistrationUtil {
+public class BeanRegistrationUtil implements me.whereareiam.yue.api.util.BeanRegistrationUtil {
 	private static ConfigurableApplicationContext context;
 
 	@Autowired
@@ -15,7 +15,7 @@ public class BeanRegistrationUtil {
 		BeanRegistrationUtil.context = context;
 	}
 
-	public static void registerSingleton(String beanName, Class<?> beanClass, Object beanInstance) {
+	public void registerSingleton(String beanName, Class<?> beanClass, Object beanInstance) {
 		GenericBeanDefinition beanDefinition = new GenericBeanDefinition();
 		beanDefinition.setBeanClass(beanClass);
 		beanDefinition.setScope(BeanDefinition.SCOPE_SINGLETON);
@@ -25,7 +25,7 @@ public class BeanRegistrationUtil {
 		context.getBeanFactory().registerSingleton(beanName, beanInstance);
 	}
 
-	public static void destroyBean(String name) {
+	public void destroyBean(String name) {
 		context.getBeanFactory().destroyBean(name);
 	}
 }

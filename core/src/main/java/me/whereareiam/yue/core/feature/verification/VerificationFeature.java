@@ -1,9 +1,9 @@
 package me.whereareiam.yue.core.feature.verification;
 
 import lombok.Getter;
-import me.whereareiam.yue.core.config.feature.VerificationFeatureConfig;
-import me.whereareiam.yue.core.config.setting.FeaturesSettingsConfig;
-import me.whereareiam.yue.core.config.setting.SettingsConfig;
+import me.whereareiam.yue.core.config.configs.feature.VerificationFeatureConfig;
+import me.whereareiam.yue.core.config.configs.setting.FeaturesSettingsConfig;
+import me.whereareiam.yue.core.config.configs.setting.SettingsConfig;
 import me.whereareiam.yue.core.feature.Feature;
 import me.whereareiam.yue.core.model.StepData;
 import net.dv8tion.jda.api.entities.User;
@@ -19,8 +19,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Service
 @Lazy
+@Service
 public class VerificationFeature implements Feature {
 	private final ApplicationContext ctx;
 	private final FeaturesSettingsConfig featuresSettingsConfig;

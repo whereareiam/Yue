@@ -1,6 +1,7 @@
 package me.whereareiam.yue.core.util.message;
 
 import com.vdurmont.emoji.EmojiParser;
+import me.whereareiam.yue.api.util.message.PlaceholderReplacement;
 import me.whereareiam.yue.core.language.LanguageService;
 import net.dv8tion.jda.api.entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,15 +11,15 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Service
-public class MessageFormatterUtil {
-	private static LanguageService languageService;
+public class MessageFormatterUtil implements me.whereareiam.yue.api.util.message.MessageFormatterUtil {
+	private final LanguageService languageService;
 
 	@Autowired
 	public MessageFormatterUtil(LanguageService languageService) {
-		MessageFormatterUtil.languageService = languageService;
+		this.languageService = languageService;
 	}
 
-	public static String[] formatMessage(User user, String[] message) {
+	public String[] formatMessage(User user, String[] message) {
 		for (int i = 0; i < message.length; i++) {
 			message[i] = formatMessage(user, message[i]);
 		}
@@ -26,7 +27,7 @@ public class MessageFormatterUtil {
 		return message;
 	}
 
-	public static String formatMessage(String message) {
+	public String formatMessage(String message) {
 		message = languageService.getTranslation(message);
 		message = hookTranslationPlaceholders(message);
 		message = hookEmojiParser(message);
@@ -34,7 +35,7 @@ public class MessageFormatterUtil {
 		return message;
 	}
 
-	public static String formatMessage(User user, String message) {
+	public String formatMessage(User user, String message) {
 		message = languageService.getTranslation(user, message);
 		message = hookTranslationPlaceholders(message);
 		message = hookInternalPlaceholders(user, message);
@@ -43,7 +44,7 @@ public class MessageFormatterUtil {
 		return message;
 	}
 
-	private static String hookTranslationPlaceholders(String message) {
+	private String hookTranslationPlaceholders(String message) {
 		if (message == null) return null;
 
 		final Pattern pattern = Pattern.compile("\\$t\\{(.+?)\\}");
@@ -60,11 +61,11 @@ public class MessageFormatterUtil {
 		return buffer.toString();
 	}
 
-	private static String hookInternalPlaceholders(User user, String message) {
+	private String hookInternalPlaceholders(User user, String message) {
 		return message.replace("{memberTag}", user.getAsMention());
 	}
 
-	private static String hookEmojiParser(String message) {
+	private String hookEmojiParser(String message) {
 		if (message.startsWith(":") && message.endsWith(":")) {
 			return EmojiParser.parseToUnicode(message);
 		}
@@ -72,7 +73,7 @@ public class MessageFormatterUtil {
 		return message;
 	}
 
-	public static String[] replacePlaceholders(String[] message, PlaceholderReplacement replacement) {
+	public String[] replacePlaceholders(String[] message, PlaceholderReplacement replacement) {
 		for (int i = 0; i < message.length; i++) {
 			message[i] = replacePlaceholders(message[i], replacement);
 		}
@@ -80,7 +81,7 @@ public class MessageFormatterUtil {
 		return message;
 	}
 
-	public static String replacePlaceholders(String message, PlaceholderReplacement replacement) {
+	public String replacePlaceholders(String message, PlaceholderReplacement replacement) {
 		for (int i = 0; i < replacement.getPlaceholders().size(); i++) {
 			message = message.replace(replacement.getPlaceholders().get(i), replacement.getReplacements().get(i));
 		}

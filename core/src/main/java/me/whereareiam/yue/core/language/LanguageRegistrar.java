@@ -38,7 +38,7 @@ public class LanguageRegistrar {
 
 	@Order(Ordered.HIGHEST_PRECEDENCE)
 	@EventListener(ApplicationStartedEvent.class)
-	public void onLoad() {
+	public void registerTranslations() {
 		try (Stream<Path> paths = Files.walk(langPath, 1)) {
 			paths.filter(Files::isDirectory).forEach(dir -> {
 				String dirName = dir.getFileName().toString();

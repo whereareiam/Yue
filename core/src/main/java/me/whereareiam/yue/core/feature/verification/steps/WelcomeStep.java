@@ -1,13 +1,13 @@
 package me.whereareiam.yue.core.feature.verification.steps;
 
+import me.whereareiam.yue.api.util.message.MessageBuilderUtil;
 import me.whereareiam.yue.core.config.RolesConfig;
-import me.whereareiam.yue.core.config.feature.VerificationFeatureConfig;
+import me.whereareiam.yue.core.config.configs.feature.VerificationFeatureConfig;
 import me.whereareiam.yue.core.database.repository.RoleRepository;
 import me.whereareiam.yue.core.feature.verification.VerificationFeature;
 import me.whereareiam.yue.core.feature.verification.VerificationStep;
 import me.whereareiam.yue.core.model.StepData;
 import me.whereareiam.yue.core.service.PersonRoleService;
-import me.whereareiam.yue.core.util.message.MessageBuilderUtil;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.Role;
@@ -22,25 +22,27 @@ import java.util.stream.Collectors;
 @Lazy
 @Service
 public class WelcomeStep extends VerificationStep {
-	private final RoleRepository roleRepository;
+	private final MessageBuilderUtil messageBuilderUtil;
 	private final PersonRoleService personRoleService;
+	private final RoleRepository roleRepository;
 	private final RolesConfig rolesConfig;
 	private final Guild guild;
 
 	@Autowired
 	public WelcomeStep(VerificationFeatureConfig verificationConfig, VerificationFeature verificationFeature,
-	                   RoleRepository roleRepository,
-	                   PersonRoleService personRoleService, RolesConfig rolesConfig, Guild guild) {
+	                   MessageBuilderUtil messageBuilderUtil, PersonRoleService personRoleService,
+	                   RoleRepository roleRepository, RolesConfig rolesConfig, @Lazy Guild guild) {
 		super(verificationConfig, verificationFeature);
-		this.roleRepository = roleRepository;
+		this.messageBuilderUtil = messageBuilderUtil;
 		this.personRoleService = personRoleService;
+		this.roleRepository = roleRepository;
 		this.rolesConfig = rolesConfig;
 		this.guild = guild;
 	}
 
 	@Override
 	public void execute(StepData stepData) {
-		MessageEmbed embed = MessageBuilderUtil.embed(
+		MessageEmbed embed = messageBuilderUtil.embed(
 				"welcome",
 				stepData.getUser(),
 				Optional.empty()

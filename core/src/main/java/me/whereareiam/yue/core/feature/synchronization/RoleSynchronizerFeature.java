@@ -1,11 +1,11 @@
 package me.whereareiam.yue.core.feature.synchronization;
 
+import me.whereareiam.yue.core.config.RolesConfig;
+import me.whereareiam.yue.core.config.configs.setting.FeaturesSettingsConfig;
+import me.whereareiam.yue.core.config.configs.setting.SettingsConfig;
 import me.whereareiam.yue.core.database.entity.Person;
 import me.whereareiam.yue.core.database.entity.PersonRole;
 import me.whereareiam.yue.core.database.entity.Role;
-import me.whereareiam.yue.core.config.RolesConfig;
-import me.whereareiam.yue.core.config.setting.FeaturesSettingsConfig;
-import me.whereareiam.yue.core.config.setting.SettingsConfig;
 import me.whereareiam.yue.core.database.repository.PersonRepository;
 import me.whereareiam.yue.core.database.repository.PersonRoleRepository;
 import me.whereareiam.yue.core.feature.Feature;
@@ -35,7 +35,7 @@ public class RoleSynchronizerFeature implements Feature {
 	@Autowired
 	public RoleSynchronizerFeature(SettingsConfig settingsConfig, PersonRoleRepository personRoleRepository,
 	                               PersonRepository personRepository, RolesConfig rolesConfig, Logger logger,
-	                               Guild guild) {
+	                               @Lazy Guild guild) {
 		this.featuresSettingsConfig = settingsConfig.getFeatures();
 		this.personRoleRepository = personRoleRepository;
 		this.personRepository = personRepository;
