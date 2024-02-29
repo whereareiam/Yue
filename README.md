@@ -14,8 +14,10 @@
 
 ### Free-to-use plugins
 
-- **[Essentials](https://github.com/whereareiam/YueEssentials)** - A set of basic commands and features that are
+- **[Essentials](https://github.com/aerittopia/YueEssentials)** - A set of basic commands and features that are
   essential for any Discord server.
+- **[Verification](https://github.com/aerittopia/YueVerification)** - Adds verification for users when they first join
+  the Discord server.
 
 ### How to use
 
@@ -26,7 +28,7 @@
 Needed for release:
 
 - [x] Per plugin components
-- [ ] Commands -> Essentials Plugin
+- [x] Commands -> Essentials Plugin
 - [ ] Plugin controller
 - [ ] Synchronization feature -> Plugin
 - [ ] Verification feature -> Plugin
