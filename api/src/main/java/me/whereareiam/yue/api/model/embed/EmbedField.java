@@ -1,4 +1,4 @@
-package me.whereareiam.yue.api.model;
+package me.whereareiam.yue.api.model.embed;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

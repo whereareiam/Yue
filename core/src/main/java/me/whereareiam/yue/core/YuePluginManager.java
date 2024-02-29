@@ -84,10 +84,10 @@ public class YuePluginManager {
 
 	private void unloadPlugin(YuePlugin plugin) {
 		try {
+			plugins.remove(plugin);
 			plugin.onUnload();
 			((ConfigurableApplicationContext) plugin.getApplicationContext()).close();
 			pluginManager.unloadPlugin(plugin.getWrapper().getPluginId());
-			plugins.remove(plugin);
 		} catch (Exception e) {
 			logger.warning("Failed to unload plugin " + plugin.getWrapper().getPluginId());
 		}
@@ -100,6 +100,9 @@ public class YuePluginManager {
 			pluginManager.startPlugin(plugin.getWrapper().getPluginId());
 			plugin.onEnable();
 		} catch (Exception e) {
+			plugins.remove(plugin);
+			unloadPlugin(plugin);
+
 			logger.warning("Failed to enable plugin " + plugin.getWrapper().getPluginId());
 			logger.warning(e.getMessage());
 		}
@@ -112,6 +115,7 @@ public class YuePluginManager {
 			plugin.onDisable();
 			pluginManager.stopPlugin(plugin.getWrapper().getPluginId());
 		} catch (Exception e) {
+			unloadPlugin(plugin);
 			logger.warning("Failed to disable plugin " + plugin.getWrapper().getPluginId());
 		}
 	}

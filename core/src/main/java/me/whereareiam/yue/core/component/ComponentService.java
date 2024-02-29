@@ -1,7 +1,7 @@
-package me.whereareiam.yue.core.config.component;
+package me.whereareiam.yue.core.component;
 
 import me.whereareiam.yue.api.model.CustomButton;
-import me.whereareiam.yue.api.model.Embed;
+import me.whereareiam.yue.api.model.embed.Embed;
 import me.whereareiam.yue.api.type.ColorType;
 import org.springframework.stereotype.Service;
 
@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
-public class ComponentService {
+public class ComponentService implements me.whereareiam.yue.api.component.ComponentService {
 	private final Map<String, Map<String, Object>> components = new HashMap<>();
 
 	public void registerComponent(String id, Object component) {
@@ -33,15 +33,25 @@ public class ComponentService {
 	}
 
 	public Color getColorComponent(String colorId) {
-		return Color.decode((String) getComponent(colorId));
+		String color = (String) getComponent(colorId);
+		if (color == null) return getColorComponent(ColorType.FALLBACK);
+
+		return Color.decode(color);
 	}
 
 	public Color getColorComponent(ColorType type) {
-		return Color.decode((String) getComponent("core.palette." + type.name()));
+		String color = (String) getComponent("core.color.palette." + type.name().toLowerCase());
+		if (color == null) return getColorComponent(ColorType.FALLBACK);
+
+		return Color.decode(color);
 	}
 
 	private Object getComponent(String componentId) {
-		return components.get(componentId);
+		return components.get(componentId.split("\\.")[0]).get(componentId);
+	}
+
+	public int getComponentCount() {
+		return components.values().stream().mapToInt(Map::size).sum();
 	}
 }
 

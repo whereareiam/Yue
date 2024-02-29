@@ -1,4 +1,4 @@
-package me.whereareiam.yue.api.model;
+package me.whereareiam.yue.api.model.embed;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,8 +12,12 @@ public class Embed {
 	private String id;
 	private String title;
 	private String description;
-	private String footer;
 	private String color;
+	private String url;
+	private String image;
+	private String thumbnail;
+	private EmbedAuthor author;
+	private EmbedFooter footer;
 	private List<EmbedField> fields;
 
 	public String[] getMessage() {
@@ -27,8 +31,8 @@ public class Embed {
 			messageParts.add(description);
 		}
 
-		if (footer != null && !footer.isEmpty()) {
-			messageParts.add(footer);
+		if (footer != null && !footer.getText().isEmpty()) {
+			messageParts.add(footer.getText());
 		}
 
 		return messageParts.toArray(new String[0]);

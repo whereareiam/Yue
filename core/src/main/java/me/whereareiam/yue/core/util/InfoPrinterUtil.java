@@ -2,6 +2,7 @@ package me.whereareiam.yue.core.util;
 
 import me.whereareiam.yue.api.command.management.CommandRegistrar;
 import me.whereareiam.yue.api.event.ApplicationBotStarted;
+import me.whereareiam.yue.core.component.ComponentService;
 import me.whereareiam.yue.core.database.entity.Language;
 import me.whereareiam.yue.core.database.repository.LanguageRepository;
 import me.whereareiam.yue.core.database.repository.PersonRepository;
@@ -26,6 +27,7 @@ public class InfoPrinterUtil {
 	private final PersonRepository personRepository;
 	private final LanguageRepository languageRepository;
 	private final CommandRegistrar commandRegistrar;
+	private final ComponentService componentService;
 	private final SpringPluginManager pluginManager;
 	private final String version;
 	private final Logger logger;
@@ -33,9 +35,11 @@ public class InfoPrinterUtil {
 
 	@Autowired
 	public InfoPrinterUtil(PersonRepository personRepository, LanguageRepository languageRepository,
-	                       CommandRegistrar commandRegistrar, SpringPluginManager pluginManager,
-	                       @Qualifier("version") String version, Logger logger, @Lazy JDA jda) {
+	                       CommandRegistrar commandRegistrar, ComponentService componentService,
+	                       SpringPluginManager pluginManager, @Qualifier("version") String version, Logger logger,
+	                       @Lazy JDA jda) {
 		this.commandRegistrar = commandRegistrar;
+		this.componentService = componentService;
 		this.pluginManager = pluginManager;
 		this.version = version;
 		this.logger = logger;
@@ -55,6 +59,7 @@ public class InfoPrinterUtil {
 		logger.info("");
 		logger.info("  Saved users: " + personRepository.count());
 		logger.info("  Registered commands: " + commandRegistrar.getCommands().size());
+		logger.info("  Registered component: " + componentService.getComponentCount());
 
 		List<Language> languages = languageRepository.findAll();
 		String languageCodes = languages.stream()

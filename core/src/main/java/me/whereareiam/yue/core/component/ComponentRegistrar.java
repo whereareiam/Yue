@@ -1,12 +1,9 @@
-package me.whereareiam.yue.core.config.component;
+package me.whereareiam.yue.core.component;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import com.google.gson.*;
 import me.whereareiam.yue.api.model.CustomButton;
 import me.whereareiam.yue.api.model.CustomColor;
-import me.whereareiam.yue.api.model.Embed;
+import me.whereareiam.yue.api.model.embed.Embed;
 import org.pf4j.spring.SpringPluginManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -43,17 +40,16 @@ public class ComponentRegistrar {
 
 		componentParsers.put("embed", this::parseEmbed);
 		componentParsers.put("button", this::parseButton);
-		componentParsers.put("color", this::parseColor);
 	}
 
 	@EventListener(ApplicationReadyEvent.class)
 	public void registerComponents() {
 		List<Path> componentPaths = pluginManager.getPlugins()
 				.stream()
-				.map(pluginWrapper -> pluginWrapper.getPluginPath().getParent().resolve(pluginWrapper.getPluginId() + "/components"))
+				.map(pluginWrapper -> pluginWrapper.getPluginPath().getParent().resolve(pluginWrapper.getPluginId() + "/component"))
 				.collect(Collectors.toList());
 
-		componentPaths.add(dataPath.resolve("components"));
+		componentPaths.add(dataPath.resolve("component"));
 
 		componentPaths
 				.forEach(path -> {
@@ -64,11 +60,12 @@ public class ComponentRegistrar {
 								files.filter(file -> file.toString().endsWith(".json")).forEach(file -> {
 									String componentId;
 									if (path.getNameCount() == 3) {
-										componentId = "core.components." + file.getFileName().toString().replace(".json", "");
+										componentId = "core." + dirName + "." + file.getFileName().toString().replace(".json", "");
 									} else {
-										componentId = file.subpath(3, 5).toString()
+										componentId = file.subpath(3, 6).toString()
 												.replace(".json", "")
 												.replace("/", ".")
+												.replace(".component.", ".")
 												+ "." + file.getFileName().toString().replace(".json", "");
 									}
 
@@ -76,6 +73,7 @@ public class ComponentRegistrar {
 										registerComponent(dirName, componentId, reader);
 									} catch (Exception e) {
 										logger.warning("Failed to read component file: " + file);
+										logger.warning(e.getMessage());
 									}
 								});
 							} catch (Exception e) {
@@ -83,7 +81,7 @@ public class ComponentRegistrar {
 							}
 						});
 					} catch (Exception e) {
-						logger.warning("Failed to read plugin components: " + path);
+						logger.warning("Failed to read plugin component: " + path);
 					}
 				});
 	}
@@ -99,7 +97,6 @@ public class ComponentRegistrar {
 			if (jsonObject.has("id") && componentParsers.containsKey(type)) {
 				Object component = componentParsers.get(type).apply(jsonObject);
 				String newComponentId = componentId + "." + (parentFieldName != null ? parentFieldName + "." : "") + jsonObject.get("id").getAsString();
-
 				componentService.registerComponent(newComponentId, component);
 			} else {
 				for (Map.Entry<String, JsonElement> entry : jsonObject.entrySet()) {
@@ -111,6 +108,15 @@ public class ComponentRegistrar {
 			for (JsonElement element : jsonArray) {
 				registerComponentsRecursively(element, componentId, parentFieldName, type);
 			}
+		} else if (jsonElement.isJsonPrimitive()) {
+			JsonPrimitive jsonPrimitive = jsonElement.getAsJsonPrimitive();
+			if (jsonPrimitive.isString() && type.equals("color")) {
+				String colorString = jsonPrimitive.getAsString();
+				CustomColor color = new CustomColor(colorString);
+				String newComponentId = componentId + "." + parentFieldName;
+
+				componentService.registerComponent(newComponentId, color);
+			}
 		}
 	}
 
@@ -120,9 +126,5 @@ public class ComponentRegistrar {
 
 	private CustomButton parseButton(JsonObject jsonObject) {
 		return gson.fromJson(jsonObject, CustomButton.class);
-	}
-
-	private CustomColor parseColor(JsonObject jsonObject) {
-		return gson.fromJson(jsonObject, CustomColor.class);
 	}
 }
