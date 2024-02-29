@@ -12,9 +12,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.github.aerittopia</groupId>
-            <artifactId>Yue</artifactId>
-            <version>dev-SNAPSHOT</version>
+            <groupId>me.whereareiam</groupId>
+            <artifactId>api</artifactId>
+            <version>0.0.1</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

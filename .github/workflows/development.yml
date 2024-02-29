@@ -63,7 +63,7 @@ jobs:
 
       - name: Build Yue
         run: |
-          mvn -pl core -B install --file pom.xml
+          mvn -B install --file pom.xml
       - name: Upload artifact
         env:
           projectName: ${{ needs.setup.outputs.projectName }}
