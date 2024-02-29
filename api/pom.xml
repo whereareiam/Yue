@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>me.whereareiam</groupId>
+        <groupId>com.aeritt</groupId>
         <artifactId>Yue</artifactId>
         <version>0.0.1</version>
     </parent>
