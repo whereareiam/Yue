@@ -48,7 +48,7 @@ jobs:
           path: api/target/${{ env.projectName }}API-${{ env.projectVersion }}.jar
 
   yue:
-    needs: [ setup, api ]
+    needs: setup
     runs-on: ubuntu-latest
 
     steps:
@@ -63,7 +63,7 @@ jobs:
 
       - name: Build Yue
         run: |
-          mvn -B install --file pom.xml
+          mvn -pl core -B install --file pom.xml
       - name: Upload artifact
         env:
           projectName: ${{ needs.setup.outputs.projectName }}
