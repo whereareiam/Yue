@@ -24,9 +24,10 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>${maven.source.version}</version>
+                <version>${maven.javadoc.version}</version>
                 <inherited>false</inherited>
                 <configuration>
+                    <doctitle>${project.parent.name}API-${project.parent.version}</doctitle>
                     <additionalOptions>
                         <additionalOption>-Xdoclint:none</additionalOption>
                     </additionalOptions>

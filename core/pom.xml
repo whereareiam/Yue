@@ -12,8 +12,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.github.aerittopia.Yue</groupId>
-            <artifactId>api</artifactId>
+            <groupId>com.github.aerittopia</groupId>
+            <artifactId>Yue</artifactId>
             <version>dev-SNAPSHOT</version>
         </dependency>
         <dependency>
