@@ -26,6 +26,11 @@
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>${maven.source.version}</version>
                 <inherited>false</inherited>
+                <configuration>
+                    <additionalOptions>
+                        <additionalOption>-Xdoclint:none</additionalOption>
+                    </additionalOptions>
+                </configuration>
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>
