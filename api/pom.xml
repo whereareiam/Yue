@@ -27,7 +27,8 @@
                 <version>${maven.javadoc.version}</version>
                 <inherited>false</inherited>
                 <configuration>
-                    <doctitle>${project.parent.name}API-${project.parent.version}</doctitle>
+                    <doctitle>${project.parent.name}API ${project.parent.version}</doctitle>
+                    <windowtitle>${project.parent.name}API ${project.parent.version}</windowtitle>
                     <additionalOptions>
                         <additionalOption>-Xdoclint:none</additionalOption>
                     </additionalOptions>
