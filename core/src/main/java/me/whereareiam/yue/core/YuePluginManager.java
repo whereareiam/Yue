@@ -3,6 +3,8 @@ package me.whereareiam.yue.core;
 import jakarta.annotation.PreDestroy;
 import lombok.Getter;
 import me.whereareiam.yue.api.YuePlugin;
+import me.whereareiam.yue.api.event.ApplicationBotStarted;
+import me.whereareiam.yue.api.event.ApplicationReloaded;
 import org.pf4j.spring.ExtensionsInjector;
 import org.pf4j.spring.SpringPluginManager;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -47,14 +49,18 @@ public class YuePluginManager {
 
 		for (File file : files) {
 			if (file.isFile() && file.getName().endsWith(".jar")) {
-				YuePlugin plugin = loadPlugin(file.toPath());
-				enablePlugin(plugin);
+				loadPlugin(file.toPath());
 			}
 		}
 
 		AbstractAutowireCapableBeanFactory beanFactory = (AbstractAutowireCapableBeanFactory) ctx.getAutowireCapableBeanFactory();
 		ExtensionsInjector extensionsInjector = new ExtensionsInjector(pluginManager, beanFactory);
 		extensionsInjector.injectExtensions();
+	}
+
+	@EventListener(ApplicationReloaded.class)
+	public void onReload() {
+		plugins.forEach(this::reloadPlugin);
 	}
 
 	@PreDestroy
@@ -65,21 +71,23 @@ public class YuePluginManager {
 		}
 	}
 
-	private YuePlugin loadPlugin(Path path) {
-		YuePlugin plugin = null;
+	@EventListener(ApplicationBotStarted.class)
+	public void enableAllPlugins() {
+		plugins.forEach(this::enablePlugin);
+	}
 
+	private void loadPlugin(Path path) {
 		try {
 			String pluginId = pluginManager.loadPlugin(path);
-			plugin = (YuePlugin) pluginManager.getPlugin(pluginId).getPlugin();
-			plugins.add(plugin);
+			YuePlugin plugin = (YuePlugin) pluginManager.getPlugin(pluginId).getPlugin();
 			plugin.createApplicationContext();
 			plugin.onLoad();
+			plugins.add(plugin);
 		} catch (Exception e) {
 			logger.warning("Failed to load plugin " + path.getFileName());
 			logger.warning(e.getMessage());
 		}
 
-		return plugin;
 	}
 
 	private void unloadPlugin(YuePlugin plugin) {
@@ -122,8 +130,10 @@ public class YuePluginManager {
 
 	private void reloadPlugin(YuePlugin plugin) {
 		try {
+			disablePlugin(plugin);
 			unloadPlugin(plugin);
 			loadPlugin(plugin.getWrapper().getPluginPath());
+			enablePlugin(plugin);
 		} catch (Exception e) {
 			logger.warning("Failed to reload plugin " + plugin.getWrapper().getPluginId());
 		}

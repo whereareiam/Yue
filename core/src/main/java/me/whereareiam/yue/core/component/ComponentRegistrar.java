@@ -53,10 +53,10 @@ public class ComponentRegistrar {
 
 		componentPaths
 				.forEach(path -> {
-					try (var paths = java.nio.file.Files.walk(path)) {
-						paths.filter(java.nio.file.Files::isDirectory).forEach(dir -> {
+					try (var paths = Files.walk(path)) {
+						paths.filter(Files::isDirectory).forEach(dir -> {
 							String dirName = dir.getFileName().toString();
-							try (var files = java.nio.file.Files.walk(dir, 1)) {
+							try (var files = Files.walk(dir, 1)) {
 								files.filter(file -> file.toString().endsWith(".json")).forEach(file -> {
 									String componentId;
 									if (path.getNameCount() == 3) {
@@ -78,10 +78,12 @@ public class ComponentRegistrar {
 								});
 							} catch (Exception e) {
 								logger.warning("Failed to read component directory: " + dir);
+								logger.warning(e.getMessage());
 							}
 						});
 					} catch (Exception e) {
 						logger.warning("Failed to read plugin component: " + path);
+						logger.warning(e.getMessage());
 					}
 				});
 	}
