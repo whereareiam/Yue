@@ -37,7 +37,7 @@ jobs:
 
       - name: Build API
         run: |
-          mvn -pl api -B -P dev package --file pom.xml
+          mvn -B install --file pom.xml
       - name: Upload artifact
         env:
           projectName: ${{ needs.setup.outputs.projectName }}
@@ -63,7 +63,7 @@ jobs:
 
       - name: Build Yue
         run: |
-          mvn -B package --file pom.xml
+          mvn -B -P dev install --file pom.xml
       - name: Upload artifact
         env:
           projectName: ${{ needs.setup.outputs.projectName }}
