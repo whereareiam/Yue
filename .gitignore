@@ -1,5 +1,4 @@
 !**/src/main/**/target/
 !**/src/test/**/target/
-test/
-
 .idea/
+test/

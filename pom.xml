@@ -15,7 +15,7 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>api</module>
+        <module>core</module>
     </modules>
 
     <properties>
@@ -37,21 +37,14 @@
         <maven.antrun.version>3.1.0</maven.antrun.version>
         <exec-maven-plugin.version>3.1.0</exec-maven-plugin.version>
         <maven.source.version>3.6.3</maven.source.version>
-        <maven.compiler.version>3.12.1</maven.compiler.version>
     </properties>
 
     <profiles>
         <profile>
             <id>dev</id>
-            <modules>
-                <module>core</module>
-            </modules>
         </profile>
         <profile>
             <id>release</id>
-            <modules>
-                <module>core</module>
-            </modules>
         </profile>
     </profiles>
 
