@@ -6,5 +6,5 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class CustomColor {
-	public String color;
+	private String color;
 }

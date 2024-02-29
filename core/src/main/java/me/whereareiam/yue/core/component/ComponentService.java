@@ -1,6 +1,7 @@
 package me.whereareiam.yue.core.component;
 
 import me.whereareiam.yue.api.model.CustomButton;
+import me.whereareiam.yue.api.model.CustomColor;
 import me.whereareiam.yue.api.model.embed.Embed;
 import me.whereareiam.yue.api.type.ColorType;
 import org.springframework.stereotype.Service;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class ComponentService implements me.whereareiam.yue.api.component.ComponentService {
@@ -25,33 +27,37 @@ public class ComponentService implements me.whereareiam.yue.api.component.Compon
 	}
 
 	public Embed getEmbedComponent(String embedId) {
-		return (Embed) getComponent(embedId);
+		Optional<Object> component = getComponent(embedId);
+		return (Embed) component.orElse(null);
+
 	}
 
 	public CustomButton getButtonComponent(String buttonId) {
-		return (CustomButton) getComponent(buttonId);
+		Optional<Object> component = getComponent(buttonId);
+		return (CustomButton) component.orElse(null);
 	}
 
 	public Color getColorComponent(String colorId) {
-		String color = (String) getComponent(colorId);
-		if (color == null) return getColorComponent(ColorType.FALLBACK);
+		Optional<Object> component = getComponent(colorId);
 
-		return Color.decode(color);
+		return component.map(object -> Color.decode(((CustomColor) object).getColor())).orElseGet(() -> getColorComponent(ColorType.FALLBACK));
 	}
 
 	public Color getColorComponent(ColorType type) {
-		String color = (String) getComponent("core.color.palette." + type.name().toLowerCase());
-		if (color == null) return getColorComponent(ColorType.FALLBACK);
+		Optional<Object> component = getComponent("core.color.palette." + type.name().toLowerCase());
 
-		return Color.decode(color);
+		return component.map(object -> Color.decode(((CustomColor) object).getColor())).orElseGet(() -> getColorComponent(ColorType.FALLBACK));
 	}
 
-	private Object getComponent(String componentId) {
-		return components.get(componentId.split("\\.")[0]).get(componentId);
+	private Optional<Object> getComponent(String componentId) {
+		try {
+			return Optional.of(components.get(componentId.split("\\.")[0]).get(componentId));
+		} catch (NullPointerException e) {
+			return Optional.empty();
+		}
 	}
 
 	public int getComponentCount() {
 		return components.values().stream().mapToInt(Map::size).sum();
 	}
 }
-
