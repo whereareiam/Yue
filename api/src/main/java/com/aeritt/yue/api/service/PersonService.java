@@ -6,4 +6,8 @@ public interface PersonService {
 	void deleteUser(String userId);
 
 	long getUserCount();
+
+	PersonLanguageService getPersonLanguageService();
+
+	PersonRoleService getPersonRoleService();
 }

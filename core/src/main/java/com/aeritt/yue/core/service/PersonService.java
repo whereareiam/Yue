@@ -1,5 +1,6 @@
 package com.aeritt.yue.core.service;
 
+import com.aeritt.yue.api.service.PersonLanguageService;
 import com.aeritt.yue.core.database.entity.Language;
 import com.aeritt.yue.core.database.entity.Person;
 import com.aeritt.yue.core.database.entity.PersonAdditionalLanguage;
@@ -10,9 +11,11 @@ import com.aeritt.yue.core.database.repository.PersonRepository;
 import com.aeritt.yue.core.database.repository.PersonRoleRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
@@ -24,15 +27,17 @@ public class PersonService implements com.aeritt.yue.api.service.PersonService {
 	private final LanguageRepository languageRepository;
 	private final PersonAdditionalLanguageRepository additionalLanguageRepository;
 	private final PersonRoleRepository roleRepository;
+	private final ApplicationContext ctx;
 
 	@Autowired
 	public PersonService(@Lazy LanguageRepository languageRepository, @Lazy PersonRepository repository,
 	                     @Lazy PersonAdditionalLanguageRepository additionalLanguageRepository,
-	                     @Lazy PersonRoleRepository roleRepository) {
+	                     @Lazy PersonRoleRepository roleRepository, @Qualifier ApplicationContext ctx) {
 		this.languageRepository = languageRepository;
 		this.repository = repository;
 		this.additionalLanguageRepository = additionalLanguageRepository;
 		this.roleRepository = roleRepository;
+		this.ctx = ctx;
 	}
 
 	@Caching(evict = {
@@ -71,5 +76,13 @@ public class PersonService implements com.aeritt.yue.api.service.PersonService {
 	@Cacheable(value = "users")
 	public long getUserCount() {
 		return repository.count();
+	}
+
+	public PersonLanguageService getPersonLanguageService() {
+		return ctx.getBean(PersonLanguageService.class);
+	}
+
+	public PersonRoleService getPersonRoleService() {
+		return ctx.getBean(PersonRoleService.class);
 	}
 }
