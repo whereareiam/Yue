@@ -1,6 +1,6 @@
 package com.aeritt.yue.core.language;
 
-import com.aeritt.yue.core.config.configs.setting.SettingsConfig;
+import com.aeritt.yue.core.config.setting.SettingsConfig;
 import com.aeritt.yue.core.service.PersonLanguageService;
 import lombok.Getter;
 import net.dv8tion.jda.api.entities.User;
@@ -31,7 +31,7 @@ public class LanguageService implements com.aeritt.yue.api.language.LanguageServ
 	public String getTranslation(User user, String key) {
 		Optional<String> langCode = personLanguageService.getUserLanguage(user.getId());
 		if (langCode.isEmpty()) {
-			langCode = Optional.of(settingsConfig.getDefaultLanguage());
+			langCode = Optional.of(getDefaultLanguage());
 		}
 
 		Map<String, String> langTranslations = translations.get(langCode.get());
@@ -40,10 +40,14 @@ public class LanguageService implements com.aeritt.yue.api.language.LanguageServ
 	}
 
 	public String getTranslation(String key) {
-		String langCode = settingsConfig.getDefaultLanguage();
+		String langCode = getDefaultLanguage();
 
 		Map<String, String> langTranslations = translations.get(langCode);
 		String translation = langTranslations != null ? langTranslations.get(key) : null;
 		return translation != null ? translation : key;
+	}
+
+	public String getDefaultLanguage() {
+		return settingsConfig.getDefaultLanguage();
 	}
 }

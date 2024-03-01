@@ -1,10 +1,10 @@
 package com.aeritt.yue.core.database.repository;
 
-import jakarta.transaction.Transactional;
 import com.aeritt.yue.core.database.entity.Person;
 import com.aeritt.yue.core.database.entity.PersonRole;
 import com.aeritt.yue.core.database.entity.PersonRoleId;
 import com.aeritt.yue.core.database.entity.Role;
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Repository;

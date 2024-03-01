@@ -1,4 +1,4 @@
-package com.aeritt.yue.core.config.configs.setting;
+package com.aeritt.yue.core.config.setting;
 
 import lombok.Getter;
 import net.dv8tion.jda.api.requests.GatewayIntent;

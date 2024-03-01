@@ -1,4 +1,4 @@
-package com.aeritt.yue.core.config.configs.command;
+package com.aeritt.yue.core.config.command;
 
 import com.aeritt.yue.api.command.base.CommandCategory;
 import lombok.Getter;

@@ -47,6 +47,7 @@ public class ComponentRegistrar {
 		List<Path> componentPaths = pluginManager.getPlugins()
 				.stream()
 				.map(pluginWrapper -> pluginWrapper.getPluginPath().getParent().resolve(pluginWrapper.getPluginId() + "/component"))
+				.filter(Files::exists)
 				.collect(Collectors.toList());
 
 		componentPaths.add(dataPath.resolve("component"));

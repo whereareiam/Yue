@@ -1,6 +1,5 @@
 package com.aeritt.yue.core.service;
 
-import jakarta.persistence.EntityNotFoundException;
 import com.aeritt.yue.core.database.entity.Language;
 import com.aeritt.yue.core.database.entity.Person;
 import com.aeritt.yue.core.database.entity.PersonAdditionalLanguage;
@@ -9,6 +8,7 @@ import com.aeritt.yue.core.database.repository.LanguageRepository;
 import com.aeritt.yue.core.database.repository.PersonAdditionalLanguageRepository;
 import com.aeritt.yue.core.database.repository.PersonRepository;
 import com.aeritt.yue.core.database.repository.PersonRoleRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;

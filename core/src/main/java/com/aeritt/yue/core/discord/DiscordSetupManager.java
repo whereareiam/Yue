@@ -1,14 +1,11 @@
 package com.aeritt.yue.core.discord;
 
-import jakarta.annotation.PreDestroy;
 import com.aeritt.yue.api.event.ApplicationBotStarted;
 import com.aeritt.yue.api.util.BeanRegistrationUtil;
-import com.aeritt.yue.core.config.RolesConfig;
-import com.aeritt.yue.core.config.configs.setting.DiscordSettingsConfig;
-import com.aeritt.yue.core.config.configs.setting.SettingsConfig;
-import com.aeritt.yue.core.database.entity.Role;
-import com.aeritt.yue.core.database.repository.RoleRepository;
+import com.aeritt.yue.core.config.setting.DiscordSettingsConfig;
+import com.aeritt.yue.core.config.setting.SettingsConfig;
 import com.aeritt.yue.core.language.LanguageService;
+import jakarta.annotation.PreDestroy;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
@@ -23,26 +20,20 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
 @Component
 @DependsOn("databaseSetupManager")
 public class DiscordSetupManager {
 	private final BeanRegistrationUtil beanRegistrationUtil;
 	private final LanguageService languageService;
 	private final SettingsConfig settingsConfig;
-	private final RolesConfig rolesConfig;
-	private final RoleRepository roleRepository;
 	private JDA jda;
 
 	@Autowired
-	public DiscordSetupManager(BeanRegistrationUtil beanRegistrationUtil, LanguageService languageService, SettingsConfig settingsConfig, RolesConfig rolesConfig,
-	                           RoleRepository roleRepository) {
+	public DiscordSetupManager(BeanRegistrationUtil beanRegistrationUtil, LanguageService languageService,
+	                           SettingsConfig settingsConfig) {
 		this.beanRegistrationUtil = beanRegistrationUtil;
 		this.languageService = languageService;
 		this.settingsConfig = settingsConfig;
-		this.rolesConfig = rolesConfig;
-		this.roleRepository = roleRepository;
 	}
 
 	@Order(Ordered.HIGHEST_PRECEDENCE)
@@ -65,28 +56,6 @@ public class DiscordSetupManager {
 		jda.getPresence().setActivity(Activity.playing(
 				languageService.getTranslation("core.main.phase.loading")
 		));
-
-		registerRoles();
-	}
-
-	private void registerRoles() {
-		List<Role> existingRoles = roleRepository.findAll();
-
-		List<String> existingRoleIds = existingRoles.stream()
-				.map(Role::getId)
-				.toList();
-
-		existingRoles.stream()
-				.filter(role -> !rolesConfig.getRoles().contains(role.getId()))
-				.forEach(roleRepository::delete);
-
-		rolesConfig.getRoles().stream()
-				.filter(roleId -> !existingRoleIds.contains(roleId))
-				.forEach(roleId -> {
-					Role newRole = new Role();
-					newRole.setId(roleId);
-					roleRepository.save(newRole);
-				});
 	}
 
 	@Order(Ordered.HIGHEST_PRECEDENCE)

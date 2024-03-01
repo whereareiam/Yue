@@ -1,4 +1,4 @@
-package com.aeritt.yue.core.config.configs.setting.database;
+package com.aeritt.yue.core.config.setting.database;
 
 import lombok.Getter;
 

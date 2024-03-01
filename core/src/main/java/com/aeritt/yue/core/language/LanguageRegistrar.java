@@ -1,9 +1,9 @@
 package com.aeritt.yue.core.language;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.aeritt.yue.core.database.entity.Language;
 import com.aeritt.yue.core.database.repository.LanguageRepository;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.event.ApplicationStartedEvent;

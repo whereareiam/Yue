@@ -12,4 +12,6 @@ public interface LanguageService {
 	String getTranslation(String key);
 
 	Map<String, Map<String, String>> getTranslations();
+
+	String getDefaultLanguage();
 }

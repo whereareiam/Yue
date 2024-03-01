@@ -29,9 +29,9 @@ Needed for release:
 
 - [x] Per plugin components
 - [x] Commands -> Essentials Plugin
+- [x] Verification feature -> Plugin
 - [ ] Plugin controller
 - [ ] Synchronization feature -> Plugin
-- [ ] Verification feature -> Plugin
 
 Planned for the future:
 

@@ -7,11 +7,11 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.scheduling.annotation.EnableAsync;
 
+@EntityScan
 @EnableAsync
 @EnableCaching
 @EnableJpaRepositories
 @SpringBootApplication
-@EntityScan
 public class YueApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(YueApplication.class, args);
