@@ -43,6 +43,10 @@ public class PersonRoleService implements com.aeritt.yue.api.service.PersonRoleS
 		personRoleRepository.deleteByPersonIdAndRoleId(userId, role.getId());
 	}
 
+	public boolean hasRole(String userId, String roleId) {
+		return personRoleRepository.existsByPersonIdAndRoleId(userId, roleId);
+	}
+
 	public List<String> getPersonsByRole(String roleId) {
 		Optional<Role> role = roleRepository.findById(roleId);
 		if (role.isPresent()) {

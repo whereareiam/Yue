@@ -5,6 +5,8 @@ public interface PersonService {
 
 	void deleteUser(String userId);
 
+	boolean userExists(String userId);
+
 	long getUserCount();
 
 	PersonLanguageService getPersonLanguageService();

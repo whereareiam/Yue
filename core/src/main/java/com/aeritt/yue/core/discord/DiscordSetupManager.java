@@ -62,6 +62,10 @@ public class DiscordSetupManager {
 	@EventListener(ApplicationBotStarted.class)
 	public void onEnable() {
 		beanRegistrationUtil.registerSingleton("guild", Guild.class, jda.getGuildById(settingsConfig.getDiscord().getGuildId()));
+		jda.getGuilds().stream()
+				.filter(guild -> !guild.getId().equals(settingsConfig.getDiscord().getGuildId()))
+				.forEach(Guild::leave);
+
 		jda.getPresence().setActivity(Activity.playing(
 				languageService.getTranslation("core.main.phase.starting")
 		));

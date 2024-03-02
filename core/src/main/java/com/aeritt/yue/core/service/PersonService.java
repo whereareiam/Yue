@@ -73,6 +73,10 @@ public class PersonService implements com.aeritt.yue.api.service.PersonService {
 		repository.delete(person);
 	}
 
+	public boolean userExists(String userId) {
+		return repository.existsById(userId);
+	}
+
 	@Cacheable(value = "users")
 	public long getUserCount() {
 		return repository.count();

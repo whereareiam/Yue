@@ -8,4 +8,6 @@ public interface PersonRoleService {
 	void removeRole(String userId, String roleId);
 
 	List<String> getPersonsByRole(String roleId);
+
+	boolean hasRole(String userId, String roleId);
 }
