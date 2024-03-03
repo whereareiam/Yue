@@ -31,7 +31,8 @@ Needed for release:
 - [x] Commands -> Essentials Plugin
 - [x] Verification feature -> Plugin
 - [ ] Plugin controller
-- [ ] Synchronization feature -> Plugin
+- [ ] Role manager plugin
+- [ ] Help command full implementation
 
 Planned for the future:
 

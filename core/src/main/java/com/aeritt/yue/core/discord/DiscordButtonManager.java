@@ -26,4 +26,3 @@ public class DiscordButtonManager implements com.aeritt.yue.api.discord.DiscordB
 		}
 	}
 }
-

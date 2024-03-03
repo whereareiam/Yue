@@ -26,7 +26,7 @@ public class MessageSenderUtil implements com.aeritt.yue.api.util.message.Messag
 
 		hook.sendMessageEmbeds(
 				messageBuilderUtil.embed(
-						"noRequiredRole",
+						"core.embed.default.errors.noRequiredRole",
 						hook.getInteraction().getUser(),
 						Optional.of(new PlaceholderReplacement(List.of("{roleMention}"), List.of(allowedRoles)))
 				)
@@ -38,7 +38,7 @@ public class MessageSenderUtil implements com.aeritt.yue.api.util.message.Messag
 
 		hook.sendMessageEmbeds(
 				messageBuilderUtil.embed(
-						"noRequiredChannel",
+						"core.embed.default.errors.noRequiredChannel",
 						hook.getInteraction().getUser(),
 						Optional.of(new PlaceholderReplacement(List.of("{channelMention}"), List.of(allowedChannels)))
 				)
@@ -48,7 +48,7 @@ public class MessageSenderUtil implements com.aeritt.yue.api.util.message.Messag
 	public void noRequiredUser(InteractionHook hook, String id) {
 		hook.sendMessageEmbeds(
 				messageBuilderUtil.embed(
-						"noRequiredUser",
+						"core.embed.default.errors.noRequiredUser",
 						hook.getInteraction().getUser(),
 						Optional.of(new PlaceholderReplacement(List.of("{userMention}"), List.of(id)))
 				)
@@ -58,7 +58,7 @@ public class MessageSenderUtil implements com.aeritt.yue.api.util.message.Messag
 	public void guildOnly(InteractionHook hook) {
 		hook.sendMessageEmbeds(
 				messageBuilderUtil.embed(
-						"guildOnly",
+						"core.embed.default.errors.guildOnly",
 						hook.getInteraction().getUser(),
 						Optional.empty()
 				)

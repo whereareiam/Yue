@@ -16,6 +16,7 @@ public class DeleteCommandConfig {
 	private CommandCategory category = CommandCategory.UTILITY;
 	private String shortDescription = "$t{core.commands.staff.delete.shortDescription}";
 	private String fullDescription = "$t{core.commands.staff.delete.fullDescription}";
-	private String role = "1209471775805800478";
+	private String roleId = "1209471775805800478";
+	private String embedId = "core.embed.commands.delete.success";
 	private List<String> allowedChannels = new ArrayList<>();
 }

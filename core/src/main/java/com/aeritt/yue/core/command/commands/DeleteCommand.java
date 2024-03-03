@@ -54,7 +54,7 @@ public class DeleteCommand extends CommandBase {
 			guild.kick(userOption.getAsMember()).queue();
 
 			MessageEmbed embed = messageBuilderUtil.embed(
-					"deleteCommandSuccess",
+					deleteCommand.getEmbedId(),
 					event.getUser(),
 					Optional.empty()
 			);
@@ -101,7 +101,7 @@ public class DeleteCommand extends CommandBase {
 
 	@Override
 	public String getRequiredRole() {
-		return deleteCommand.getRole();
+		return deleteCommand.getRoleId();
 	}
 
 	@Override

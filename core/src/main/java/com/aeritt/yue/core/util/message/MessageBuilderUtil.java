@@ -86,6 +86,6 @@ public class MessageBuilderUtil implements com.aeritt.yue.api.util.message.Messa
 		String label = customButton.getLabel();
 		label = messageFormatterUtil.formatMessage(user, label);
 
-		return Button.of(customButton.getStyle(), customButton.getId(), label);
+		return Button.of(customButton.getStyle(), buttonId, label);
 	}
 }
