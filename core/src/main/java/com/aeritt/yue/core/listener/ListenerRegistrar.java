@@ -1,6 +1,7 @@
 package com.aeritt.yue.core.listener;
 
 import com.aeritt.yue.core.listener.listeners.ButtonInteractionListener;
+import com.aeritt.yue.core.listener.listeners.MessageReceivedListener;
 import com.aeritt.yue.core.listener.listeners.ReadyListener;
 import com.aeritt.yue.core.listener.listeners.SlashCommandInteractionListener;
 import net.dv8tion.jda.api.JDA;
@@ -33,6 +34,7 @@ public class ListenerRegistrar {
 	public void registerListeners() {
 		jda.addEventListener(ctx.getBean(SlashCommandInteractionListener.class));
 		jda.addEventListener(ctx.getBean(ButtonInteractionListener.class));
+		jda.addEventListener(ctx.getBean(MessageReceivedListener.class));
 		jda.addEventListener(ctx.getBean(ReadyListener.class));
 	}
 }

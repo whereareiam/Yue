@@ -45,8 +45,8 @@ public class DiscordSetupManager {
 			JDABuilder bot = JDABuilder
 					.createDefault(discordSettingsConfig.getToken())
 					.setChunkingFilter(ChunkingFilter.ALL)
+					.setMemberCachePolicy(MemberCachePolicy.VOICE)
 					.enableIntents(discordSettingsConfig.getIntents())
-					.setMemberCachePolicy(MemberCachePolicy.ONLINE)
 					.setAutoReconnect(discordSettingsConfig.isAutoReconnect());
 
 			jda = bot.build();

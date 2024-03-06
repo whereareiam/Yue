@@ -1,14 +1,12 @@
 package com.aeritt.yue.core.discord;
 
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
-@Lazy
 @Service
 public class DiscordButtonManager implements com.aeritt.yue.api.discord.DiscordButtonManager {
 	private final Map<String, Consumer<ButtonInteractionEvent>> buttonActions = new HashMap<>();

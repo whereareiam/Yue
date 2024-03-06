@@ -2,6 +2,7 @@ package com.aeritt.yue.core.command.management;
 
 import com.aeritt.yue.api.command.base.CommandBase;
 import com.aeritt.yue.api.command.management.CommandRegistrar;
+import com.aeritt.yue.api.discord.member.DiscordMemberManager;
 import com.aeritt.yue.api.util.message.MessageSenderUtil;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -16,12 +17,15 @@ import java.util.Optional;
 @Service
 public class CommandService {
 	private final MessageSenderUtil messageSenderUtil;
+	private final DiscordMemberManager memberManager;
 	private final CommandRegistrar commandRegistrar;
 	private final Guild guild;
 
 	@Autowired
-	public CommandService(MessageSenderUtil messageSenderUtil, CommandRegistrar commandRegistrar, @Lazy Guild guild) {
+	public CommandService(MessageSenderUtil messageSenderUtil, DiscordMemberManager memberManager,
+	                      CommandRegistrar commandRegistrar, @Lazy Guild guild) {
 		this.messageSenderUtil = messageSenderUtil;
+		this.memberManager = memberManager;
 		this.commandRegistrar = commandRegistrar;
 		this.guild = guild;
 	}
@@ -70,15 +74,7 @@ public class CommandService {
 
 	private boolean checkRequiredRole(CommandBase command, SlashCommandInteractionEvent event) {
 		if (command.getRequiredRole().isEmpty()) return true;
-
-		Member member;
-		if (event.isFromGuild()) {
-			member = event.getMember();
-		} else {
-			member = guild.retrieveMember(event.getUser()).complete();
-		}
-
-		if (member == null) return false;
+		Member member = memberManager.getMember(event.getUser().getId());
 
 		boolean isAllowed = member.getRoles().stream()
 				.anyMatch(role -> role.getId().equalsIgnoreCase(command.getRequiredRole()));
