@@ -1,12 +1,11 @@
 package com.aeritt.yue.core;
 
-import jakarta.annotation.PreDestroy;
-import lombok.Getter;
 import com.aeritt.yue.api.YuePlugin;
 import com.aeritt.yue.api.event.ApplicationBotStarted;
 import com.aeritt.yue.api.event.ApplicationReloaded;
+import jakarta.annotation.PreDestroy;
+import lombok.Getter;
 import org.pf4j.spring.ExtensionsInjector;
-import org.pf4j.spring.SpringPluginManager;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory;
 import org.springframework.boot.context.event.ApplicationReadyEvent;

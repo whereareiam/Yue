@@ -1,6 +1,5 @@
 package com.aeritt.yue.core;
 
-import org.pf4j.spring.SpringPluginManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.info.BuildProperties;
@@ -25,14 +24,6 @@ public class YueConfig {
 	}
 
 	@Bean
-	public SpringPluginManager pluginManager() {
-		SpringPluginManager pluginManager = new SpringPluginManager();
-		pluginManager.setApplicationContext(ctx);
-
-		return pluginManager;
-	}
-
-	@Bean
 	@Qualifier("version")
 	public String getVersion() {
 		String version;
@@ -49,7 +40,7 @@ public class YueConfig {
 	@Primary
 	@Qualifier("dataPath")
 	public Path getDataPath() {
-		return System.getProperty("app.dir") != null ? Paths.get(System.getProperty("app.dir")) : Paths.get("");
+		return System.getProperty("app.dir") != null ? Paths.get(System.getProperty("app.dir")) : Paths.get(System.getProperty("user.dir"));
 	}
 
 	@Bean

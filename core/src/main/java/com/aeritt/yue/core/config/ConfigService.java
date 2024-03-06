@@ -1,8 +1,8 @@
 package com.aeritt.yue.core.config;
 
 import com.aeritt.yue.api.util.BeanRegistrationUtil;
+import com.aeritt.yue.core.SpringPluginManager;
 import org.pf4j.PluginWrapper;
-import org.pf4j.spring.SpringPluginManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;

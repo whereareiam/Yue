@@ -75,7 +75,7 @@ public class CommandService {
 		if (event.isFromGuild()) {
 			member = event.getMember();
 		} else {
-			member = guild.getMember(event.getUser());
+			member = guild.retrieveMember(event.getUser()).complete();
 		}
 
 		if (member == null) return false;

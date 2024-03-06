@@ -49,7 +49,7 @@ public class LanguageRegistrar {
 							Map<String, Object> rawTranslations = new Gson().fromJson(reader, new TypeToken<HashMap<String, Object>>() {
 							}.getType());
 							Map<String, String> translations = flattenMap(rawTranslations, dirName);
-							translations.forEach((key, value) -> registerTranslation(key, langCode, value));
+							translations.forEach((key, value) -> languageService.registerTranslation(key, langCode, value));
 						} catch (IOException e) {
 							logger.warning("Failed to read language file: " + file);
 						}
@@ -71,17 +71,22 @@ public class LanguageRegistrar {
 			if (entry.getValue() instanceof Map) {
 				translations.putAll(flattenMap((Map<String, Object>) entry.getValue(), key));
 			} else if (entry.getValue() instanceof List) {
-				String value = String.join("\n", (List<String>) entry.getValue());
-				translations.put(key, value);
+				List<?> list = (List<?>) entry.getValue();
+				if (!list.isEmpty() && list.get(0) instanceof String) {
+					String value = String.join("\n", (List<String>) list);
+					translations.put(key, value);
+				} else {
+					for (Object obj : list) {
+						if (obj instanceof Map) {
+							translations.putAll(flattenMap((Map<String, Object>) obj, key));
+						}
+					}
+				}
 			} else {
 				translations.put(key, entry.getValue().toString());
 			}
 		}
 		return translations;
-	}
-
-	private void registerTranslation(String key, String langCode, String value) {
-		languageService.registerTranslation(key, langCode, value);
 	}
 
 	private void registerLanguage(String langCode) {

@@ -1,8 +1,8 @@
 package com.aeritt.yue.core.util.message;
 
-import com.vdurmont.emoji.EmojiParser;
 import com.aeritt.yue.api.util.message.PlaceholderReplacement;
 import com.aeritt.yue.core.language.LanguageService;
+import com.vdurmont.emoji.EmojiParser;
 import net.dv8tion.jda.api.entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

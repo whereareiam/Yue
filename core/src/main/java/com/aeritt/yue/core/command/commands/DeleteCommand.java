@@ -23,7 +23,6 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Optional;
 
-@Lazy
 @Component
 public class DeleteCommand extends CommandBase {
 	private final DeleteCommandConfig deleteCommand;

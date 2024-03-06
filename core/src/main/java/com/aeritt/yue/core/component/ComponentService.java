@@ -13,23 +13,15 @@ import java.util.Optional;
 
 @Service
 public class ComponentService implements com.aeritt.yue.api.component.ComponentService {
-	private final Map<String, Map<String, Object>> components = new HashMap<>();
+	private final Map<String, Object> components = new HashMap<>();
 
 	public void registerComponent(String id, Object component) {
-		String[] parts = id.split("\\.");
-		String firstPart = parts[0];
-
-		if (!components.containsKey(firstPart)) {
-			components.put(firstPart, new HashMap<>());
-		}
-
-		components.get(firstPart).put(id, component);
+		components.put(id, component);
 	}
 
 	public Embed getEmbedComponent(String embedId) {
 		Optional<Object> component = getComponent(embedId);
 		return (Embed) component.orElse(null);
-
 	}
 
 	public CustomButton getButtonComponent(String buttonId) {
@@ -51,13 +43,13 @@ public class ComponentService implements com.aeritt.yue.api.component.ComponentS
 
 	private Optional<Object> getComponent(String componentId) {
 		try {
-			return Optional.of(components.get(componentId.split("\\.")[0]).get(componentId));
+			return Optional.of(components.get(componentId));
 		} catch (NullPointerException e) {
 			return Optional.empty();
 		}
 	}
 
 	public int getComponentCount() {
-		return components.values().stream().mapToInt(Map::size).sum();
+		return components.values().size();
 	}
 }

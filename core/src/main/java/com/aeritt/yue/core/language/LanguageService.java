@@ -50,4 +50,8 @@ public class LanguageService implements com.aeritt.yue.api.language.LanguageServ
 	public String getDefaultLanguage() {
 		return settingsConfig.getDefaultLanguage();
 	}
+
+	public int getLanguageCount() {
+		return translations.values().stream().mapToInt(Map::size).sum();
+	}
 }

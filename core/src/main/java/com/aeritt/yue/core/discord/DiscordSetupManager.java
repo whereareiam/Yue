@@ -11,6 +11,7 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.exceptions.InvalidTokenException;
+import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -43,6 +44,7 @@ public class DiscordSetupManager {
 			DiscordSettingsConfig discordSettingsConfig = settingsConfig.getDiscord();
 			JDABuilder bot = JDABuilder
 					.createDefault(discordSettingsConfig.getToken())
+					.setChunkingFilter(ChunkingFilter.ALL)
 					.enableIntents(discordSettingsConfig.getIntents())
 					.setMemberCachePolicy(MemberCachePolicy.ONLINE)
 					.setAutoReconnect(discordSettingsConfig.isAutoReconnect());

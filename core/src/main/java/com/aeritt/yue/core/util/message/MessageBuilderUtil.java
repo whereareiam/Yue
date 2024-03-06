@@ -3,6 +3,7 @@ package com.aeritt.yue.core.util.message;
 import com.aeritt.yue.api.model.CustomButton;
 import com.aeritt.yue.api.model.embed.Embed;
 import com.aeritt.yue.api.model.embed.EmbedFooter;
+import com.aeritt.yue.api.type.ColorType;
 import com.aeritt.yue.api.util.message.MessageFormatterUtil;
 import com.aeritt.yue.api.util.message.PlaceholderReplacement;
 import com.aeritt.yue.core.component.ComponentService;
@@ -40,7 +41,13 @@ public class MessageBuilderUtil implements com.aeritt.yue.api.util.message.Messa
 		String[] finalMessage = message;
 		Optional.ofNullable(embed.getTitle()).ifPresent(title -> embedBuilder.setTitle(finalMessage[0]));
 		Optional.ofNullable(embed.getDescription()).ifPresent(description -> embedBuilder.setDescription(finalMessage[1]));
-		Optional.ofNullable(embed.getColor()).map(componentService::getColorComponent).ifPresent(embedBuilder::setColor);
+		Optional.ofNullable(embed.getColor())
+				.map(color -> color.equals(color.toUpperCase()) ? ColorType.valueOf(color) : color)
+				.map(color -> color instanceof ColorType ?
+						componentService.getColorComponent((ColorType) color) :
+						componentService.getColorComponent((String) color))
+				.ifPresent(embedBuilder::setColor);
+
 		Optional.ofNullable(embed.getUrl()).ifPresent(embedBuilder::setUrl);
 		Optional.ofNullable(embed.getImage()).ifPresent(embedBuilder::setImage);
 		Optional.ofNullable(embed.getThumbnail()).ifPresent(embedBuilder::setThumbnail);

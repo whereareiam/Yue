@@ -30,9 +30,13 @@ Needed for release:
 - [x] Per plugin components
 - [x] Commands -> Essentials Plugin
 - [x] Verification feature -> Plugin
+- [ ] Implement own member caching system
+- [ ] Editable message util
 - [ ] Plugin controller
 - [ ] Role manager plugin
 - [ ] Help command full implementation
+- [ ] Handle cases where we can't PM the user
+- [ ] Handle command permissions on discord side
 
 Planned for the future:
 
