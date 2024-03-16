@@ -1,7 +1,7 @@
-package com.aeritt.yue.core.database.repository;
+package com.aeritt.yue.core.database.repository.person;
 
-import com.aeritt.yue.core.database.entity.PersonAdditionalLanguage;
-import com.aeritt.yue.core.database.entity.PersonAdditionalLanguageId;
+import com.aeritt.yue.core.database.entity.person.PersonAdditionalLanguage;
+import com.aeritt.yue.core.database.entity.person.PersonAdditionalLanguageId;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;

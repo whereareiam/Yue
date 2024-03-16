@@ -33,6 +33,7 @@
         <ehcache.version>2.10.9.2</ehcache.version>
         <pf4j-spring.version>0.9.0-SNAPSHOT</pf4j-spring.version>
         <jakarta.persistence.version>3.1.0</jakarta.persistence.version>
+        <hikaricp.version>5.1.0</hikaricp.version>
 
         <!-- Maven -->
         <maven.antrun.version>3.1.0</maven.antrun.version>
@@ -89,5 +90,11 @@
             <artifactId>jakarta.persistence-api</artifactId>
             <version>${jakarta.persistence.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+            <version>${hikaricp.version}</version>
+        </dependency>
+
     </dependencies>
 </project>

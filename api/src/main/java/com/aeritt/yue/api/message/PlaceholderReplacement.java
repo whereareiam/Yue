@@ -1,4 +1,4 @@
-package com.aeritt.yue.api.util.message;
+package com.aeritt.yue.api.message;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

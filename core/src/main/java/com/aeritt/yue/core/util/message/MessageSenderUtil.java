@@ -1,6 +1,6 @@
 package com.aeritt.yue.core.util.message;
 
-import com.aeritt.yue.api.util.message.PlaceholderReplacement;
+import com.aeritt.yue.api.message.PlaceholderReplacement;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -9,11 +9,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class MessageSenderUtil implements com.aeritt.yue.api.util.message.MessageSenderUtil {
-	private final MessageBuilderUtil messageBuilderUtil;
+public class MessageSenderUtil {
+	private final MessageBuilder messageBuilderUtil;
 
 	@Autowired
-	public MessageSenderUtil(MessageBuilderUtil messageBuilderUtil) {
+	public MessageSenderUtil(MessageBuilder messageBuilderUtil) {
 		this.messageBuilderUtil = messageBuilderUtil;
 	}
 

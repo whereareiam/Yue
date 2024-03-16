@@ -1,4 +1,4 @@
-package com.aeritt.yue.core.database.entity;
+package com.aeritt.yue.core.database.entity.person;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -9,7 +9,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @EqualsAndHashCode
-public class PersonAdditionalLanguageId implements Serializable {
+public class PersonRoleId implements Serializable {
 	private String personId;
-	private int languageId;
+	private String roleId;
 }

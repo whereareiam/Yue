@@ -1,11 +1,11 @@
 package com.aeritt.yue.core.service;
 
-import com.aeritt.yue.core.database.entity.Person;
-import com.aeritt.yue.core.database.entity.PersonRole;
 import com.aeritt.yue.core.database.entity.Role;
-import com.aeritt.yue.core.database.repository.PersonRepository;
-import com.aeritt.yue.core.database.repository.PersonRoleRepository;
+import com.aeritt.yue.core.database.entity.person.Person;
+import com.aeritt.yue.core.database.entity.person.PersonRole;
 import com.aeritt.yue.core.database.repository.RoleRepository;
+import com.aeritt.yue.core.database.repository.person.PersonRepository;
+import com.aeritt.yue.core.database.repository.person.PersonRoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;

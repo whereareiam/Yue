@@ -1,6 +1,6 @@
 package com.aeritt.yue.core.listener.pubisher;
 
-import com.aeritt.yue.api.event.ApplicationReloaded;
+import com.aeritt.yue.core.event.ApplicationReloaded;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -16,5 +16,6 @@ public class ApplicationReloadedPublisher {
 
 	public void publish() {
 		applicationEventPublisher.publishEvent(new ApplicationReloaded(this));
+		System.out.println("published");
 	}
 }

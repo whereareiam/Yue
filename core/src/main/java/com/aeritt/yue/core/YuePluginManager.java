@@ -1,8 +1,8 @@
 package com.aeritt.yue.core;
 
 import com.aeritt.yue.api.YuePlugin;
-import com.aeritt.yue.api.event.ApplicationBotStarted;
-import com.aeritt.yue.api.event.ApplicationReloaded;
+import com.aeritt.yue.core.event.ApplicationBotStarted;
+import com.aeritt.yue.core.event.ApplicationReloaded;
 import jakarta.annotation.PreDestroy;
 import lombok.Getter;
 import org.pf4j.spring.ExtensionsInjector;
@@ -76,17 +76,20 @@ public class YuePluginManager {
 	}
 
 	private void loadPlugin(Path path) {
+		YuePlugin plugin = null;
+		String pluginId = "";
+
 		try {
-			String pluginId = pluginManager.loadPlugin(path);
-			YuePlugin plugin = (YuePlugin) pluginManager.getPlugin(pluginId).getPlugin();
+			pluginId = pluginManager.loadPlugin(path);
+			plugin = (YuePlugin) pluginManager.getPlugin(pluginId).getPlugin();
 			plugin.createApplicationContext();
 			plugin.onLoad();
 			plugins.add(plugin);
 		} catch (Exception e) {
 			logger.warning("Failed to load plugin " + path.getFileName());
 			logger.warning(e.getMessage());
+			plugins.remove(plugin);
 		}
-
 	}
 
 	private void unloadPlugin(YuePlugin plugin) {
@@ -129,10 +132,7 @@ public class YuePluginManager {
 
 	private void reloadPlugin(YuePlugin plugin) {
 		try {
-			disablePlugin(plugin);
-			unloadPlugin(plugin);
-			loadPlugin(plugin.getWrapper().getPluginPath());
-			enablePlugin(plugin);
+			plugin.onReload();
 		} catch (Exception e) {
 			logger.warning("Failed to reload plugin " + plugin.getWrapper().getPluginId());
 		}

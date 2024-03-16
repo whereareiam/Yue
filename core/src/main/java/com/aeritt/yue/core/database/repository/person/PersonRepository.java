@@ -1,6 +1,6 @@
-package com.aeritt.yue.core.database.repository;
+package com.aeritt.yue.core.database.repository.person;
 
-import com.aeritt.yue.core.database.entity.Person;
+import com.aeritt.yue.core.database.entity.person.Person;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

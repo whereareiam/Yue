@@ -1,6 +1,6 @@
 package com.aeritt.yue.core.util.message;
 
-import com.aeritt.yue.api.util.message.PlaceholderReplacement;
+import com.aeritt.yue.api.message.PlaceholderReplacement;
 import com.aeritt.yue.core.language.LanguageService;
 import com.vdurmont.emoji.EmojiParser;
 import net.dv8tion.jda.api.entities.User;
@@ -11,11 +11,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Service
-public class MessageFormatterUtil implements com.aeritt.yue.api.util.message.MessageFormatterUtil {
+public class MessageFormatter implements com.aeritt.yue.api.message.MessageFormatter {
 	private final LanguageService languageService;
 
 	@Autowired
-	public MessageFormatterUtil(LanguageService languageService) {
+	public MessageFormatter(LanguageService languageService) {
 		this.languageService = languageService;
 	}
 

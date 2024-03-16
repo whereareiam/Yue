@@ -4,7 +4,7 @@ import com.aeritt.yue.api.command.base.CommandBase;
 import com.aeritt.yue.api.command.base.CommandCategory;
 import com.aeritt.yue.core.config.command.CommandsConfig;
 import com.aeritt.yue.core.config.command.PluginCommandConfig;
-import com.aeritt.yue.core.util.message.MessageFormatterUtil;
+import com.aeritt.yue.core.util.message.MessageFormatter;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
@@ -16,11 +16,11 @@ import java.util.List;
 
 @Component
 public class PluginCommand extends CommandBase {
-	private final MessageFormatterUtil messageFormatterUtil;
+	private final MessageFormatter messageFormatterUtil;
 	private final PluginCommandConfig pluginCommand;
 
 	@Autowired
-	public PluginCommand(MessageFormatterUtil messageFormatterUtil, CommandsConfig commandsConfig) {
+	public PluginCommand(MessageFormatter messageFormatterUtil, CommandsConfig commandsConfig) {
 		this.messageFormatterUtil = messageFormatterUtil;
 		this.pluginCommand = commandsConfig.getPluginCommand();
 	}

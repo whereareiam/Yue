@@ -2,7 +2,7 @@ package com.aeritt.yue.core.command;
 
 import com.aeritt.yue.api.command.base.CommandBase;
 import com.aeritt.yue.api.command.management.CommandRegistrar;
-import com.aeritt.yue.api.event.ApplicationBotStarted;
+import com.aeritt.yue.core.event.ApplicationBotStarted;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;

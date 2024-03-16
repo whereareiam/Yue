@@ -22,6 +22,7 @@
 ### How to use
 
 > Currently, there is no How-to-use guide, because the bot is not yet ready for public use.
+]
 
 ## TODO
 
@@ -30,7 +31,7 @@ Needed for release:
 - [x] Per plugin components
 - [x] Commands -> Essentials Plugin
 - [x] Verification feature -> Plugin
-- [ ] Implement own member caching system
+- [x] Implement own member caching system
 - [ ] Editable message util
 - [ ] Plugin controller
 - [ ] Role manager plugin

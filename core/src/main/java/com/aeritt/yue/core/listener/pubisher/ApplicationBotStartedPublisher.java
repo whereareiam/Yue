@@ -1,7 +1,7 @@
 package com.aeritt.yue.core.listener.pubisher;
 
 import com.aeritt.yue.api.Scheduler;
-import com.aeritt.yue.api.event.ApplicationBotStarted;
+import com.aeritt.yue.core.event.ApplicationBotStarted;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;

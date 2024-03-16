@@ -1,16 +1,17 @@
 package com.aeritt.yue.core.database;
 
-import jakarta.annotation.PostConstruct;
-import jakarta.persistence.EntityManagerFactory;
 import com.aeritt.yue.api.util.BeanRegistrationUtil;
 import com.aeritt.yue.core.config.setting.SettingsConfig;
 import com.aeritt.yue.core.config.setting.database.DatabaseSettingsConfig;
 import com.aeritt.yue.core.exception.DatabaseSetupException;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+import jakarta.annotation.PostConstruct;
+import jakarta.persistence.EntityManagerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.DependsOn;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
@@ -51,23 +52,34 @@ public class DatabaseSetupManager {
 	}
 
 	private void createDataSource() {
-		DriverManagerDataSource dataSource = new DriverManagerDataSource();
+		HikariConfig hikariConfig = new HikariConfig();
 		DatabaseSettingsConfig database = settingsConfig.getDatabase();
 		switch (settingsConfig.getDatabase().getType()) {
 			case MYSQL:
-				dataSource.setUrl("jdbc:mysql://" + database.getMysql().getHost() + ":" + database.getMysql().getPort() + "/" + database.getMysql().getDatabase() + "?useSSL=" + database.getMysql().isUseSSL() + "&autoReconnect=" + database.getMysql().isAutoReconnect());
-				dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
-				dataSource.setUsername(database.getMysql().getUsername());
-				dataSource.setPassword(database.getMysql().getPassword());
+				hikariConfig.setJdbcUrl("jdbc:mysql://" + database.getMysql().getHost() + ":" + database.getMysql().getPort() + "/" + database.getMysql().getDatabase() + "?useSSL=" + database.getMysql().isUseSSL() + "&autoReconnect=" + database.getMysql().isAutoReconnect());
+				hikariConfig.setDriverClassName("com.mysql.cj.jdbc.Driver");
+				hikariConfig.setUsername(database.getMysql().getUsername());
+				hikariConfig.setPassword(database.getMysql().getPassword());
 				break;
 			case SQLITE:
-				dataSource.setUrl("jdbc:sqlite:" + database.getSqlite().getFile());
-				dataSource.setDriverClassName("org.sqlite.JDBC");
+				hikariConfig.setJdbcUrl("jdbc:sqlite:" + database.getSqlite().getFile());
+				hikariConfig.setDriverClassName("org.sqlite.JDBC");
 				break;
 			default:
 				throw new RuntimeException("Unsupported database type: " + database);
 		}
 
+		hikariConfig.setPoolName(database.getHikariCP().getPoolName());
+		hikariConfig.setMaximumPoolSize(database.getHikariCP().getMaximumPoolSize());
+		hikariConfig.setMinimumIdle(database.getHikariCP().getMinimumIdle());
+		hikariConfig.setConnectionTimeout(database.getHikariCP().getConnectionTimeout());
+		hikariConfig.setIdleTimeout(database.getHikariCP().getIdleTimeout());
+		hikariConfig.setMaxLifetime(database.getHikariCP().getMaxLifetime());
+
+		hikariConfig.setLeakDetectionThreshold(60000);
+		hikariConfig.setConnectionTestQuery("SELECT 1");
+
+		HikariDataSource dataSource = new HikariDataSource(hikariConfig);
 		beanRegistrationUtil.registerSingleton("dataSource", DataSource.class, dataSource);
 	}
 

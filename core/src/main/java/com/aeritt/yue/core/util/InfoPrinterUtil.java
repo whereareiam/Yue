@@ -1,11 +1,11 @@
 package com.aeritt.yue.core.util;
 
 import com.aeritt.yue.api.command.management.CommandRegistrar;
-import com.aeritt.yue.api.event.ApplicationBotStarted;
 import com.aeritt.yue.api.language.LanguageService;
 import com.aeritt.yue.core.SpringPluginManager;
 import com.aeritt.yue.core.component.ComponentService;
-import com.aeritt.yue.core.database.repository.PersonRepository;
+import com.aeritt.yue.core.database.repository.person.PersonRepository;
+import com.aeritt.yue.core.event.ApplicationBotStarted;
 import net.dv8tion.jda.api.JDA;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -57,7 +57,7 @@ public class InfoPrinterUtil {
 		logger.info("");
 		logger.info("  Saved users: " + personRepository.count());
 		logger.info("  Registered commands: " + commandRegistrar.getCommands().size());
-		logger.info("  Registered component: " + componentService.getComponentCount());
+		logger.info("  Registered components: " + componentService.getComponentCount());
 		logger.info("  Registered translations: " + languageService.getLanguageCount());
 
 		List<String> languages = languageService.getTranslations().keySet().stream().toList();

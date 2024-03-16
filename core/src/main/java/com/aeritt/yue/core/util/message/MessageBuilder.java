@@ -1,11 +1,11 @@
 package com.aeritt.yue.core.util.message;
 
+import com.aeritt.yue.api.message.MessageFormatter;
+import com.aeritt.yue.api.message.PlaceholderReplacement;
 import com.aeritt.yue.api.model.CustomButton;
 import com.aeritt.yue.api.model.embed.Embed;
 import com.aeritt.yue.api.model.embed.EmbedFooter;
 import com.aeritt.yue.api.type.ColorType;
-import com.aeritt.yue.api.util.message.MessageFormatterUtil;
-import com.aeritt.yue.api.util.message.PlaceholderReplacement;
 import com.aeritt.yue.core.component.ComponentService;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -17,13 +17,13 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-public class MessageBuilderUtil implements com.aeritt.yue.api.util.message.MessageBuilderUtil {
-	private final MessageFormatterUtil messageFormatterUtil;
+public class MessageBuilder implements com.aeritt.yue.api.message.MessageBuilder {
+	private final MessageFormatter messageFormatter;
 	private final ComponentService componentService;
 
 	@Autowired
-	public MessageBuilderUtil(MessageFormatterUtil messageFormatterUtil, ComponentService componentService) {
-		this.messageFormatterUtil = messageFormatterUtil;
+	public MessageBuilder(MessageFormatter messageFormatter, ComponentService componentService) {
+		this.messageFormatter = messageFormatter;
 		this.componentService = componentService;
 	}
 
@@ -31,10 +31,10 @@ public class MessageBuilderUtil implements com.aeritt.yue.api.util.message.Messa
 		Embed embed = componentService.getEmbedComponent(embedId);
 
 		String[] message = embed.getMessage();
-		message = messageFormatterUtil.formatMessage(user, message);
+		message = messageFormatter.formatMessage(user, message);
 
 		if (replacement.isPresent())
-			message = messageFormatterUtil.replacePlaceholders(message, replacement.get());
+			message = messageFormatter.replacePlaceholders(message, replacement.get());
 
 		EmbedBuilder embedBuilder = new EmbedBuilder();
 
@@ -67,11 +67,11 @@ public class MessageBuilderUtil implements com.aeritt.yue.api.util.message.Messa
 
 		//Fields
 		embed.getFields().forEach(field -> {
-			String fieldName = messageFormatterUtil.formatMessage(user, field.getName());
-			String fieldValue = messageFormatterUtil.formatMessage(user, field.getValue());
+			String fieldName = messageFormatter.formatMessage(user, field.getName());
+			String fieldValue = messageFormatter.formatMessage(user, field.getValue());
 			if (replacement.isPresent()) {
-				fieldName = messageFormatterUtil.replacePlaceholders(fieldName, replacement.get());
-				fieldValue = messageFormatterUtil.replacePlaceholders(fieldValue, replacement.get());
+				fieldName = messageFormatter.replacePlaceholders(fieldName, replacement.get());
+				fieldValue = messageFormatter.replacePlaceholders(fieldValue, replacement.get());
 			}
 
 			embedBuilder.addField(fieldName, fieldValue, field.isInline());
@@ -81,8 +81,8 @@ public class MessageBuilderUtil implements com.aeritt.yue.api.util.message.Messa
 	}
 
 	public MessageEmbed.Field field(User user, String name, String value, boolean inline) {
-		name = messageFormatterUtil.formatMessage(user, name);
-		value = messageFormatterUtil.formatMessage(user, value);
+		name = messageFormatter.formatMessage(user, name);
+		value = messageFormatter.formatMessage(user, value);
 
 		return new MessageEmbed.Field(name, value, inline);
 	}
@@ -91,7 +91,7 @@ public class MessageBuilderUtil implements com.aeritt.yue.api.util.message.Messa
 		CustomButton customButton = componentService.getButtonComponent(buttonId);
 
 		String label = customButton.getLabel();
-		label = messageFormatterUtil.formatMessage(user, label);
+		label = messageFormatter.formatMessage(user, label);
 
 		return Button.of(customButton.getStyle(), buttonId, label);
 	}

@@ -3,7 +3,7 @@ package com.aeritt.yue.core.command.management;
 import com.aeritt.yue.api.command.base.CommandBase;
 import com.aeritt.yue.api.command.management.CommandRegistrar;
 import com.aeritt.yue.api.discord.member.DiscordMemberManager;
-import com.aeritt.yue.api.util.message.MessageSenderUtil;
+import com.aeritt.yue.core.util.message.MessageSenderUtil;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.Channel;

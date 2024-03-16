@@ -1,4 +1,4 @@
-package com.aeritt.yue.api.event;
+package com.aeritt.yue.core.event;
 
 import org.springframework.context.ApplicationEvent;
 

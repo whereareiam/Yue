@@ -1,8 +1,8 @@
-package com.aeritt.yue.api.util.message;
+package com.aeritt.yue.api.message;
 
 import net.dv8tion.jda.api.entities.User;
 
-public interface MessageFormatterUtil {
+public interface MessageFormatter {
 	String[] formatMessage(User user, String[] message);
 
 	String formatMessage(String message);

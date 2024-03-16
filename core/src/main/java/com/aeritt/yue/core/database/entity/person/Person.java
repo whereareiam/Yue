@@ -1,5 +1,6 @@
-package com.aeritt.yue.core.database.entity;
+package com.aeritt.yue.core.database.entity.person;
 
+import com.aeritt.yue.core.database.entity.Language;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

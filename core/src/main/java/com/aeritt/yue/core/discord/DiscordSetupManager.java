@@ -1,9 +1,9 @@
 package com.aeritt.yue.core.discord;
 
-import com.aeritt.yue.api.event.ApplicationBotStarted;
 import com.aeritt.yue.api.util.BeanRegistrationUtil;
 import com.aeritt.yue.core.config.setting.DiscordSettingsConfig;
 import com.aeritt.yue.core.config.setting.SettingsConfig;
+import com.aeritt.yue.core.event.ApplicationBotStarted;
 import com.aeritt.yue.core.language.LanguageService;
 import jakarta.annotation.PreDestroy;
 import net.dv8tion.jda.api.JDA;
