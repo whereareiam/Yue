@@ -75,6 +75,8 @@ public class DiscordSetupManager {
 
 	@PreDestroy
 	public void onDisable() {
+		if (jda == null) return;
+
 		jda.shutdown();
 	}
 }

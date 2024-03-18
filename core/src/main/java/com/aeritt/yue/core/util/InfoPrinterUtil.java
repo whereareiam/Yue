@@ -67,8 +67,8 @@ public class InfoPrinterUtil {
 		logger.info("  Languages: " + languages.size() + " (" + languageCodes + (languages.size() > 3 ? ", ..." : "") + ")");
 
 		logger.info("");
-		logger.info("  Plugins (" + pluginManager.getPlugins().size() + "):");
-		pluginManager.getPlugins().forEach(plugin -> logger.info("   - " + plugin.getPluginId() + " v" + plugin.getDescriptor().getVersion()));
+		logger.info("  Plugins (" + pluginManager.getStartedPlugins().size() + "):");
+		pluginManager.getStartedPlugins().forEach(plugin -> logger.info("   - " + plugin.getPluginId() + " v" + plugin.getDescriptor().getVersion()));
 
 		logger.info("");
 	}

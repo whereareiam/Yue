@@ -16,12 +16,12 @@ import java.util.List;
 
 @Component
 public class PluginCommand extends CommandBase {
-	private final MessageFormatter messageFormatterUtil;
+	private final MessageFormatter messageFormatter;
 	private final PluginCommandConfig pluginCommand;
 
 	@Autowired
-	public PluginCommand(MessageFormatter messageFormatterUtil, CommandsConfig commandsConfig) {
-		this.messageFormatterUtil = messageFormatterUtil;
+	public PluginCommand(MessageFormatter messageFormatter, CommandsConfig commandsConfig) {
+		this.messageFormatter = messageFormatter;
 		this.pluginCommand = commandsConfig.getPluginCommand();
 	}
 
@@ -44,9 +44,11 @@ public class PluginCommand extends CommandBase {
 	public List<? extends CommandData> getCommand() {
 		List<SlashCommandData> commandData = getCommandAliases().stream()
 				.map(command ->
-						Commands.slash(command, messageFormatterUtil.formatMessage(pluginCommand.getShortDescription()))
+						Commands.slash(command, messageFormatter.formatMessage(pluginCommand.getShortDescription()))
 				)
 				.toList();
+
+		commandData.forEach(command -> command.setGuildOnly(isGuildOnly()));
 
 		return commandData;
 	}

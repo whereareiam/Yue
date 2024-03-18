@@ -16,7 +16,9 @@ public class Language {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
+	@Column(length = 20)
 	private String code;
+	@Column(length = 50)
 	private String name;
 
 	@Override

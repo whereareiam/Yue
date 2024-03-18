@@ -18,7 +18,7 @@ public class PersonAdditionalLanguage {
 	private String personId;
 
 	@Id
-	@Column(name = "language_id")
+	@Column(name = "language_id", length = 100)
 	private int languageId;
 
 	@ManyToOne

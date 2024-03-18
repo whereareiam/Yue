@@ -34,6 +34,12 @@
         <pf4j-spring.version>0.9.0-SNAPSHOT</pf4j-spring.version>
         <jakarta.persistence.version>3.1.0</jakarta.persistence.version>
         <hikaricp.version>5.1.0</hikaricp.version>
+        <mapstruct.version>1.5.5.Final</mapstruct.version>
+        <lombok-mapstruct.version>0.2.0</lombok-mapstruct.version>
+
+        <!-- CVE Overrides -->
+        <pf4j.version>3.11.0</pf4j.version>
+        <spring-web.version>6.1.5</spring-web.version>
 
         <!-- Maven -->
         <maven.antrun.version>3.1.0</maven.antrun.version>
@@ -83,7 +89,16 @@
                     <groupId>org.slf4j</groupId>
                     <artifactId>slf4j-reload4j</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>org.pf4j</groupId>
+                    <artifactId>pf4j</artifactId>
+                </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.pf4j</groupId>
+            <artifactId>pf4j</artifactId>
+            <version>${pf4j.version}</version>
         </dependency>
         <dependency>
             <groupId>jakarta.persistence</groupId>
@@ -95,6 +110,5 @@
             <artifactId>HikariCP</artifactId>
             <version>${hikaricp.version}</version>
         </dependency>
-
     </dependencies>
 </project>

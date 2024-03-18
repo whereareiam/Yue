@@ -1,10 +1,15 @@
 package com.aeritt.yue.core.service;
 
+import com.aeritt.yue.api.event.EventManager;
+import com.aeritt.yue.api.event.database.UserCreatedEvent;
+import com.aeritt.yue.api.event.database.UserDeletedEvent;
+import com.aeritt.yue.api.model.PersonBE;
 import com.aeritt.yue.api.service.PersonLanguageService;
 import com.aeritt.yue.core.database.entity.Language;
 import com.aeritt.yue.core.database.entity.person.Person;
 import com.aeritt.yue.core.database.entity.person.PersonAdditionalLanguage;
 import com.aeritt.yue.core.database.entity.person.PersonRole;
+import com.aeritt.yue.core.database.mapper.PersonMapper;
 import com.aeritt.yue.core.database.repository.LanguageRepository;
 import com.aeritt.yue.core.database.repository.person.PersonAdditionalLanguageRepository;
 import com.aeritt.yue.core.database.repository.person.PersonRepository;
@@ -23,20 +28,24 @@ import java.util.List;
 
 @Service
 public class PersonService implements com.aeritt.yue.api.service.PersonService {
+	private final PersonMapper personMapper;
 	private final PersonRepository repository;
 	private final LanguageRepository languageRepository;
 	private final PersonAdditionalLanguageRepository additionalLanguageRepository;
 	private final PersonRoleRepository roleRepository;
+	private final EventManager eventManager;
 	private final ApplicationContext ctx;
 
 	@Autowired
-	public PersonService(@Lazy LanguageRepository languageRepository, @Lazy PersonRepository repository,
+	public PersonService(PersonMapper personMapper, @Lazy LanguageRepository languageRepository, @Lazy PersonRepository repository,
 	                     @Lazy PersonAdditionalLanguageRepository additionalLanguageRepository,
-	                     @Lazy PersonRoleRepository roleRepository, @Qualifier ApplicationContext ctx) {
+	                     @Lazy PersonRoleRepository roleRepository, EventManager eventManager, @Qualifier ApplicationContext ctx) {
+		this.personMapper = personMapper;
 		this.languageRepository = languageRepository;
 		this.repository = repository;
 		this.additionalLanguageRepository = additionalLanguageRepository;
 		this.roleRepository = roleRepository;
+		this.eventManager = eventManager;
 		this.ctx = ctx;
 	}
 
@@ -53,6 +62,10 @@ public class PersonService implements com.aeritt.yue.api.service.PersonService {
 		Language language = languageRepository.findByCode(langCode).orElseThrow();
 		person.setMainLanguage(language);
 
+		UserCreatedEvent event = new UserCreatedEvent(personMapper.personToPersonBE(person));
+		eventManager.fireEvent(event);
+		if (event.isCancelled()) return;
+
 		repository.save(person);
 	}
 
@@ -68,13 +81,23 @@ public class PersonService implements com.aeritt.yue.api.service.PersonService {
 		additionalLanguageRepository.deleteAll(additionalLanguages);
 
 		List<PersonRole> roles = roleRepository.findByPerson(person);
-		roleRepository.deleteAll(roles);
 
+		UserDeletedEvent event = new UserDeletedEvent(personMapper.personToPersonBE(person));
+		eventManager.fireEvent(event);
+		if (event.isCancelled()) return;
+
+		roleRepository.deleteAll(roles);
 		repository.delete(person);
 	}
 
 	public boolean userExists(String userId) {
 		return repository.existsById(userId);
+	}
+
+	public PersonBE getPersonById(String id) {
+		return repository.findById(id)
+				.map(personMapper::personToPersonBE)
+				.orElseThrow(() -> new EntityNotFoundException("Person not found"));
 	}
 
 	@Cacheable(value = "users")

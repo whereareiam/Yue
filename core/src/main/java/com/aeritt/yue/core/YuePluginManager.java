@@ -4,7 +4,8 @@ import com.aeritt.yue.api.YuePlugin;
 import com.aeritt.yue.core.event.ApplicationBotStarted;
 import com.aeritt.yue.core.event.ApplicationReloaded;
 import jakarta.annotation.PreDestroy;
-import lombok.Getter;
+import org.pf4j.PluginState;
+import org.pf4j.PluginWrapper;
 import org.pf4j.spring.ExtensionsInjector;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory;
@@ -18,8 +19,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.logging.Logger;
 
 @Service
@@ -28,9 +27,6 @@ public class YuePluginManager {
 	private final ApplicationContext ctx;
 	private final Path pluginPath;
 	private final Logger logger;
-
-	@Getter
-	private final Set<YuePlugin> plugins = new HashSet<>();
 
 	public YuePluginManager(SpringPluginManager pluginManager, ApplicationContext ctx, @Qualifier("pluginPath") Path pluginPath,
 	                        Logger logger) {
@@ -59,12 +55,17 @@ public class YuePluginManager {
 
 	@EventListener(ApplicationReloaded.class)
 	public void onReload() {
-		plugins.forEach(this::reloadPlugin);
+		pluginManager.getStartedPlugins().forEach(plugin -> {
+			YuePlugin yuePlugin = (YuePlugin) plugin.getPlugin();
+			reloadPlugin(yuePlugin);
+		});
 	}
 
 	@PreDestroy
 	public void onShutdown() {
-		for (YuePlugin plugin : plugins) {
+		for (PluginWrapper wrapper : pluginManager.getStartedPlugins()) {
+			YuePlugin plugin = (YuePlugin) wrapper.getPlugin();
+
 			disablePlugin(plugin);
 			unloadPlugin(plugin);
 		}
@@ -72,29 +73,29 @@ public class YuePluginManager {
 
 	@EventListener(ApplicationBotStarted.class)
 	public void enableAllPlugins() {
-		plugins.forEach(this::enablePlugin);
+		pluginManager.getPlugins().forEach(plugin -> {
+			YuePlugin yuePlugin = (YuePlugin) plugin.getPlugin();
+			enablePlugin(yuePlugin);
+		});
 	}
 
 	private void loadPlugin(Path path) {
-		YuePlugin plugin = null;
-		String pluginId = "";
+		YuePlugin plugin;
+		String pluginId;
 
 		try {
 			pluginId = pluginManager.loadPlugin(path);
 			plugin = (YuePlugin) pluginManager.getPlugin(pluginId).getPlugin();
 			plugin.createApplicationContext();
 			plugin.onLoad();
-			plugins.add(plugin);
 		} catch (Exception e) {
 			logger.warning("Failed to load plugin " + path.getFileName());
 			logger.warning(e.getMessage());
-			plugins.remove(plugin);
 		}
 	}
 
 	private void unloadPlugin(YuePlugin plugin) {
 		try {
-			plugins.remove(plugin);
 			plugin.onUnload();
 			((ConfigurableApplicationContext) plugin.getApplicationContext()).close();
 			pluginManager.unloadPlugin(plugin.getWrapper().getPluginId());
@@ -104,13 +105,12 @@ public class YuePluginManager {
 	}
 
 	private void enablePlugin(YuePlugin plugin) {
-		if (!plugins.contains(plugin)) return;
+		if (pluginManager.getPlugins(PluginState.STARTED).contains(plugin.getWrapper())) return;
 
 		try {
 			pluginManager.startPlugin(plugin.getWrapper().getPluginId());
 			plugin.onEnable();
 		} catch (Exception e) {
-			plugins.remove(plugin);
 			unloadPlugin(plugin);
 
 			logger.warning("Failed to enable plugin " + plugin.getWrapper().getPluginId());
@@ -119,7 +119,7 @@ public class YuePluginManager {
 	}
 
 	private void disablePlugin(YuePlugin plugin) {
-		if (!plugins.contains(plugin)) return;
+		if (pluginManager.getPlugins(PluginState.DISABLED).contains(plugin.getWrapper())) return;
 
 		try {
 			plugin.onDisable();

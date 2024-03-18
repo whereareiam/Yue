@@ -19,7 +19,7 @@ public interface PersonRoleRepository extends JpaRepository<PersonRole, PersonRo
 
 	@Modifying
 	@Transactional
-	void deleteByPersonIdAndRoleId(String userId, String roleId);
+	void deleteByPersonAndRole(Person person, Role role);
 
 	boolean existsByPersonIdAndRoleId(String userId, String id);
 }
