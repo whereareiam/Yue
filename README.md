@@ -32,12 +32,11 @@ Needed for release:
 - [x] Commands -> Essentials Plugin
 - [x] Verification feature -> Plugin
 - [x] Implement own member caching system
-- [ ] Editable message util
 - [ ] Plugin controller
 - [ ] Role manager plugin
 - [ ] Help command full implementation
 - [ ] Handle cases where we can't PM the user
-- [ ] Handle command permissions on discord side
+- [ ] Define buttons into DYNAMIC and STATIC
 
 Planned for the future:
 

@@ -4,4 +4,4 @@ before_install:
   - sdk use java 17.0.10-librca
   - sdk install maven
 install:
-  - mvn -pl api install -DskipTests
+  - mvn -pl yue-core-api install -DskipTests

@@ -15,8 +15,10 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>api</module>
-        <module>core</module>
+        <module>yue-core</module>
+        <module>yue-core-api</module>
+        <module>yue-core-bootstrap</module>
+        <module>yue-adapter-database</module>
     </modules>
 
     <properties>
@@ -43,16 +45,17 @@
 
         <!-- Maven -->
         <maven.antrun.version>3.1.0</maven.antrun.version>
-        <exec-maven-plugin.version>3.1.0</exec-maven-plugin.version>
+        <maven.compiler.version>3.12.1</maven.compiler.version>
         <maven.javadoc.version>3.6.3</maven.javadoc.version>
+        <exec-maven-plugin.version>3.1.0</exec-maven-plugin.version>
     </properties>
 
     <profiles>
         <profile>
-            <id>dev</id>
+            <id>release</id>
         </profile>
         <profile>
-            <id>release</id>
+            <id>dev</id>
         </profile>
     </profiles>
 
@@ -70,6 +73,11 @@
     </repositories>
 
     <dependencies>
+        <dependency>
+            <groupId>net.dv8tion</groupId>
+            <artifactId>JDA</artifactId>
+            <version>${discord.jda.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
@@ -100,15 +108,15 @@
             <artifactId>pf4j</artifactId>
             <version>${pf4j.version}</version>
         </dependency>
-        <dependency>
-            <groupId>jakarta.persistence</groupId>
-            <artifactId>jakarta.persistence-api</artifactId>
-            <version>${jakarta.persistence.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.zaxxer</groupId>
-            <artifactId>HikariCP</artifactId>
-            <version>${hikaricp.version}</version>
-        </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven.compiler.version}</version>
+            </plugin>
+        </plugins>
+    </build>
 </project>
