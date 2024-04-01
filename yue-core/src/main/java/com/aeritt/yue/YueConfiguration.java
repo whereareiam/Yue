@@ -3,24 +3,32 @@ package com.aeritt.yue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.info.BuildProperties;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.logging.Logger;
 
+@EnableAsync
+@EnableCaching
 @Configuration
-public class YueConfig {
+@EnableScheduling
+public class YueConfiguration {
 	private final ApplicationContext ctx;
 
 	@Autowired
-	public YueConfig(ApplicationContext ctx) {
+	public YueConfiguration(ApplicationContext ctx) {
 		this.ctx = ctx;
+
+		System.out.println("Initializing Yue...");
 	}
 
 	@Bean

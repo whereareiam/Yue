@@ -15,11 +15,11 @@ import java.util.List;
 public interface UserRoleRepository extends JpaRepository<UserRole, UserRoleId> {
 	List<UserRole> findByRole(Role role);
 
-	List<UserRole> findByPerson(User user);
+	List<UserRole> findByUser(User user);
 
 	@Modifying
 	@Transactional
-	void deleteByPersonAndRole(User user, Role role);
+	void deleteByUserAndRole(User user, Role role);
 
 	boolean existsByUserIdAndRoleId(String userId, String id);
 }
