@@ -45,7 +45,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: YueAPI-${{ env.projectVersion }}-b${{ github.run_number }}
-          path: api/target/${{ env.projectName }}API-${{ env.projectVersion }}.jar
+          path: yue-core-api/target/${{ env.projectName }}API-${{ env.projectVersion }}.jar
 
   yue:
     needs: setup
