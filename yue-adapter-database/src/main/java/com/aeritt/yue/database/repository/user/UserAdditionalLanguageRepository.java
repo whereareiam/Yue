@@ -1,5 +1,7 @@
 package com.aeritt.yue.database.repository.user;
 
+import com.aeritt.yue.database.entity.Language;
+import com.aeritt.yue.database.entity.user.User;
 import com.aeritt.yue.database.entity.user.UserAdditionalLanguage;
 import com.aeritt.yue.database.entity.user.UserAdditionalLanguageId;
 import jakarta.transaction.Transactional;
@@ -15,6 +17,6 @@ public interface UserAdditionalLanguageRepository extends JpaRepository<UserAddi
 
 	@Modifying
 	@Transactional
-	void deleteByUserIdAndLanguageId(String userId, int languageId);
+	void deleteByUserAndLanguage(User user, Language language);
 }
 

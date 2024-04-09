@@ -9,4 +9,8 @@ import java.util.Optional;
 @Repository
 public interface LanguageRepository extends JpaRepository<Language, Integer> {
 	Optional<Language> findByCode(String langCode);
+
+	boolean existsByCode(String langCode);
+
+	void deleteByCode(String langCode);
 }

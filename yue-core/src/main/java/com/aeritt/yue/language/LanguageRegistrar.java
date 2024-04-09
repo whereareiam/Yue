@@ -1,6 +1,7 @@
 package com.aeritt.yue.language;
 
 import com.aeritt.yue.api.model.Language;
+import com.aeritt.yue.api.service.LanguageService;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,25 +17,24 @@ import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 @Service
 public class LanguageRegistrar {
 	private final Logger logger;
-	private final LanguageService languageService;
 	private final Path langPath;
+	private final LanguageProvider languageProvider;
+	private final LanguageService languageService;
 
 	@Autowired
-	public LanguageRegistrar(Logger logger, LanguageService languageService,
-	                         @Qualifier("languagePath") Path langPath) {
+	public LanguageRegistrar(Logger logger, @Qualifier("languagePath") Path langPath,
+	                         LanguageProvider languageProvider, LanguageService languageService) {
 		this.logger = logger;
-		this.languageService = languageService;
+		this.languageProvider = languageProvider;
 		this.langPath = langPath;
+		this.languageService = languageService;
 	}
 
 	@Async
@@ -51,7 +51,7 @@ public class LanguageRegistrar {
 							Map<String, Object> rawTranslations = new Gson().fromJson(reader, new TypeToken<HashMap<String, Object>>() {
 							}.getType());
 							Map<String, String> translations = flattenMap(rawTranslations, dirName);
-							translations.forEach((key, value) -> languageService.registerTranslation(key, langCode, value));
+							translations.forEach((key, value) -> languageProvider.registerTranslation(key, langCode, value));
 						} catch (IOException e) {
 							logger.warning("Failed to read language file: " + file);
 						}
@@ -92,8 +92,8 @@ public class LanguageRegistrar {
 	}
 
 	private void validateLanguage(String langCode) {
-		Language language = languageService.getLanguage(langCode);
-		if (language == null) {
+		Optional<Language> language = languageService.getLanguage(langCode);
+		if (language.isEmpty()) {
 			languageService.registerLanguage(
 					new Language(Locale.forLanguageTag(langCode).getDisplayName(), langCode)
 			);

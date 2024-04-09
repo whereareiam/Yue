@@ -1,4 +1,4 @@
-package com.aeritt.yue.api.event.database;
+package com.aeritt.yue.api.event.internal.user;
 
 import com.aeritt.yue.api.event.Event;
 import com.aeritt.yue.api.model.UserProfile;
@@ -9,7 +9,6 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class RoleRemovedEvent extends Event {
+public class UserDeletedEvent extends Event {
 	private final UserProfile userProfile;
-	private String roleId;
 }

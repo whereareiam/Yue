@@ -3,7 +3,7 @@ package com.aeritt.yue.service;
 import com.aeritt.yue.config.setting.DiscordSettingsConfig;
 import com.aeritt.yue.config.setting.SettingsConfig;
 import com.aeritt.yue.event.ApplicationBotStarted;
-import com.aeritt.yue.language.LanguageService;
+import com.aeritt.yue.language.LanguageProvider;
 import com.aeritt.yue.util.BeanRegistrationUtil;
 import jakarta.annotation.PreDestroy;
 import net.dv8tion.jda.api.JDA;
@@ -23,15 +23,15 @@ import org.springframework.stereotype.Component;
 @Component
 public class DiscordSetupService {
 	private final BeanRegistrationUtil beanRegistrationUtil;
-	private final LanguageService languageService;
+	private final LanguageProvider languageProvider;
 	private final SettingsConfig settingsConfig;
 	private JDA jda;
 
 	@Autowired
-	public DiscordSetupService(BeanRegistrationUtil beanRegistrationUtil, LanguageService languageService,
+	public DiscordSetupService(BeanRegistrationUtil beanRegistrationUtil, LanguageProvider languageProvider,
 	                           SettingsConfig settingsConfig) {
 		this.beanRegistrationUtil = beanRegistrationUtil;
-		this.languageService = languageService;
+		this.languageProvider = languageProvider;
 		this.settingsConfig = settingsConfig;
 	}
 
@@ -54,7 +54,7 @@ public class DiscordSetupService {
 		}
 
 		jda.getPresence().setActivity(Activity.playing(
-				languageService.getTranslation("core.main.phase.loading")
+				languageProvider.getTranslation("core.main.phase.loading")
 		));
 	}
 
@@ -67,7 +67,7 @@ public class DiscordSetupService {
 				.forEach(Guild::leave);
 
 		jda.getPresence().setActivity(Activity.playing(
-				languageService.getTranslation("core.main.phase.starting")
+				languageProvider.getTranslation("core.main.phase.starting")
 		));
 	}
 

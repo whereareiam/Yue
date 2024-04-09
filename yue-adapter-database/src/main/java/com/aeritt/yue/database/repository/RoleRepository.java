@@ -8,9 +8,7 @@ import java.util.List;
 
 @Repository
 public interface RoleRepository extends JpaRepository<Role, String> {
-	boolean existsById(String id);
-
-	default boolean existsById(List<String> ids) {
+	default boolean existsByIds(List<String> ids) {
 		for (String id : ids) {
 			if (!existsById(id)) {
 				return false;

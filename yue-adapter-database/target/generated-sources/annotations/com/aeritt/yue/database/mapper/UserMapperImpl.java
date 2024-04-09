@@ -10,8 +10,8 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2024-04-01T15:19:55+0200",
-    comments = "version: 1.5.5.Final, compiler: javac, environment: Java 17.0.10 (BellSoft)"
+    date = "2024-04-09T13:04:42+0200",
+    comments = "version: 1.5.5.Final, compiler: javac, environment: Java 22 (BellSoft)"
 )
 @Component
 public class UserMapperImpl implements UserMapper {
@@ -20,7 +20,7 @@ public class UserMapperImpl implements UserMapper {
     private LanguageMapper languageMapper;
 
     @Override
-    public UserProfile userToUserProfile(User user) {
+    public UserProfile map(User user) {
         if ( user == null ) {
             return null;
         }
@@ -30,7 +30,7 @@ public class UserMapperImpl implements UserMapper {
         String globalName = null;
         String name = null;
 
-        language = languageMapper.mapEntity( user.getMainLanguage() );
+        language = languageMapper.modelToEntity( user.getMainLanguage() );
         id = user.getId();
         globalName = user.getGlobalName();
         name = user.getName();

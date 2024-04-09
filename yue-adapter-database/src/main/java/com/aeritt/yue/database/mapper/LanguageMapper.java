@@ -10,5 +10,9 @@ import org.springframework.stereotype.Component;
 public interface LanguageMapper {
 	@Mapping(source = "name", target = "name")
 	@Mapping(source = "code", target = "code")
-	Language mapEntity(com.aeritt.yue.database.entity.Language language);
+	Language modelToEntity(com.aeritt.yue.database.entity.Language language);
+
+	@Mapping(source = "name", target = "name")
+	@Mapping(source = "code", target = "code")
+	com.aeritt.yue.database.entity.Language entityToModel(Language language);
 }

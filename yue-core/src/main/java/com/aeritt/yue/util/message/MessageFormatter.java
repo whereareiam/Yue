@@ -1,7 +1,7 @@
 package com.aeritt.yue.util.message;
 
 import com.aeritt.yue.api.message.PlaceholderReplacement;
-import com.aeritt.yue.language.LanguageService;
+import com.aeritt.yue.language.LanguageProvider;
 import com.vdurmont.emoji.EmojiParser;
 import net.dv8tion.jda.api.entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,11 +12,11 @@ import java.util.regex.Pattern;
 
 @Service
 public class MessageFormatter implements com.aeritt.yue.api.message.MessageFormatter {
-	private final LanguageService languageService;
+	private final LanguageProvider languageProvider;
 
 	@Autowired
-	public MessageFormatter(LanguageService languageService) {
-		this.languageService = languageService;
+	public MessageFormatter(LanguageProvider languageProvider) {
+		this.languageProvider = languageProvider;
 	}
 
 	public String[] formatMessage(User user, String[] message) {
@@ -28,7 +28,7 @@ public class MessageFormatter implements com.aeritt.yue.api.message.MessageForma
 	}
 
 	public String formatMessage(String message) {
-		message = languageService.getTranslation(message);
+		message = languageProvider.getTranslation(message);
 		message = hookTranslationPlaceholders(message);
 		message = hookEmojiParser(message);
 
@@ -36,7 +36,7 @@ public class MessageFormatter implements com.aeritt.yue.api.message.MessageForma
 	}
 
 	public String formatMessage(User user, String message) {
-		message = languageService.getTranslation(user, message);
+		message = languageProvider.getTranslation(user, message);
 		message = hookTranslationPlaceholders(message);
 		message = hookInternalPlaceholders(user, message);
 		message = hookEmojiParser(message);
@@ -53,7 +53,7 @@ public class MessageFormatter implements com.aeritt.yue.api.message.MessageForma
 		StringBuilder buffer = new StringBuilder();
 		while (matcher.find()) {
 			String key = matcher.group(1);
-			String translation = languageService.getTranslation(key);
+			String translation = languageProvider.getTranslation(key);
 			String escapedTranslation = translation.replace("$", "\\$");
 			matcher.appendReplacement(buffer, escapedTranslation);
 		}

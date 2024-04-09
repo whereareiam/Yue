@@ -12,6 +12,6 @@ import org.springframework.stereotype.Component;
 )
 public interface UserMapper {
 	@Mapping(source = "mainLanguage", target = "language")
-	UserProfile userToUserProfile(User user);
+	UserProfile map(User user);
 }
 

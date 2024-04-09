@@ -37,6 +37,7 @@ Needed for release:
 - [ ] Help command full implementation
 - [ ] Handle cases where we can't PM the user
 - [ ] Define buttons into DYNAMIC and STATIC
+- [ ] LanguageService -> i18n
 
 Planned for the future:
 

@@ -1,20 +1,18 @@
 package com.aeritt.yue.api.service;
 
 import com.aeritt.yue.api.model.Language;
-import net.dv8tion.jda.api.entities.User;
 
-import java.util.Map;
+import java.util.List;
+import java.util.Optional;
 
 public interface LanguageService {
-	void registerTranslation(String key, String langCode, String value);
+	boolean registerLanguage(Language language);
 
-	String getTranslation(User user, String key);
+	boolean unregisterLanguage(Language language);
 
-	String getTranslation(String key);
-
-	Map<String, Map<String, String>> getTranslations();
+	Optional<Language> getLanguage(String langCode);
 
 	Language getDefaultLanguage();
 
-	int getLanguageCount();
+	List<Language> getLanguages();
 }

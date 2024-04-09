@@ -52,7 +52,7 @@ public class DatabaseConfiguration {
 				hikariConfig.setDriverClassName("org.sqlite.JDBC");
 				break;
 			default:
-				throw new RuntimeException("Unsupported database type: " + database);
+				throw new RuntimeException("Unsupported internal type: " + database);
 		}
 
 		hikariConfig.setPoolName(database.getHikariCP().getPoolName());
@@ -91,7 +91,7 @@ public class DatabaseConfiguration {
 		return em.getObject();
 	}
 
-	@Bean
+	@Bean(name = "transactionManager")
 	public JpaTransactionManager getTransactionManager() {
 		EntityManagerFactory emf = ctx.getBean(EntityManagerFactory.class);
 		JpaTransactionManager tm = new JpaTransactionManager();

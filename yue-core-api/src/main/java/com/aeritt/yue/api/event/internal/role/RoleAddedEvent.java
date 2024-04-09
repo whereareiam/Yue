@@ -1,4 +1,4 @@
-package com.aeritt.yue.api.event.database;
+package com.aeritt.yue.api.event.internal.role;
 
 import com.aeritt.yue.api.event.Event;
 import com.aeritt.yue.api.model.UserProfile;

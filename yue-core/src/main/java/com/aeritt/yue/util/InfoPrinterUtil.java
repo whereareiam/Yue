@@ -1,6 +1,8 @@
 package com.aeritt.yue.util;
 
 import com.aeritt.yue.SpringPluginManager;
+import com.aeritt.yue.api.model.Language;
+import com.aeritt.yue.api.service.LanguageProvider;
 import com.aeritt.yue.api.service.LanguageService;
 import com.aeritt.yue.api.service.UserService;
 import com.aeritt.yue.command.management.CommandRegistrar;
@@ -26,6 +28,7 @@ public class InfoPrinterUtil {
 	private final CommandRegistrar commandRegistrar;
 	private final ComponentService componentService;
 	private final SpringPluginManager pluginManager;
+	private final LanguageProvider languageProvider;
 	private final LanguageService languageService;
 	private final UserService userService;
 	private final String version;
@@ -34,11 +37,12 @@ public class InfoPrinterUtil {
 
 	@Autowired
 	public InfoPrinterUtil(CommandRegistrar commandRegistrar, ComponentService componentService,
-	                       SpringPluginManager pluginManager, LanguageService languageService, UserService userService, @Qualifier("version") String version, Logger logger,
+	                       SpringPluginManager pluginManager, LanguageProvider languageProvider, LanguageService languageService, UserService userService, @Qualifier("version") String version, Logger logger,
 	                       @Lazy JDA jda) {
 		this.commandRegistrar = commandRegistrar;
 		this.componentService = componentService;
 		this.pluginManager = pluginManager;
+		this.languageProvider = languageProvider;
 		this.languageService = languageService;
 		this.userService = userService;
 		this.version = version;
@@ -58,11 +62,12 @@ public class InfoPrinterUtil {
 		logger.info("  Saved users: " + userService.getUserCount());
 		logger.info("  Registered commands: " + commandRegistrar.getCommands().size());
 		logger.info("  Registered components: " + componentService.getComponentCount());
-		logger.info("  Registered translations: " + languageService.getLanguageCount());
+		logger.info("  Registered translations: " + languageProvider.getTranslationCount());
 
-		List<String> languages = languageService.getTranslations().keySet().stream().toList();
+		List<Language> languages = languageService.getLanguages();
 		String languageCodes = languages.stream()
 				.limit(3)
+				.map(Language::getCode)
 				.collect(Collectors.joining(", "));
 		logger.info("  Languages: " + languages.size() + " (" + languageCodes + (languages.size() > 3 ? ", ..." : "") + ")");
 
