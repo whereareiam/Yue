@@ -24,16 +24,17 @@ import java.util.stream.Collectors;
 
 @Service
 public class ComponentRegistrar {
+	private final Gson gson;
 	private final Logger logger;
 	private final Path dataPath;
 	private final SpringPluginManager pluginManager;
 	private final ComponentService componentService;
-	private final Gson gson = new Gson();
 
 	private final Map<String, Function<JsonObject, Object>> componentParsers = new HashMap<>();
 
 	@Autowired
-	public ComponentRegistrar(Logger logger, @Qualifier("dataPath") Path dataPath, SpringPluginManager pluginManager, ComponentService componentService) {
+	public ComponentRegistrar(Gson gson, Logger logger, @Qualifier("dataPath") Path dataPath, SpringPluginManager pluginManager, ComponentService componentService) {
+		this.gson = gson;
 		this.logger = logger;
 		this.dataPath = dataPath;
 		this.pluginManager = pluginManager;

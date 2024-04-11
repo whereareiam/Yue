@@ -1,5 +1,7 @@
 package com.aeritt.yue;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.info.BuildProperties;
@@ -94,5 +96,13 @@ public class YueConfiguration {
 	@Qualifier("yue")
 	public Logger getLogger() {
 		return Logger.getLogger("Yue");
+	}
+
+	@Bean
+	@Qualifier
+	public Gson getGson() {
+		return new GsonBuilder()
+				.setPrettyPrinting()
+				.create();
 	}
 }
