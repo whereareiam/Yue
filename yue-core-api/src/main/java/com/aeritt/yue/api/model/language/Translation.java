@@ -4,7 +4,9 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -35,21 +37,23 @@ public class Translation {
 	}
 
 	public String process(List<Placeholder> placeholders) {
-		for (Selector selector : selectors) {
-			String selectedValue = selector.evaluate(placeholders);
+		String processedMessage = message;
+		Map<String, String> placeholderMap = new HashMap<>();
+		for (Placeholder placeholder : placeholders) {
+			placeholderMap.put(placeholder.getKey(), placeholder.getValue());
+		}
 
+		for (Selector selector : selectors) {
+			String selectedValue = selector.evaluate(placeholderMap);
 			if (selectedValue != null) {
-				System.out.println(message);
-				System.out.println("Selected value: " + selectedValue);
-				System.out.println("Replacing selector: " + selector);
-				message = message.replace(selector.toString(), selectedValue);
+				processedMessage = processedMessage.replace(selector.toString(), selectedValue);
 			}
 		}
 
-		for (Placeholder placeholder : placeholders) {
-			message = message.replace(placeholder.getKey(), placeholder.getValue());
+		for (Map.Entry<String, String> entry : placeholderMap.entrySet()) {
+			processedMessage = processedMessage.replace(entry.getKey(), entry.getValue());
 		}
 
-		return message;
+		return processedMessage;
 	}
 }

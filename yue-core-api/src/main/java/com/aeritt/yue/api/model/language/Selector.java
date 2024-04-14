@@ -3,6 +3,7 @@ package com.aeritt.yue.api.model.language;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 public class Selector {
 	private List<String> conditions;
@@ -25,31 +26,31 @@ public class Selector {
 		Collections.addAll(this.values, valuesArray);
 	}
 
-	public String evaluate(List<Placeholder> placeholders) {
-		System.out.println("Evaluating selector: " + conditions + " -> " + values);
-
+	public String evaluate(Map<String, String> placeholders) {
 		for (int i = 0; i < conditions.size(); i++) {
 			String condition = conditions.get(i);
 			String value = values.get(i);
 
-			for (Placeholder placeholder : placeholders) {
-				if (condition.contains(placeholder.getKey()))
-					condition = condition.replace(placeholder.getKey(), placeholder.getValue());
+			for (Map.Entry<String, String> entry : placeholders.entrySet()) {
+				if (condition.contains(entry.getKey()))
+					condition = condition.replace(entry.getKey(), entry.getValue());
 			}
 
-			System.out.println("Checking condition: " + condition + " -> " + value);
-
 			String[] parts = condition.split("([<>!=]=?)");
-			double left = Double.parseDouble(parts[0].trim());
-			double right = Double.parseDouble(parts[1].trim());
+			try {
+				double left = Double.parseDouble(parts[0].trim());
+				double right = Double.parseDouble(parts[1].trim());
 
-			if (condition.contains("<=") && left <= right
-					|| condition.contains(">=") && left >= right
-					|| condition.contains("==") && left == right
-					|| condition.contains("!=") && left != right
-					|| condition.contains("<") && left < right
-					|| condition.contains(">") && left > right) {
-				return value;
+				if (condition.contains("<=") && left <= right
+						|| condition.contains(">=") && left >= right
+						|| condition.contains("==") && left == right
+						|| condition.contains("!=") && left != right
+						|| condition.contains("<") && left < right
+						|| condition.contains(">") && left > right) {
+					return value;
+				}
+			} catch (NumberFormatException e) {
+				System.err.println("Could not parse condition: " + condition);
 			}
 		}
 
