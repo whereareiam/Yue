@@ -1,6 +1,8 @@
 package com.aeritt.yue.language;
 
 import com.aeritt.yue.api.model.Language;
+import com.aeritt.yue.api.model.language.Placeholder;
+import com.aeritt.yue.api.model.language.Translation;
 import com.aeritt.yue.api.service.LanguageService;
 import com.aeritt.yue.api.service.UserService;
 import lombok.Getter;
@@ -9,24 +11,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
 public class LanguageProvider implements com.aeritt.yue.api.service.LanguageProvider {
-	/*
-	 TODO 1: Add selectors for the translation that will work like if else statements,
-	  in the end they will just return some string
-	 TODO 2: Allow selectors to be nested
-	 TODO 3: Allow selectors to return values based on some translation placeholder.
-	 */
-
 	// Services
 	private final UserService userService;
 	private final LanguageService languageService;
 
 	// Translations
 	@Getter
-	private final Map<String, Map<String, String>> translations = new HashMap<>();
+	private final Map<String, Translation> translations = new HashMap<>();
 
 	@Autowired
 	public LanguageProvider(UserService userService, LanguageService languageService) {
@@ -35,32 +31,32 @@ public class LanguageProvider implements com.aeritt.yue.api.service.LanguageProv
 	}
 
 	@Override
-	public String getTranslation(User user, String key) {
-		Language language = userService.getUserLanguage(user.getId());
+	public String getTranslation(User user, String key, List<Placeholder> placeholders) {
+		Language language = (user != null) ? userService.getUserLanguage(user.getId()) : null;
 		if (language == null) {
 			language = languageService.getDefaultLanguage();
 		}
 
-		Map<String, String> langTranslations = translations.get(language.getCode());
-		String translation = langTranslations != null ? langTranslations.get(key) : null;
-		return translation != null ? translation : key;
+		Translation translation = translations.get(language.getCode() + key);
+		return translation != null ? translation.process(placeholders) : key;
+	}
+
+	@Override
+	public String getTranslation(User user, String key) {
+		return getTranslation(user, key, List.of());
 	}
 
 	@Override
 	public String getTranslation(String key) {
-		Language language = languageService.getDefaultLanguage();
-
-		Map<String, String> langTranslations = translations.get(language.getCode());
-		String translation = langTranslations != null ? langTranslations.get(key) : null;
-		return translation != null ? translation : key;
+		return getTranslation(null, key, List.of());
 	}
 
 	@Override
 	public int getTranslationCount() {
-		return translations.values().stream().mapToInt(Map::size).sum();
+		return translations.size();
 	}
 
-	public void registerTranslation(String key, String langCode, String value) {
-		translations.computeIfAbsent(langCode, k -> new HashMap<>()).put(key, value);
+	public void registerTranslation(String key, String langCode, String message) {
+		translations.putIfAbsent(langCode + key, new Translation(message));
 	}
 }

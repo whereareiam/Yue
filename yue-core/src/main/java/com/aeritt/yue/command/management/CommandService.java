@@ -2,7 +2,7 @@ package com.aeritt.yue.command.management;
 
 import com.aeritt.yue.api.command.base.CommandBase;
 import com.aeritt.yue.api.service.member.DiscordMemberService;
-import com.aeritt.yue.util.message.MessageSenderUtil;
+import com.aeritt.yue.util.MessageSenderUtil;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.Channel;

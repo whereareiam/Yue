@@ -1,10 +1,10 @@
-package com.aeritt.yue.util.message;
+package com.aeritt.yue.service.message;
 
 import com.aeritt.yue.api.message.MessageFormatter;
-import com.aeritt.yue.api.message.PlaceholderReplacement;
 import com.aeritt.yue.api.model.CustomButton;
 import com.aeritt.yue.api.model.embed.Embed;
 import com.aeritt.yue.api.model.embed.EmbedFooter;
+import com.aeritt.yue.api.model.language.Placeholder;
 import com.aeritt.yue.api.type.ColorType;
 import com.aeritt.yue.component.ComponentService;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -14,33 +14,31 @@ import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
-public class MessageBuilder implements com.aeritt.yue.api.message.MessageBuilder {
-	private final MessageFormatter messageFormatter;
+public class MessageBuilder implements com.aeritt.yue.api.service.message.MessageBuilder {
 	private final ComponentService componentService;
+	private final MessageFormatter messageFormatter;
 
 	@Autowired
-	public MessageBuilder(MessageFormatter messageFormatter, ComponentService componentService) {
-		this.messageFormatter = messageFormatter;
+	public MessageBuilder(ComponentService componentService, MessageFormatter messageFormatter) {
 		this.componentService = componentService;
+		this.messageFormatter = messageFormatter;
 	}
 
-	public MessageEmbed embed(String embedId, User user, Optional<PlaceholderReplacement> replacement) {
+	public MessageEmbed embed(String embedId, User user, List<Placeholder> placeholders) {
 		Embed embed = componentService.getEmbedComponent(embedId);
 
 		String[] message = embed.getMessage();
-		message = messageFormatter.formatMessage(user, message);
-
-		if (replacement.isPresent())
-			message = messageFormatter.replacePlaceholders(message, replacement.get());
+		message = messageFormatter.formatMessage(user, message, placeholders);
 
 		EmbedBuilder embedBuilder = new EmbedBuilder();
 
 		String[] finalMessage = message;
-		Optional.ofNullable(embed.getTitle()).ifPresent(title -> embedBuilder.setTitle(finalMessage[0]));
-		Optional.ofNullable(embed.getDescription()).ifPresent(description -> embedBuilder.setDescription(finalMessage[1]));
+		Optional.ofNullable(embed.getTitle()).ifPresent(_ -> embedBuilder.setTitle(finalMessage[0]));
+		Optional.ofNullable(embed.getDescription()).ifPresent(_ -> embedBuilder.setDescription(finalMessage[1]));
 		Optional.ofNullable(embed.getColor())
 				.map(color -> color.equals(color.toUpperCase()) ? ColorType.valueOf(color) : color)
 				.map(color -> color instanceof ColorType ?
@@ -60,7 +58,7 @@ public class MessageBuilder implements com.aeritt.yue.api.message.MessageBuilder
 		});
 
 		//Footer
-		Optional.ofNullable(embed.getFooter()).map(EmbedFooter::getText).ifPresent(footerText -> {
+		Optional.ofNullable(embed.getFooter()).map(EmbedFooter::getText).ifPresent(_ -> {
 			String iconUrl = embed.getFooter().getIconUrl();
 			embedBuilder.setFooter(finalMessage[finalMessage.length - 1], iconUrl);
 		});
@@ -72,12 +70,8 @@ public class MessageBuilder implements com.aeritt.yue.api.message.MessageBuilder
 				return;
 			}
 
-			String fieldName = messageFormatter.formatMessage(user, field.getName());
-			String fieldValue = messageFormatter.formatMessage(user, field.getValue());
-			if (replacement.isPresent()) {
-				fieldName = messageFormatter.replacePlaceholders(fieldName, replacement.get());
-				fieldValue = messageFormatter.replacePlaceholders(fieldValue, replacement.get());
-			}
+			String fieldName = messageFormatter.formatMessage(user, field.getName(), placeholders);
+			String fieldValue = messageFormatter.formatMessage(user, field.getValue(), placeholders);
 
 			embedBuilder.addField(fieldName, fieldValue, field.isInline());
 		});

@@ -3,12 +3,12 @@ package com.aeritt.yue.command.commands;
 import com.aeritt.yue.SpringPluginManager;
 import com.aeritt.yue.api.command.base.CommandBase;
 import com.aeritt.yue.api.command.base.CommandCategory;
-import com.aeritt.yue.api.message.PlaceholderReplacement;
+import com.aeritt.yue.api.message.MessageFormatter;
+import com.aeritt.yue.api.model.language.Placeholder;
 import com.aeritt.yue.config.command.CommandsConfig;
 import com.aeritt.yue.config.command.PluginCommandConfig;
 import com.aeritt.yue.service.DiscordButtonService;
-import com.aeritt.yue.util.message.MessageBuilder;
-import com.aeritt.yue.util.message.MessageFormatter;
+import com.aeritt.yue.service.message.MessageBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -24,7 +24,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Component
 public class PluginCommand extends CommandBase {
@@ -53,24 +52,20 @@ public class PluginCommand extends CommandBase {
 		int loadedPluginsCount = pluginManager.getPlugins(PluginState.RESOLVED).size();
 		int enabledPluginsCount = pluginManager.getPlugins(PluginState.STARTED).size();
 		int disabledPluginsCount = pluginManager.getPlugins(PluginState.DISABLED).size();
-		PlaceholderReplacement replacements = new PlaceholderReplacement(
-				List.of("{pluginCount}", "{loadedPluginsCount}", "{enabledPluginsCount}", "{disabledPluginsCount}",
-						"{loadedPlugins}", "{enabledPlugins}", "{disabledPlugins}"),
-				List.of(
-						String.valueOf(pluginManager.getPlugins().size()),
-						String.valueOf(loadedPluginsCount),
-						String.valueOf(enabledPluginsCount),
-						String.valueOf(disabledPluginsCount),
-						formatPlugins(pluginManager.getPlugins(PluginState.RESOLVED), pluginFormat, event.getUser()),
-						formatPlugins(pluginManager.getPlugins(PluginState.STARTED), pluginFormat, event.getUser()),
-						formatPlugins(pluginManager.getPlugins(PluginState.DISABLED), pluginFormat, event.getUser())
-				)
+		List<Placeholder> placeholders = List.of(
+				new Placeholder("{pluginCount}", String.valueOf(pluginManager.getPlugins().size())),
+				new Placeholder("{loadedPluginsCount}", String.valueOf(loadedPluginsCount)),
+				new Placeholder("{enabledPluginsCount}", String.valueOf(enabledPluginsCount)),
+				new Placeholder("{disabledPluginsCount}", String.valueOf(disabledPluginsCount)),
+				new Placeholder("{loadedPlugins}", formatPlugins(pluginManager.getPlugins(PluginState.RESOLVED), pluginFormat, event.getUser())),
+				new Placeholder("{enabledPlugins}", formatPlugins(pluginManager.getPlugins(PluginState.STARTED), pluginFormat, event.getUser())),
+				new Placeholder("{disabledPlugins}", formatPlugins(pluginManager.getPlugins(PluginState.DISABLED), pluginFormat, event.getUser()))
 		);
 
 		MessageEmbed embed = messageBuilder.embed(
 				pluginCommand.getEmbedId(),
 				event.getUser(),
-				Optional.of(replacements)
+				placeholders
 		);
 
 		List<Button> buttons = new ArrayList<>();

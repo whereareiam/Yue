@@ -1,12 +1,13 @@
-package com.aeritt.yue.util.message;
+package com.aeritt.yue.service.message;
 
-import com.aeritt.yue.api.message.PlaceholderReplacement;
+import com.aeritt.yue.api.model.language.Placeholder;
 import com.aeritt.yue.language.LanguageProvider;
 import com.vdurmont.emoji.EmojiParser;
 import net.dv8tion.jda.api.entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -19,6 +20,16 @@ public class MessageFormatter implements com.aeritt.yue.api.message.MessageForma
 		this.languageProvider = languageProvider;
 	}
 
+	@Override
+	public String[] formatMessage(User user, String[] message, List<Placeholder> placeholders) {
+		for (int i = 0; i < message.length; i++) {
+			message[i] = formatMessage(user, message[i], placeholders);
+		}
+
+		return message;
+	}
+
+	@Override
 	public String[] formatMessage(User user, String[] message) {
 		for (int i = 0; i < message.length; i++) {
 			message[i] = formatMessage(user, message[i]);
@@ -27,19 +38,37 @@ public class MessageFormatter implements com.aeritt.yue.api.message.MessageForma
 		return message;
 	}
 
-	public String formatMessage(String message) {
-		message = languageProvider.getTranslation(message);
-		message = hookTranslationPlaceholders(message);
+	@Override
+	public String formatMessage(User user, String message) {
+		message = languageProvider.getTranslation(user, message);
+		message = message.contains("$t{") ? hookTranslationPlaceholders(message) : message;
 		message = hookEmojiParser(message);
 
 		return message;
 	}
 
-	public String formatMessage(User user, String message) {
-		message = languageProvider.getTranslation(user, message);
-		message = hookTranslationPlaceholders(message);
-		message = hookInternalPlaceholders(user, message);
+	@Override
+	public String formatMessage(String message) {
+		message = languageProvider.getTranslation(message);
+		message = message.contains("$t{") ? hookTranslationPlaceholders(message) : message;
 		message = hookEmojiParser(message);
+
+		return message;
+	}
+
+	@Override
+	public String formatMessage(User user, String message, List<Placeholder> placeholders) {
+		message = languageProvider.getTranslation(user, message, placeholders);
+		message = message.contains("$t{") ? hookTranslationPlaceholders(message) : message;
+		message = hookEmojiParser(message);
+
+		return message;
+	}
+
+	private String hookEmojiParser(String message) {
+		if (message.startsWith(":") && message.endsWith(":")) {
+			return EmojiParser.parseToUnicode(message);
+		}
 
 		return message;
 	}
@@ -59,33 +88,5 @@ public class MessageFormatter implements com.aeritt.yue.api.message.MessageForma
 		}
 		matcher.appendTail(buffer);
 		return buffer.toString();
-	}
-
-	private String hookInternalPlaceholders(User user, String message) {
-		return message.replace("{memberTag}", user.getAsMention());
-	}
-
-	private String hookEmojiParser(String message) {
-		if (message.startsWith(":") && message.endsWith(":")) {
-			return EmojiParser.parseToUnicode(message);
-		}
-
-		return message;
-	}
-
-	public String[] replacePlaceholders(String[] message, PlaceholderReplacement replacement) {
-		for (int i = 0; i < message.length; i++) {
-			message[i] = replacePlaceholders(message[i], replacement);
-		}
-
-		return message;
-	}
-
-	public String replacePlaceholders(String message, PlaceholderReplacement replacement) {
-		for (int i = 0; i < replacement.getPlaceholders().size(); i++) {
-			message = message.replace(replacement.getPlaceholders().get(i), replacement.getReplacements().get(i));
-		}
-
-		return message;
 	}
 }

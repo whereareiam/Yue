@@ -1,20 +1,20 @@
-package com.aeritt.yue.util.message;
+package com.aeritt.yue.util;
 
-import com.aeritt.yue.api.message.PlaceholderReplacement;
+import com.aeritt.yue.api.model.language.Placeholder;
+import com.aeritt.yue.service.message.MessageBuilder;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class MessageSenderUtil {
-	private final MessageBuilder messageBuilderUtil;
+	private final MessageBuilder messageBuilder;
 
 	@Autowired
-	public MessageSenderUtil(MessageBuilder messageBuilderUtil) {
-		this.messageBuilderUtil = messageBuilderUtil;
+	public MessageSenderUtil(MessageBuilder messageBuilder) {
+		this.messageBuilder = messageBuilder;
 	}
 
 	public void noRequiredRole(InteractionHook hook, String allowedRole) {
@@ -25,10 +25,10 @@ public class MessageSenderUtil {
 		String allowedRoles = String.join(", ", allowedRole);
 
 		hook.sendMessageEmbeds(
-				messageBuilderUtil.embed(
+				messageBuilder.embed(
 						"core.embed.default.errors.noRequiredRole",
 						hook.getInteraction().getUser(),
-						Optional.of(new PlaceholderReplacement(List.of("{roleMention}"), List.of(allowedRoles)))
+						List.of(new Placeholder("{roleMention}", allowedRoles))
 				)
 		).queue();
 	}
@@ -37,30 +37,30 @@ public class MessageSenderUtil {
 		String allowedChannels = String.join(", ", allowedChannel);
 
 		hook.sendMessageEmbeds(
-				messageBuilderUtil.embed(
+				messageBuilder.embed(
 						"core.embed.default.errors.noRequiredChannel",
 						hook.getInteraction().getUser(),
-						Optional.of(new PlaceholderReplacement(List.of("{channelMention}"), List.of(allowedChannels)))
+						List.of(new Placeholder("{channelMention}", allowedChannels))
 				)
 		).queue();
 	}
 
 	public void noRequiredUser(InteractionHook hook, String id) {
 		hook.sendMessageEmbeds(
-				messageBuilderUtil.embed(
+				messageBuilder.embed(
 						"core.embed.default.errors.noRequiredUser",
 						hook.getInteraction().getUser(),
-						Optional.of(new PlaceholderReplacement(List.of("{userMention}"), List.of(id)))
+						List.of(new Placeholder("{userMention}", id))
 				)
 		).queue();
 	}
 
 	public void guildOnly(InteractionHook hook) {
 		hook.sendMessageEmbeds(
-				messageBuilderUtil.embed(
+				messageBuilder.embed(
 						"core.embed.default.errors.guildOnly",
 						hook.getInteraction().getUser(),
-						Optional.empty()
+						List.of()
 				)
 		).queue();
 	}

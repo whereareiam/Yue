@@ -2,12 +2,12 @@ package com.aeritt.yue.command.commands;
 
 import com.aeritt.yue.api.command.base.CommandBase;
 import com.aeritt.yue.api.command.base.CommandCategory;
-import com.aeritt.yue.api.message.MessageBuilder;
 import com.aeritt.yue.api.message.MessageFormatter;
 import com.aeritt.yue.api.service.UserService;
+import com.aeritt.yue.api.service.message.MessageBuilder;
 import com.aeritt.yue.config.command.CommandsConfig;
 import com.aeritt.yue.config.command.DeleteCommandConfig;
-import com.aeritt.yue.util.message.MessageSenderUtil;
+import com.aeritt.yue.util.MessageSenderUtil;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -21,7 +21,6 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Optional;
 
 @Component
 public class DeleteCommand extends CommandBase {
@@ -55,7 +54,7 @@ public class DeleteCommand extends CommandBase {
 			MessageEmbed embed = messageBuilder.embed(
 					deleteCommand.getEmbedId(),
 					event.getUser(),
-					Optional.empty()
+					List.of()
 			);
 
 			event.getHook().sendMessageEmbeds(embed).queue();

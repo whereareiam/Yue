@@ -113,10 +113,7 @@ public class LanguageRegistrar {
 				}
 			}
 		}
-
-		target.keySet().removeIf(key -> !source.has(key));
 	}
-
 
 	private Map<String, String> flattenMap(Map<String, Object> rawTranslations, String prefix) {
 		Map<String, String> translations = new HashMap<>();

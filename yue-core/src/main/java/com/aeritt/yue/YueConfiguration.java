@@ -103,6 +103,7 @@ public class YueConfiguration {
 	public Gson getGson() {
 		return new GsonBuilder()
 				.setPrettyPrinting()
+				.disableHtmlEscaping()
 				.create();
 	}
 }

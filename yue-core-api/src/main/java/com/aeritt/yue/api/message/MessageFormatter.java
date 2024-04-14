@@ -1,15 +1,18 @@
 package com.aeritt.yue.api.message;
 
+import com.aeritt.yue.api.model.language.Placeholder;
 import net.dv8tion.jda.api.entities.User;
 
-public interface MessageFormatter {
-	String[] formatMessage(User user, String[] message);
+import java.util.List;
 
-	String formatMessage(String message);
+public interface MessageFormatter {
+	String[] formatMessage(User user, String[] message, List<Placeholder> placeholders);
+
+	String[] formatMessage(User user, String... message);
 
 	String formatMessage(User user, String message);
 
-	String[] replacePlaceholders(String[] message, PlaceholderReplacement replacement);
+	String formatMessage(String message);
 
-	String replacePlaceholders(String message, PlaceholderReplacement replacement);
+	String formatMessage(User user, String message, List<Placeholder> placeholders);
 }
