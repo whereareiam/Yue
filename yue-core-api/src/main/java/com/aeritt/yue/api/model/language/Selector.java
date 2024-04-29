@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 public class Selector {
-	private List<String> conditions;
-	private List<String> values;
+	private final List<String> conditions;
+	private final List<String> values;
 
 	public Selector(String selectorString) {
 		this.conditions = new ArrayList<>();
@@ -50,7 +50,7 @@ public class Selector {
 					return value;
 				}
 			} catch (NumberFormatException e) {
-				System.err.println("Could not parse condition: " + condition);
+				return null;
 			}
 		}
 

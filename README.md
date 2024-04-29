@@ -18,22 +18,22 @@
   essential for any Discord server.
 - **[Verification](https://github.com/aerittopia/YueVerification)** - Adds verification for users when they first join
   the Discord server.
+- **[Warden](https://github.com/aerittopia/YueWarden)** - Manages roles for users.
 
 ### How to use
 
 > Currently, there is no How-to-use guide, because the bot is not yet ready for public use.
-]
 
 ## TODO
 
 Needed for release:
 
-- [x] Per plugin components
 - [x] Commands -> Essentials Plugin
-- [x] Verification feature -> Plugin
 - [x] Implement own member caching system
+- [x] Per plugin components
+- [x] Role manager plugin
+- [x] Verification feature -> Plugin
 - [ ] Plugin controller
-- [ ] Role manager plugin
 - [ ] Help command full implementation
 - [ ] Handle cases where we can't PM the user
 - [ ] Define buttons into DYNAMIC and STATIC

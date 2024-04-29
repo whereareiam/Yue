@@ -42,6 +42,7 @@
         <!-- CVE Overrides -->
         <pf4j.version>3.11.0</pf4j.version>
         <spring-web.version>6.1.5</spring-web.version>
+        <json.version>20240303</json.version>
 
         <!-- Maven -->
         <maven.antrun.version>3.1.0</maven.antrun.version>

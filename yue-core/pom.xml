@@ -34,6 +34,17 @@
             <groupId>com.github.minndevelopment</groupId>
             <artifactId>emoji-java</artifactId>
             <version>master-SNAPSHOT</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.json</groupId>
+                    <artifactId>json</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>${json.version}</version>
         </dependency>
     </dependencies>
 </project>
