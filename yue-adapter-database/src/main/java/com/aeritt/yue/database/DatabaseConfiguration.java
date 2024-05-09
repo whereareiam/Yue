@@ -40,32 +40,41 @@ public class DatabaseConfiguration {
 	public DataSource getDataSource() {
 		HikariConfig hikariConfig = new HikariConfig();
 		DatabaseSettingsConfig database = settingsConfig.getDatabase();
-		switch (settingsConfig.getDatabase().getType()) {
-			case MYSQL:
-				hikariConfig.setJdbcUrl("jdbc:mysql://" + database.getMysql().getHost() + ":" + database.getMysql().getPort() + "/" + database.getMysql().getDatabase() + "?useSSL=" + database.getMysql().isUseSSL() + "&autoReconnect=" + database.getMysql().isAutoReconnect());
-				hikariConfig.setDriverClassName("com.mysql.cj.jdbc.Driver");
-				hikariConfig.setUsername(database.getMysql().getUsername());
-				hikariConfig.setPassword(database.getMysql().getPassword());
-				break;
-			case SQLITE:
-				hikariConfig.setJdbcUrl("jdbc:sqlite:" + database.getSqlite().getFile());
-				hikariConfig.setDriverClassName("org.sqlite.JDBC");
-				break;
-			default:
-				throw new RuntimeException("Unsupported internal type: " + database);
+		HikariDataSource dataSource;
+
+		try {
+			switch (settingsConfig.getDatabase().getType()) {
+				case MYSQL:
+					hikariConfig.setJdbcUrl("jdbc:mysql://" + database.getMysql().getHost() + ":" + database.getMysql().getPort() + "/" + database.getMysql().getDatabase() + "?useSSL=" + database.getMysql().isUseSSL() + "&autoReconnect=" + database.getMysql().isAutoReconnect());
+					hikariConfig.setDriverClassName("com.mysql.cj.jdbc.Driver");
+					hikariConfig.setUsername(database.getMysql().getUsername());
+					hikariConfig.setPassword(database.getMysql().getPassword());
+					break;
+				case SQLITE:
+					hikariConfig.setJdbcUrl("jdbc:sqlite:" + database.getSqlite().getFile());
+					hikariConfig.setDriverClassName("org.sqlite.JDBC");
+					break;
+				default:
+					throw new RuntimeException("Unsupported internal type: " + database);
+			}
+
+			hikariConfig.setPoolName(database.getHikariCP().getPoolName());
+			hikariConfig.setMaximumPoolSize(database.getHikariCP().getMaximumPoolSize());
+			hikariConfig.setMinimumIdle(database.getHikariCP().getMinimumIdle());
+			hikariConfig.setConnectionTimeout(database.getHikariCP().getConnectionTimeout());
+			hikariConfig.setIdleTimeout(database.getHikariCP().getIdleTimeout());
+			hikariConfig.setMaxLifetime(database.getHikariCP().getMaxLifetime());
+
+			hikariConfig.setLeakDetectionThreshold(60000);
+			hikariConfig.setConnectionTestQuery("SELECT 1");
+
+			dataSource = new HikariDataSource(hikariConfig);
+			dataSource.getConnection().close();
+		} catch (Exception e) {
+			throw new RuntimeException("Failed to establish database connection", e);
 		}
 
-		hikariConfig.setPoolName(database.getHikariCP().getPoolName());
-		hikariConfig.setMaximumPoolSize(database.getHikariCP().getMaximumPoolSize());
-		hikariConfig.setMinimumIdle(database.getHikariCP().getMinimumIdle());
-		hikariConfig.setConnectionTimeout(database.getHikariCP().getConnectionTimeout());
-		hikariConfig.setIdleTimeout(database.getHikariCP().getIdleTimeout());
-		hikariConfig.setMaxLifetime(database.getHikariCP().getMaxLifetime());
-
-		hikariConfig.setLeakDetectionThreshold(60000);
-		hikariConfig.setConnectionTestQuery("SELECT 1");
-
-		return new HikariDataSource(hikariConfig);
+		return dataSource;
 	}
 
 	@Bean(name = "entityManagerFactory")

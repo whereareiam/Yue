@@ -26,8 +26,8 @@ public class EventManager implements com.aeritt.yue.api.event.EventManager {
 				Priority priorityAnnotation = method.getAnnotation(Priority.class);
 				order = priorityAnnotation.value();
 			}
-			listeners.computeIfAbsent(eventType, _ -> new TreeMap<>())
-					.computeIfAbsent(order, _ -> new HashSet<>())
+			listeners.computeIfAbsent(eventType, o -> new TreeMap<>())
+					.computeIfAbsent(order, o -> new HashSet<>())
 					.add(listener);
 		}
 	}

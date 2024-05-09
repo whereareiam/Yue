@@ -37,8 +37,8 @@ public class MessageBuilder implements com.aeritt.yue.api.service.message.Messag
 		EmbedBuilder embedBuilder = new EmbedBuilder();
 
 		String[] finalMessage = message;
-		Optional.ofNullable(embed.getTitle()).ifPresent(_ -> embedBuilder.setTitle(finalMessage[0]));
-		Optional.ofNullable(embed.getDescription()).ifPresent(_ -> embedBuilder.setDescription(finalMessage[1]));
+		Optional.ofNullable(embed.getTitle()).ifPresent(o -> embedBuilder.setTitle(finalMessage[0]));
+		Optional.ofNullable(embed.getDescription()).ifPresent(o -> embedBuilder.setDescription(finalMessage[1]));
 		Optional.ofNullable(embed.getColor())
 				.map(color -> color.equals(color.toUpperCase()) ? ColorType.valueOf(color) : color)
 				.map(color -> color instanceof ColorType ?
@@ -58,7 +58,7 @@ public class MessageBuilder implements com.aeritt.yue.api.service.message.Messag
 		});
 
 		//Footer
-		Optional.ofNullable(embed.getFooter()).map(EmbedFooter::getText).ifPresent(_ -> {
+		Optional.ofNullable(embed.getFooter()).map(EmbedFooter::getText).ifPresent(o -> {
 			String iconUrl = embed.getFooter().getIconUrl();
 			embedBuilder.setFooter(finalMessage[finalMessage.length - 1], iconUrl);
 		});
